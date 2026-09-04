@@ -17,6 +17,7 @@ from __future__ import annotations
 import copy
 import dataclasses
 import json
+import re
 import shutil
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -25,7 +26,12 @@ import pytest
 
 from fetch.grib import MODELS, valid_time
 from forecast import cycle as cycle_mod
-from forecast.build import build_forecast_document, model_case_map
+from forecast.build import (
+    REPO_ROOT,
+    build_forecast_document,
+    model_case_map,
+    repo_relative_source_path,
+)
 from forecast.build import _members_at as members_at
 from forecast.contract import ContractError, validate_forecast
 from forecast.live import (
@@ -47,6 +53,10 @@ NOW = datetime(2026, 9, 4, 17, 0, tzinfo=timezone.utc)
 GENERATED_AT = datetime(2026, 9, 4, 17, 4, 12, tzinfo=timezone.utc)
 
 PAYLOAD_MODELS = ("HRRR", "GFS", "NAM", "NBM")
+
+#: FORECAST-SPEC §9: `meta.weights_source.path` is the repo-relative POSIX name of the backtest
+#: output, derived from `RESULTS` rather than typed, so it follows the file if it ever moves.
+EXPECTED_SOURCE_PATH = RESULTS.relative_to(REPO).as_posix()
 
 #: Per-model offsets with long decimal tails, so rounding members to 4 dp is a real operation
 #: rather than a no-op that would make the identity test pass for the wrong reason.
@@ -278,7 +288,12 @@ def test_real_cache_site_is_copied_verbatim(
     assert real_document["meta"]["site"] == real_fitted.site
     assert real_document["meta"]["site"] is not real_fitted.site, "site must be a copy"
     assert real_document["skill"] == real_fitted.skill
-    assert real_document["meta"]["weights_source"] == real_fitted.weights_source
+    expected_source = copy.deepcopy(real_fitted.weights_source)
+    expected_source["path"] = EXPECTED_SOURCE_PATH
+    assert real_document["meta"]["weights_source"] == expected_source, (
+        "the §7.1 block is copied verbatim apart from `path`, which the payload publishes "
+        "repo-relative even though the loader was handed an absolute path"
+    )
 
 
 def test_real_cache_members_carry_the_lowercase_record_values(
@@ -546,3 +561,110 @@ def test_members_are_stored_at_four_decimal_places() -> None:
             assert value == round(value, 4)
     raw = synthetic_temp("gfs", document["forecast"][0]["lead_h"])
     assert raw != round(raw, 4), "the synthetic values must have a decimal tail to round"
+
+
+# ----------------------------------------------------------------- the published weights path
+
+
+def source_path_of(document: dict) -> str:
+    return document["meta"]["weights_source"]["path"]
+
+
+def leaks_a_machine_path(value: str) -> bool:
+    """True when `value` would print the building machine's filesystem onto the page.
+
+    Written as a predicate so the guard below can be fired at a known-bad sample as well as at
+    the real build — a check that has never been seen to fail is not a check.
+    """
+    return (
+        value.startswith("/")
+        or "\\" in value
+        or re.match(r"^[A-Za-z]:", value) is not None
+        or "Users" in value
+        or str(REPO) in value
+    )
+
+
+def test_real_cache_weights_source_path_is_repo_relative(real_document: dict) -> None:
+    """The F3 defect: an absolute path leaked the developer's home directory onto the page.
+
+    `real_fitted` loads `RESULTS`, an **absolute** path, so this asserts a real translation
+    rather than the identity: the loader reports what it read, the payload publishes the
+    repo-relative form.
+    """
+    published = source_path_of(real_document)
+    assert not leaks_a_machine_path(published), published
+    assert published == EXPECTED_SOURCE_PATH
+    assert str(RESULTS) not in json.dumps(real_document), (
+        "the absolute results.json path appears somewhere else in the document"
+    )
+
+
+def test_synthetic_build_weights_source_path_is_repo_relative() -> None:
+    """The same rule on the offline path, so it holds without the real cache present."""
+    published = source_path_of(build_synthetic())
+    assert not leaks_a_machine_path(published), published
+    assert published == EXPECTED_SOURCE_PATH
+
+
+def test_the_repo_relative_check_fires_on_an_absolute_path() -> None:
+    """Non-vacuity: prove the two tests above can fail.
+
+    A payload is built with the fitted block carrying the absolute path the old code published,
+    and the predicate the guards use must reject it. Without this, the guards would pass on a
+    build that had never translated anything.
+    """
+    leak = str(RESULTS)
+    assert leaks_a_machine_path(leak), (
+        f"{leak} is the exact value the defect published and the guard did not reject it"
+    )
+    assert leaks_a_machine_path("C:\\Users\\dev\\Bhar-forecast\\data\\results.json")
+    assert not leaks_a_machine_path(EXPECTED_SOURCE_PATH), (
+        "the guard rejects the correct value too, so it proves nothing"
+    )
+
+
+def test_a_fitted_block_carrying_an_absolute_path_is_republished_relative() -> None:
+    """The translation itself, exercised end to end through `build_forecast_document`.
+
+    The fitted block is doctored to carry the absolute path — the pre-fix payload's value —
+    and the built document must still publish the repo-relative form.
+    """
+    grid = full_grid()
+    records = synthetic_records(grid)
+    fitted = synthetic_fitted()
+    fitted.weights_source["path"] = str(RESULTS)
+
+    document = build_forecast_document(synthetic_cycle(records, grid), fitted, GENERATED_AT)
+
+    assert source_path_of(document) == EXPECTED_SOURCE_PATH
+    assert not leaks_a_machine_path(source_path_of(document))
+
+
+def test_a_path_outside_the_repository_is_refused_not_rewritten(tmp_path: Path) -> None:
+    """There is no repo-relative form of an outside path, so it raises rather than shipping."""
+    grid = full_grid()
+    records = synthetic_records(grid)
+    fitted = synthetic_fitted()
+    outside = tmp_path / "elsewhere" / "results.json"
+    fitted.weights_source["path"] = str(outside)
+
+    with pytest.raises(ContractError) as excinfo:
+        build_forecast_document(synthetic_cycle(records, grid), fitted, GENERATED_AT)
+
+    assert "meta.weights_source.path" in str(excinfo.value)
+    assert str(outside) in str(excinfo.value)
+
+
+def test_a_non_path_weights_source_survives_untouched() -> None:
+    """`forecast/make_fixture.py` puts a sentence here on purpose; it must not be mangled.
+
+    The sentence says in words that no backtest output was read. Rewriting it into something
+    that looked like a filename would turn an honesty marker into a false provenance claim.
+    """
+    sentence = (
+        "fabricated in forecast/make_fixture.py — no results.json was read, and these "
+        "weights were never fitted against observations"
+    )
+    assert repo_relative_source_path(sentence) == sentence
+    assert repo_relative_source_path(EXPECTED_SOURCE_PATH) == EXPECTED_SOURCE_PATH

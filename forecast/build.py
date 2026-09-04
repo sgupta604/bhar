@@ -47,6 +47,7 @@ from __future__ import annotations
 import copy
 from collections.abc import Sequence
 from datetime import datetime
+from pathlib import Path, PurePosixPath
 
 from fetch.grib import MODELS
 from forecast.contract import UNITS, VARIABLE, ContractError, validate_forecast
@@ -55,13 +56,19 @@ from forecast.weights import UNCHANGED_VECTOR_RULE, FittedWeights, weights_for_l
 
 __all__ = [
     "MEMBER_DECIMALS",
+    "REPO_ROOT",
     "SOURCE",
     "build_forecast_document",
     "model_case_map",
+    "repo_relative_source_path",
 ]
 
 #: FORECAST-SPEC §9 ``meta.source``. The only provenance this page has.
 SOURCE = "noaa_s3_grib"
+
+#: This repository's root: ``forecast/build.py`` → ``forecast/`` → the checkout. Every path the
+#: payload publishes is expressed against this, never against the machine's filesystem.
+REPO_ROOT = Path(__file__).resolve().parent.parent
 
 #: Decimal places each member value is stored at (D-F3-C). ``blend_f`` is then computed **from
 #: the stored values** and serialized unrounded, which is what makes §9 rule 6 true by
@@ -266,6 +273,53 @@ def _build_gaps(cycle: CycleResult, case_map: dict[str, str]) -> list[dict]:
     return gaps
 
 
+# --------------------------------------------------------------------------- published path
+
+
+def repo_relative_source_path(value: str) -> str:
+    """Express ``meta.weights_source.path`` the way FORECAST-SPEC §9 writes it: repo-relative.
+
+    :func:`forecast.weights.load_fitted_weights` reports the path it was actually handed, and
+    ``forecast/refresh.py`` hands it an absolute one. Copying that straight into the payload
+    printed the operator's home directory and account name onto a page whose audience is a
+    customer, and it made the document non-reproducible: two correct runs of the same cycle on
+    two machines differed byte for byte. The payload therefore names the file relative to
+    :data:`REPO_ROOT`, in POSIX form, so a Windows separator cannot reach the page either.
+
+    The relative form is *derived*, never typed: move ``results.json`` and this follows it.
+
+    A value that is not an absolute filesystem path is returned unchanged. That is what keeps
+    the synthetic fixture working — ``forecast/make_fixture.py`` deliberately puts a sentence
+    in this field instead of a path, saying in words that no backtest output was read, and
+    that honesty marker must survive untouched.
+
+    Raises:
+        ContractError: the path lies outside this repository, so no repo-relative form of it
+            exists. It is not rewritten into something plausible: a published path that names
+            the machine it was built on is the defect this function exists to prevent.
+    """
+    candidate = Path(value)
+    if not candidate.is_absolute():
+        return value
+    try:
+        relative = candidate.resolve().relative_to(REPO_ROOT)
+    except ValueError:
+        raise ContractError(
+            f"meta.weights_source.path: {value} lies outside this repository ({REPO_ROOT}), so "
+            "there is no repo-relative form to publish. An absolute path on the page names the "
+            "machine that built it and makes two correct runs of the same cycle differ, so it "
+            "is refused rather than rewritten."
+        ) from None
+    return PurePosixPath(*relative.parts).as_posix()
+
+
+def _published_weights_source(fitted: FittedWeights) -> dict:
+    """The §7.1 block as the payload carries it: a copy, with the path made repo-relative."""
+    source = copy.deepcopy(fitted.weights_source)
+    source["path"] = repo_relative_source_path(str(source["path"]))
+    return source
+
+
 def _build_meta(
     cycle: CycleResult,
     fitted: FittedWeights,
@@ -287,7 +341,7 @@ def _build_meta(
             "stale_reason": cycle.stale_reason,
             "cycles_fallen_back": int(cycle.cycles_fallen_back),
         },
-        "weights_source": copy.deepcopy(fitted.weights_source),
+        "weights_source": _published_weights_source(fitted),
         "models_included": list(case_map.values()),
         "horizon_h": int(cycle.horizon_h),
         "step_h": int(cycle.step_h),
