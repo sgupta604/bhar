@@ -1,0 +1,28 @@
+/* Self-hosted Clarity web fonts — vendored from the Shyft portal's own
+   /_next/static/media/*.woff2 (content-hashed, latin subsets) so the demo
+   page has ZERO network dependency at 16:00. Variable-weight faces,
+   font-display: swap, relative src urls only. Mirrors token doc §2.1. */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("./inter-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Sora";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("./sora-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("./jetbrains-mono-latin.woff2") format("woff2");
+}

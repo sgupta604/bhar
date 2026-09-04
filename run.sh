@@ -40,8 +40,14 @@ BACKEND_PID=$!
 uv run python -m http.server "$FRONTEND_PORT" --directory frontend &
 FRONTEND_PID=$!
 
-echo "Backend:  http://localhost:${BACKEND_PORT}  (health: http://localhost:${BACKEND_PORT}/health)"
-echo "Frontend: http://localhost:${FRONTEND_PORT}"
+echo "Backend:  http://localhost:${BACKEND_PORT}  (identity: http://localhost:${BACKEND_PORT}/openapi.json)"
+if [ "$BACKEND_PORT" != "8000" ]; then
+    # The page defaults its API base to :8000; on an override it needs ?api= or it renders
+    # chrome with no data. Print the assembled URL so nobody hand-builds it at demo time.
+    echo "Frontend: http://localhost:${FRONTEND_PORT}/?api=http://localhost:${BACKEND_PORT}"
+else
+    echo "Frontend: http://localhost:${FRONTEND_PORT}"
+fi
 echo "Ctrl-C stops both."
 
 wait
