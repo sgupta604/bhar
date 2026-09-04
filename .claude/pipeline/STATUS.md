@@ -1,0 +1,53 @@
+# Pipeline Status
+
+**Updated:** 2026-09-04 02:30 local
+
+## Active
+
+| Field | Value |
+|-------|-------|
+| Feature | `project-scaffold` (T1 of 6) |
+| Phase | ready — requirements settled, not yet started |
+| Next | `/research project-scaffold` |
+| Branch | `feat/site-tuned-blend` |
+
+## Context for a cold session
+
+**Read `docs/SPEC.md` first — it is the contract and it overrides `docs/BRIEF.md`.**
+Start at SPEC §16 (cold-start handoff). Verified facts that override the BRIEF live in
+`.claude/features/site-tuned-blend/2026-09-04T02-10-00_spike.md`.
+
+Requirements were fully settled in a grilling session on 2026-09-04 ~02:00. **There are no open
+questions.** The user is asleep, wakes 07:30, leaves 08:15, and **demos at 16:00**.
+The loop must not need them — see SPEC §9.
+
+## Ticket backlog (SPEC §8)
+
+| # | Feature | Depends on | Status |
+|---|---------|-----------|--------|
+| T1 | `project-scaffold` | — | not started |
+| T2 | `grib-point-fetch` | T1 | not started |
+| T3 | `demo-shell` | T1 | not started |
+| T4 | `data-backfill` | T2 | not started |
+| T5 | `score-and-blend` | T4 | not started |
+| T6 | `readme-and-caveats` | T5 | not started |
+
+T3 is independent of the data path. If T2 blocks, T3 still runs — log the blocker and move on.
+
+## Queue
+
+| Feature | Priority | Notes |
+|---------|----------|-------|
+| - | - | - |
+
+## Completed
+
+| Feature | Date | PR |
+|---------|------|----|
+| - | - | - |
+
+## Parked
+
+| Feature | Phase | Reason |
+|---------|-------|--------|
+| - | - | - |

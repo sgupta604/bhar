@@ -1,0 +1,24 @@
+# Prior unrelated project material, kept for reference
+_archive/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+
+# Fetched weather data (regenerable, large)
+data/raw/
+data/*.parquet
+*.grib2
