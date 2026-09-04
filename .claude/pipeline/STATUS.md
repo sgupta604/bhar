@@ -56,8 +56,8 @@ acceptance floors and the dependency graph are unchanged.
 | F2 | `forecast-live-fetch` | — | GREEN — finalized 2026-09-04, commit `96d0d55`, no PR (FORECAST-SPEC §12) |
 | F3 | `forecast-payload` | F2 | GREEN — finalized 2026-09-04, commit `dc97165`, no PR (FORECAST-SPEC §12) |
 | F4 | `forecast-api` | F3 | GREEN — finalized 2026-09-04, commit `56967fd`, no PR (FORECAST-SPEC §12) |
-| F5 | `forecast-page` | F1, F3 | GREEN — finalized 2026-09-04, commit `72f0630`, no PR (FORECAST-SPEC §12) — **see Known Issue below before trusting the full suite** |
-| F6 | `forecast-history` | F4, F5 | GREEN — finalized 2026-09-04, commit recorded below, no PR (FORECAST-SPEC §12) |
+| F5 | `forecast-page` | F1, F3 | GREEN — finalized 2026-09-04, commit `72f0630`, no PR (FORECAST-SPEC §12) |
+| F6 | `forecast-history` | F4, F5 | GREEN — finalized 2026-09-04, commit `27b0f36`, no PR (FORECAST-SPEC §12) |
 | F7 | `forecast-skill-panel` | F4, F5 | TODO |
 | F8 | `forecast-docs` | all | TODO |
 | F9 | `forecast-scorecard` | F3, F4 | TODO — **user-approved 11:44**; added on develop @ 37ca272 |

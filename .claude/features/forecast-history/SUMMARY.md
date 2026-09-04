@@ -1,6 +1,6 @@
 # Summary: forecast-history (F6)
 
-**Completed:** 2026-09-04 | **Branch:** `feat/forecast-page` | **Commit:** recorded below |
+**Completed:** 2026-09-04 | **Branch:** `feat/forecast-page` | **Commit:** `27b0f36` |
 **PR:** none — FORECAST-SPEC §12 opens a single PR for all nine tickets at F9; this ticket
 only commits and pushes to the shared branch.
 
