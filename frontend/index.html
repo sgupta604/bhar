@@ -4,6 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bhar — Site-Tuned Model Blend</title>
+<link rel="icon" href="vendor/s2-mark.png">
+<!-- Pre-hydration theme. MUST be inline and MUST come before the stylesheets:
+     a deferred script paints the light theme first and the presenter sees a
+     flash. Mirrors theme.js exactly; theme.js re-asserts it on DOMContentLoaded. -->
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('internal-portal:theme');
+    document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
 <!-- Load order is load-bearing: vendored tokens -> vendored fonts -> local tokens -> layout. -->
 <link rel="stylesheet" href="vendor/clarity-tokens.css">
 <link rel="stylesheet" href="vendor/fonts.css">
@@ -19,6 +33,9 @@
 <div class="shell" id="shell">
 
   <header class="page-header">
+    <!-- S2 monogram only. The full SHYFT SOLUTIONS corporate mark never appears
+         in product chrome (Clarity §6b). Solid backplate, never recoloured. -->
+    <span class="brand-mark"><img src="vendor/s2-mark.png" alt="Shyft Solutions" width="28" height="28"></span>
     <div class="page-header-main">
       <h1 class="page-title">Omaha Eppley (KOMA)</h1>
       <p class="page-sub" id="header-scope">Last 30 days</p>
@@ -26,6 +43,11 @@
     </div>
     <div class="page-header-aside">
       <div class="segmented" id="lead-toggle" role="group" aria-label="Forecast lead time"></div>
+      <div class="chrome-row">
+        <!-- href is rewritten by BharTheme.linkify() to carry ?api= across. -->
+        <a class="chrome-link" data-page-link="overview.html" href="overview.html">Overview →</a>
+        <div id="theme-toggle"></div>
+      </div>
     </div>
   </header>
 
@@ -91,6 +113,7 @@
 
 <div id="error-slot"></div>
 
+<script defer src="theme.js"></script>
 <script defer src="models.js"></script>
 <script defer src="format.js"></script>
 <script defer src="chart.js"></script>
