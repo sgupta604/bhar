@@ -311,6 +311,17 @@ margin over the best single model; chart of error vs weight.
 a slider, the error recomputes immediately. The slider is the thesis made physical: the audience
 watches the dip get found.
 
+**Resolving BRIEF §8's chart for four models.** §8 specifies "error (y) vs HRRR weight 0→100% (x),
+both ends are pure models, the dip in the middle is the value." That picture assumes **two**
+models — with four, the weight space is a 3-simplex and there is no single x-axis.
+**Resolution:** the chart plots a **two-model slice**. Default to the two best single models by
+out-of-sample MAE, with the other two held at zero; x is the weight of model A from 0 to 100%.
+This reproduces §8's intended picture exactly — both ends really are pure models, and a dip in
+the middle really is the value — while staying honest about what is being shown. Add a small
+pair selector so the presenter can switch which two models the slice runs between. Label the
+chart with the pair being shown and note that the leaderboard above it searches the full
+4-model space, not just this slice.
+
 **Styling: Shyft "Clarity" design system** (v0.2). Full tokens extracted to
 `.claude/features/site-tuned-blend/clarity-design-tokens.md` — read that file before styling.
 
