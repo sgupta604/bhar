@@ -88,24 +88,37 @@ You are a **dispatcher**. You read state, invoke commands, and report results.
 `.claude/features/site-tuned-blend/2026-09-04T02-10-00_spike.md` holds **verified facts** that override both. Four of the BRIEF's technical assumptions were probed and falsified. Do not re-probe them.
 
 ### Tech Stack
-_Undecided. Fill in once settled._
+**Python 3.12**, pinned via `uv`, venv in-repo (`.venv/`). **FastAPI** backend + separate
+frontend. `pandas` / `pyarrow` / `numpy` for data, `cfgrib` + `xarray` for GRIB decode,
+`pytest` for tests, **agent-browser@0.36.0** for UI checks.
+Not used, deliberately: Herbie, Docker, Playwright, AWS CLI. See `docs/SPEC.md` §15.
 
 ### Commands
 ```bash
-# Undecided. The test and implement agents read their commands from here —
-# fill this in before the first /test.
+# T1 (project-scaffold) MUST populate this block. The test-agent reads its
+# commands from here and currently has none, so /test is a no-op until it does.
+# Provisioning steps are in docs/SPEC.md §17.
 ```
 
 ### Repo Structure
 ```
 Bhar/
-├── docs/BRIEF.md   # requirements source of truth
-├── .claude/        # this pipeline
+├── docs/SPEC.md    # REQUIREMENTS SOURCE OF TRUTH — read §16 first
+├── docs/BRIEF.md   # business context + demo page design; superseded on technical points
+├── docs/weather-data.md   # provider handoff from a prior project (Boreas)
+├── .claude/features/site-tuned-blend/    # spike (verified facts), Clarity design tokens
+├── .claude/active-work/site-tuned-blend/ # session log
+├── .claude/pipeline/STATUS.md            # where the run is
 └── _archive/       # unrelated prior project material; ignore it
 ```
 
 ### Key Conventions
-_To be established. Add them here as they're decided, so agents inherit them._
+- **UTC everywhere.** Temperatures in degrees F at the boundary; Kelvin only inside the decoder.
+- **Never interpolate observations.** Drop missing.
+- **Never hardcode a GRIB message index** — parse the `.idx` every time (NBM's index moves).
+- **Assert on join match counts.** An empty join scores perfectly and is fake.
+- **Report what the data says.** Never tune the experiment to produce a better result.
+  See `docs/SPEC.md` §10 — these are integrity rules, not preferences.
 
 ### Autonomous Runs
 When the user explicitly asks for an unattended run ("build it while I sleep", "run the whole pipeline"), chain phases without pausing for confirmation between them, and update STATUS.md at each transition.
