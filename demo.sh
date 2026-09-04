@@ -259,9 +259,13 @@ fi
 # --- 6. Open the browser ------------------------------------------------------------
 # The page defaults its API base to :8000. On any other backend port it MUST get ?api=
 # or it renders full chrome with zero data, which looks like an app bug and is not.
-DEMO_URL="http://localhost:${FRONTEND_PORT}/?api=http://localhost:${BACKEND_PORT}"
+# Overview first: the presenter walks the room through the explainer, then clicks
+# through to the live page. The ?api= is carried across by the link itself.
+DEMO_URL="http://localhost:${FRONTEND_PORT}/overview.html?api=http://localhost:${BACKEND_PORT}"
+PRODUCT_URL="http://localhost:${FRONTEND_PORT}/?api=http://localhost:${BACKEND_PORT}"
 say ""
-say "${B}Demo URL:${RST} ${DEMO_URL}"
+say "${B}Demo URL:${RST} ${DEMO_URL}   ${DIM}(start here)${RST}"
+say "${B}Live page:${RST} ${PRODUCT_URL}"
 say "${DIM}Backend identity: http://localhost:${BACKEND_PORT}/openapi.json${RST}"
 say ""
 if command -v open >/dev/null 2>&1; then

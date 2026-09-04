@@ -65,8 +65,11 @@ echo "Backend:  http://localhost:${BACKEND_PORT}  (identity: http://localhost:${
 if [ "$BACKEND_PORT" != "8000" ]; then
     # The page defaults its API base to :8000; on an override it needs ?api= or it renders
     # chrome with no data. Print the assembled URL so nobody hand-builds it at demo time.
+    # ?api= is carried across both pages by the links themselves (theme.js linkify()).
+    echo "Start here: http://localhost:${FRONTEND_PORT}/overview.html?api=http://localhost:${BACKEND_PORT}"
     echo "Frontend: http://localhost:${FRONTEND_PORT}/?api=http://localhost:${BACKEND_PORT}"
 else
+    echo "Start here: http://localhost:${FRONTEND_PORT}/overview.html"
     echo "Frontend: http://localhost:${FRONTEND_PORT}"
 fi
 echo "Ctrl-C stops both."

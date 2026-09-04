@@ -1,0 +1,409 @@
+/* overview.css — long-form editorial layout for overview.html.
+   app.css is dashboard-shaped and is loaded first for the shared vocabulary
+   (.card, .segmented, .brand-mark, .chrome-link, .num/.mono-value); this file
+   adds only the reading layout on top.
+
+   Clarity semantic tokens only — never a raw scale value (tokens §1.3), with
+   the single deliberate exception of the --model-* custom properties, which
+   ARE the model colour contract and are declared in tokens.css.
+
+   Type sizes are the ones already in use: Sora for headings (Title 22,
+   Heading 17), Inter for body (14 / 16), JetBrains Mono with tabular figures
+   for every number. No new sizes invented. */
+
+/* ── Chrome ─────────────────────────────────────────────────────────── */
+.ov-chrome {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elev);
+}
+.ov-chrome-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--s-3) var(--s-6);
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+.ov-chrome-title { display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0; }
+.ov-chrome-name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--text);
+}
+.ov-chrome-sub { font-size: 12.5px; color: var(--text-muted); }
+.ov-chrome-aside { display: inline-flex; align-items: center; gap: var(--s-4); }
+
+/* ── Sticky lead-time sub-header ────────────────────────────────────── */
+.ov-subhead {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.ov-subhead-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--s-2) var(--s-6);
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+.ov-subhead-label {
+  font-size: 11.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-subtle);
+}
+.ov-subhead-note { font-size: 12px; color: var(--text-subtle); margin-left: auto; }
+
+/* ── Reading column ─────────────────────────────────────────────────── */
+.ov-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--s-6) var(--s-16);
+}
+.ov-section {
+  /* Sections are separated by a rule, never by a colour block. */
+  border-bottom: 1px solid var(--border);
+  padding: var(--s-10) 0;
+}
+.ov-section:last-child { border-bottom: none; }
+
+/* Reading measure. Wide children (figures, stat grids, code) opt out below. */
+.ov-section > p,
+.ov-section > h1,
+.ov-section > h2,
+.ov-section > h3,
+.ov-section > ul { max-width: 68ch; }
+
+.ov-eyebrow {
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-subtle);
+  margin: 0 0 var(--s-3);
+}
+.ov-hero {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -.02em;
+  color: var(--text);
+  margin: 0 0 var(--s-4);
+}
+.ov-h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -.02em;
+  color: var(--text);
+  margin: 0 0 var(--s-4);
+}
+.ov-h3 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+  color: var(--text);
+  margin: var(--s-6) 0 var(--s-3);
+}
+.ov-section p {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0 0 var(--s-3);
+}
+.ov-lede { font-size: 16px !important; color: var(--text) !important; }
+.ov-section p b, .ov-section li b { color: var(--text); font-weight: 600; }
+.ov-note { font-size: 13px !important; color: var(--text-subtle) !important; }
+.ov-provenance {
+  font-size: 12px !important;
+  color: var(--text-subtle) !important;
+  margin-top: var(--s-6) !important;
+}
+
+.ov-limits { max-width: 68ch; margin: 0; padding-left: var(--s-5); }
+.ov-limits li {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: var(--s-3);
+}
+
+/* ── Callouts ───────────────────────────────────────────────────────── */
+/* --warn-soft and --warn are both redefined-or-stable in dark and follow
+   the theme automatically. */
+.callout {
+  max-width: 68ch;
+  background: var(--warn-soft);
+  border-left: 3px solid var(--warn);
+  border-radius: var(--r-md);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+}
+.callout-wide { max-width: none; }
+.callout p { color: var(--text); margin-bottom: var(--s-2); }
+.callout p:last-child { margin-bottom: 0; }
+.callout-title {
+  font-family: var(--font-display) !important;
+  font-size: 17px !important;
+  font-weight: 600;
+  color: var(--text) !important;
+  letter-spacing: -.01em;
+}
+.callout-scope { font-size: 12.5px !important; color: var(--text-muted) !important; }
+.callout-flat { background: var(--bg-subtle); border-left-color: var(--border-strong); }
+.callout-verdict { max-width: none; }
+.callout-verdict-line { font-size: 16px !important; font-weight: 600; }
+.callout-verdict-line:empty { display: none; }
+
+/* ── Stat tiles (Clarity §5.6) — section 5, and matched by D-5 in §6 ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-4);
+  margin: var(--s-5) 0;
+}
+.stat-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-1);
+  padding: 18px 20px;
+}
+.stat-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -.025em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  margin-top: 6px;
+}
+.stat-meta {
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  color: var(--text-subtle);
+  margin-top: 8px;
+}
+.stat-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text-muted);
+  padding-top: var(--s-2);
+  margin-top: var(--s-2);
+  border-top: 1px solid var(--border);
+}
+.stat-row b { color: var(--text); font-weight: 500; }
+/* Signed delta. Set from the sign of the value by JS — never assumed
+   positive, never abs()'d (SPEC §10, format.js). */
+.stat-delta { font-weight: 500; }
+.stat-delta.up { color: var(--success); }
+.stat-delta.down { color: var(--danger); }
+.stat-delta.flat { color: var(--text-muted); }
+/* --success/--danger do NOT change in dark and read ~3:1 on #15181c; step
+   the coloured foreground to the 300 weight, per tokens §4 .stat-delta. */
+[data-theme="dark"] .stat-delta.up { color: var(--green-300); }
+[data-theme="dark"] .stat-delta.down { color: var(--pink-300); }
+
+/* ── Figures and diagrams ───────────────────────────────────────────── */
+.ov-figure {
+  margin: var(--s-5) 0;
+  padding: var(--s-5);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-1);
+}
+/* Section 6's panel carries the same weight as section 5's tiles: same card
+   treatment, same width, no muting, no collapsed disclosure. */
+.ov-figure-flush { padding: var(--s-5); }
+.diagram svg { display: block; width: 100%; height: auto; }
+.diagram:empty { display: none; }
+.ov-caption {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-top: var(--s-3);
+}
+.ov-caption:empty { display: none; }
+.ov-caption b { color: var(--text); font-weight: 500; }
+
+/* Diagram primitives. Colour comes from var(--model-*), never a resolved
+   hex, so a theme change repaints them with no cache to invalidate. */
+.diagram .dg-label,
+.diagram .dg-value,
+.diagram .dg-axis {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  fill: var(--text-muted);
+}
+.diagram .dg-value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; fill: var(--text); }
+.diagram .dg-axis { fill: var(--text-subtle); }
+.diagram .dg-strong { fill: var(--text); font-weight: 600; }
+.diagram .dg-rule { stroke: var(--border); stroke-width: 1; }
+.diagram .dg-rule-strong { stroke: var(--border-strong); stroke-width: 1; }
+.diagram .dg-track { fill: var(--bg-subtle); }
+.diagram .dg-line { fill: none; stroke: var(--accent); stroke-width: 2; }
+.diagram .dg-dot { fill: var(--accent); }
+.diagram .dg-min { fill: var(--bg-elev); stroke: var(--accent); stroke-width: 2; }
+.diagram .dg-obs { fill: var(--text); }
+.diagram .dg-window { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; }
+.diagram .dg-train { fill: var(--bg-subtle); stroke: var(--border-strong); stroke-width: 1; }
+.diagram .dg-test { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; }
+
+/* Weight bar reused inside the diagrams and the D-5 columns. Segment colour
+   is a CSS variable set per segment, never a baked hex. */
+.wbar-seg { display: block; height: 100%; background: var(--seg-color, var(--accent)); }
+
+/* ── D-5 side-by-side panel (section 6) ─────────────────────────────── */
+.gfs-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-4);
+}
+.gfs-col {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 18px 20px;
+}
+.gfs-col.is-better { border-color: var(--success); }
+.gfs-col-kind {
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+.gfs-col-label {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 6px;
+}
+.gfs-col-value {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -.025em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  margin-top: 6px;
+}
+.gfs-bar {
+  display: flex;
+  height: 8px;
+  width: 100%;
+  border-radius: var(--r-full);
+  overflow: hidden;
+  background: var(--bg-elev);
+  margin: var(--s-3) 0;
+}
+.gfs-flag {
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  padding: 1px 7px;
+  border-radius: var(--r-full);
+  background: var(--success);
+  color: #fff;
+}
+.gfs-table { width: 100%; border-collapse: collapse; margin-top: var(--s-5); }
+.gfs-table th {
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-subtle);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 10px;
+  text-align: left;
+}
+.gfs-table th.right, .gfs-table td.right { text-align: right; }
+.gfs-table td {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 10px;
+}
+.gfs-table td.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* ── Contract block, CTA ────────────────────────────────────────────── */
+.ov-code {
+  max-width: none;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--s-4);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: var(--s-4) 0;
+}
+.ov-cta-row { display: flex; align-items: center; gap: var(--s-4); flex-wrap: wrap; margin-top: var(--s-5) !important; }
+.ov-cta {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 var(--s-5);
+  border-radius: var(--r-md);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.ov-cta:hover { background: var(--accent-strong); }
+.ov-cta:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.ov-cta-note { font-size: 12.5px; color: var(--text-subtle); flex: 1 1 260px; }
+
+/* Numbers on this page are mono with tabular figures and read inline —
+   .num in tokens.css is right-aligned for table cells. */
+.ov-main .num { text-align: inherit; }
+
+/* Projector target is 1280x800 to 1440x900. Below that the two grids
+   collapse rather than squeeze; this is not a mobile layout. */
+@media (max-width: 900px) {
+  .stats-grid, .gfs-cols { grid-template-columns: minmax(0, 1fr); }
+}

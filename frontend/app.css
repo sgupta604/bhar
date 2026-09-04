@@ -368,3 +368,82 @@ tr.is-winner.tone-negative:hover { background: var(--danger-soft); }
   word-break: break-word;
 }
 .is-hidden { display: none !important; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   DARK MODE — the enumerated exceptions. Appended for T7; no rule above
+   this line was edited.
+
+   Almost everything in this file is already token-driven and follows the
+   [data-theme=dark] block in tokens.css for free. These are the surfaces
+   that do not, because --success / --warn / --danger / --info / --ring are
+   deliberately UNCHANGED in dark (tokens doc §4).
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* --success #37b24d and --danger #de0f80 read at roughly 3:1 on #15181c.
+   Step the coloured FOREGROUND text up to the 300 weight, exactly as the
+   tokens §4 .stat-delta pattern does. The tie state uses --text-muted and
+   already follows. */
+[data-theme="dark"] .improvement-line[data-improvement-state="positive"] { color: var(--green-300); }
+[data-theme="dark"] .improvement-line[data-improvement-state="negative"] { color: var(--pink-300); }
+
+/* tr.is-winner tone fills need nothing: --success-soft / --danger-soft ARE
+   redefined in dark. The two #fff badge literals (lines 238, 242) sit on the
+   unchanged --success / --danger fills and still read — left alone on purpose.
+
+   .model-warn on --warn #ff922b reads on #15181c; stepped to the 300 weight
+   for parity with the badge pattern rather than legibility. */
+[data-theme="dark"] .model-warn { color: var(--orange-300); }
+
+/* .readout-miss is --danger on --bg-elev; same 300-weight step. */
+[data-theme="dark"] .readout-miss { color: var(--pink-300); }
+
+/* The synthetic banner and the 3px inset frame are NOT given a dark variant.
+   --danger does not change in dark, and SPEC §10 requires the signal to be
+   unmissable. Do not soften it here or anywhere. */
+
+/* ══════════════════════════════════════════════════════════════════════
+   S2 brand mark — shared by index.html and overview.html. One class, one
+   rule, identical in both themes.
+
+   Clarity §6b: monogram only in product chrome, 22-44px, clearspace equal
+   to the height of the "S" stem, solid backplate. NEVER recoloured,
+   inverted, single-colour filled, stretched, skewed or rotated, and the
+   full SHYFT SOLUTIONS corporate mark never appears in product chrome.
+   ══════════════════════════════════════════════════════════════════════ */
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  /* Clearspace = height of the "S" stem, ~6px at a 28px mark. */
+  padding: 6px;
+  border-radius: var(--r-md);
+  /* Solid light backplate, byte-identical in both themes. The mark is
+     two-tone charcoal #212529 + blue #329af0; charcoal on #15181c is
+     effectively invisible, and recolouring is forbidden, so the backplate
+     is the compliant route (§6b permits a solid backplate). */
+  background: #ffffff;
+}
+.brand-mark img {
+  display: block;
+  width: 28px;
+  height: 28px;
+  /* No filter, no transform. Uniform scaling only. */
+}
+
+/* ── Theme toggle, product page chrome ── */
+.page-header-aside .chrome-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.chrome-link {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.chrome-link:hover { text-decoration: underline; }
+.chrome-link:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); border-radius: var(--r-sm); }
