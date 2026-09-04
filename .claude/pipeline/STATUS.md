@@ -1,14 +1,14 @@
 # Pipeline Status
 
-**Updated:** 2026-09-04 18:30 local — F2 finalized
+**Updated:** 2026-09-04 19:05 local — F3 finalized
 
 ## Active
 
 | Field | Value |
 |-------|-------|
 | Feature | `forecast-page` (FORECAST-SPEC §12, tickets F1–F9) |
-| Phase | F2 done — ready for F3 |
-| Next | `/research forecast-payload` (F3) |
+| Phase | F3 done — ready for F4 |
+| Next | `/research forecast-api` (F4) |
 | Branch | `feat/forecast-page` (off `develop`) |
 | Worktree | **`/Users/sanjaygupta/Projects/Bhar-forecast`** — NOT the main checkout |
 
@@ -54,7 +54,7 @@ acceptance floors and the dependency graph are unchanged.
 |---|---------|-----------|--------|
 | F1 | `forecast-design` | — | DONE — finalized 2026-09-04, no PR (see FORECAST-SPEC §12) |
 | F2 | `forecast-live-fetch` | — | GREEN — finalized 2026-09-04, commit `96d0d55`, no PR (FORECAST-SPEC §12) |
-| F3 | `forecast-payload` | F2 | IN PROGRESS — /plan |
+| F3 | `forecast-payload` | F2 | GREEN — finalized 2026-09-04, commit PENDING_SHA (updated below after commit), no PR (FORECAST-SPEC §12) |
 | F4 | `forecast-api` | F3 | TODO (needs main.py — 2 lines; boundary) |
 | F5 | `forecast-page` | F1, F3 | TODO |
 | F6 | `forecast-history` | F4, F5 | TODO |
