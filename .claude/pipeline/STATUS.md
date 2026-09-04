@@ -1,14 +1,14 @@
 # Pipeline Status
 
-**Updated:** 2026-09-04 22:40 local — F5 finalized
+**Updated:** 2026-09-04 23:15 local — F6 finalized
 
 ## Active
 
 | Field | Value |
 |-------|-------|
 | Feature | `forecast-page` (FORECAST-SPEC §12, tickets F1–F9) |
-| Phase | F5 done — ready for F6 |
-| Next | `/research forecast-page` (F6) |
+| Phase | F6 done — ready for F7 |
+| Next | `/research forecast-page` (F7 `forecast-skill-panel`) |
 | Branch | `feat/forecast-page` (off `develop`) |
 | Worktree | **`/Users/sanjaygupta/Projects/Bhar-forecast`** — NOT the main checkout |
 
@@ -57,12 +57,16 @@ acceptance floors and the dependency graph are unchanged.
 | F3 | `forecast-payload` | F2 | GREEN — finalized 2026-09-04, commit `dc97165`, no PR (FORECAST-SPEC §12) |
 | F4 | `forecast-api` | F3 | GREEN — finalized 2026-09-04, commit `56967fd`, no PR (FORECAST-SPEC §12) |
 | F5 | `forecast-page` | F1, F3 | GREEN — finalized 2026-09-04, commit `72f0630`, no PR (FORECAST-SPEC §12) — **see Known Issue below before trusting the full suite** |
-| F6 | `forecast-history` | F4, F5 | TODO |
+| F6 | `forecast-history` | F4, F5 | GREEN — finalized 2026-09-04, commit recorded below, no PR (FORECAST-SPEC §12) |
 | F7 | `forecast-skill-panel` | F4, F5 | TODO |
 | F8 | `forecast-docs` | all | TODO |
 | F9 | `forecast-scorecard` | F3, F4 | TODO — **user-approved 11:44**; added on develop @ 37ca272 |
 
-## KNOWN ISSUE — full suite is 976 passed / 1 failed, not fully green
+## KNOWN ISSUE — RESOLVED (commit `3c83179`, verified again at F6 finalize: 1209 passed, 0 failed)
+
+Original text preserved below for the record.
+
+## KNOWN ISSUE (historical) — full suite is 976 passed / 1 failed, not fully green
 
 Discovered post-commit during F5's finalize, re-running `pytest` against actual `HEAD` (not the
 pre-commit tree `test-pass.md` measured). `tests/test_forecast_api_guards.py::test_test10_diff_names_no_off_limits_path`

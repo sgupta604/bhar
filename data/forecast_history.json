@@ -1,0 +1,6322 @@
+{
+  "meta": {
+    "site": {
+      "id": "KOMA",
+      "iem_station": "OMA",
+      "name": "Omaha Eppley Airfield",
+      "lat": 41.3032,
+      "lon": -95.8941,
+      "station_elev_m": 295.7
+    },
+    "variable": "2m_temperature",
+    "units": "degF",
+    "window": {
+      "start": "2026-08-04T12:00:00Z",
+      "end": "2026-09-04T00:00:00Z",
+      "days": 30
+    },
+    "leads_available": [
+      6,
+      12,
+      24
+    ],
+    "weights_source": {
+      "path": "data/results.json",
+      "generated_at": "2026-09-04T12:53:01Z",
+      "weights_age_days": 0,
+      "window": {
+        "start": "2026-08-04T12:00:00Z",
+        "end": "2026-09-04T00:00:00Z",
+        "days": 30
+      },
+      "split": {
+        "method": "chronological",
+        "train_days": 20,
+        "test_days": 10
+      },
+      "fitted_leads": [
+        6,
+        12,
+        24
+      ]
+    },
+    "generated_at": "2026-09-04T21:26:07Z",
+    "is_synthetic": false,
+    "models_included": [
+      "HRRR",
+      "GFS",
+      "NAM",
+      "NBM"
+    ],
+    "weights_by_lead": {
+      "6": {
+        "HRRR": 0.5,
+        "GFS": 0.0,
+        "NAM": 0.1,
+        "NBM": 0.4
+      },
+      "12": {
+        "HRRR": 0.6,
+        "GFS": 0.0,
+        "NAM": 0.1,
+        "NBM": 0.3
+      },
+      "24": {
+        "HRRR": 0.5,
+        "GFS": 0.0,
+        "NAM": 0.1,
+        "NBM": 0.4
+      }
+    },
+    "best_single_model_by_lead": {
+      "6": "HRRR",
+      "12": "HRRR",
+      "24": "HRRR"
+    },
+    "join": {
+      "tolerance_min": 30,
+      "n_forecast_rows": 1440,
+      "n_matched_rows": 1440,
+      "matched_pct": 100.0,
+      "mean_abs_offset_min": 7.9194
+    },
+    "omitted_days": [],
+    "source": "noaa_s3_grib"
+  },
+  "days": [
+    {
+      "date": "2026-08-04",
+      "entries": [
+        {
+          "valid_time": "2026-08-04T12:00:00Z",
+          "init_time": "2026-08-04T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 70.64,
+          "observed_f": 71.0,
+          "error_f": -0.36,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.22,
+            "GFS": 67.47,
+            "NAM": 70.72,
+            "NBM": 71.15
+          },
+          "best_single_model_f": 70.22
+        },
+        {
+          "valid_time": "2026-08-04T18:00:00Z",
+          "init_time": "2026-08-04T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 75.84,
+          "observed_f": 64.0,
+          "error_f": 11.84,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.41,
+            "GFS": 83.6,
+            "NAM": 75.11,
+            "NBM": 77.81
+          },
+          "best_single_model_f": 74.41
+        },
+        {
+          "valid_time": "2026-08-04T18:00:00Z",
+          "init_time": "2026-08-04T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 78.47,
+          "observed_f": 64.0,
+          "error_f": 14.47,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.74,
+            "GFS": 72.84,
+            "NAM": 77.77,
+            "NBM": 78.17
+          },
+          "best_single_model_f": 78.74
+        }
+      ],
+      "mae_f": {
+        "6": 6.1,
+        "12": 14.47
+      },
+      "n_by_lead": {
+        "6": 2,
+        "12": 1
+      }
+    },
+    {
+      "date": "2026-08-05",
+      "entries": [
+        {
+          "valid_time": "2026-08-05T00:00:00Z",
+          "init_time": "2026-08-04T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 70.35,
+          "observed_f": 63.0,
+          "error_f": 7.35,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 69.16,
+            "GFS": 70.11,
+            "NAM": 67.3,
+            "NBM": 72.59
+          },
+          "best_single_model_f": 69.16
+        },
+        {
+          "valid_time": "2026-08-05T00:00:00Z",
+          "init_time": "2026-08-04T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 69.48,
+          "observed_f": 63.0,
+          "error_f": 6.48,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 66.66,
+            "GFS": 76.13,
+            "NAM": 73.81,
+            "NBM": 73.67
+          },
+          "best_single_model_f": 66.66
+        },
+        {
+          "valid_time": "2026-08-05T06:00:00Z",
+          "init_time": "2026-08-05T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 63.37,
+          "observed_f": 64.0,
+          "error_f": -0.63,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 63.13,
+            "GFS": 62.62,
+            "NAM": 63.7,
+            "NBM": 63.59
+          },
+          "best_single_model_f": 63.13
+        },
+        {
+          "valid_time": "2026-08-05T06:00:00Z",
+          "init_time": "2026-08-04T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 63.98,
+          "observed_f": 64.0,
+          "error_f": -0.02,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 63.99,
+            "GFS": 63.23,
+            "NAM": 62.96,
+            "NBM": 64.31
+          },
+          "best_single_model_f": 63.99
+        },
+        {
+          "valid_time": "2026-08-05T06:00:00Z",
+          "init_time": "2026-08-04T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 62.89,
+          "observed_f": 64.0,
+          "error_f": -1.11,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 60.48,
+            "GFS": 65.23,
+            "NAM": 64.94,
+            "NBM": 65.39
+          },
+          "best_single_model_f": 60.48
+        },
+        {
+          "valid_time": "2026-08-05T12:00:00Z",
+          "init_time": "2026-08-05T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 62.67,
+          "observed_f": 61.0,
+          "error_f": 1.67,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 63.73,
+            "GFS": 63.95,
+            "NAM": 62.37,
+            "NBM": 61.43
+          },
+          "best_single_model_f": 63.73
+        },
+        {
+          "valid_time": "2026-08-05T12:00:00Z",
+          "init_time": "2026-08-05T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 62.29,
+          "observed_f": 61.0,
+          "error_f": 1.29,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 62.89,
+            "GFS": 62.69,
+            "NAM": 61.25,
+            "NBM": 61.43
+          },
+          "best_single_model_f": 62.89
+        },
+        {
+          "valid_time": "2026-08-05T12:00:00Z",
+          "init_time": "2026-08-04T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 62.64,
+          "observed_f": 61.0,
+          "error_f": 1.64,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 61.87,
+            "GFS": 62.92,
+            "NAM": 61.29,
+            "NBM": 63.95
+          },
+          "best_single_model_f": 61.87
+        },
+        {
+          "valid_time": "2026-08-05T18:00:00Z",
+          "init_time": "2026-08-05T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 69.32,
+          "observed_f": 68.0,
+          "error_f": 1.32,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 68.24,
+            "GFS": 71.65,
+            "NAM": 69.53,
+            "NBM": 70.61
+          },
+          "best_single_model_f": 68.24
+        },
+        {
+          "valid_time": "2026-08-05T18:00:00Z",
+          "init_time": "2026-08-05T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 70.64,
+          "observed_f": 68.0,
+          "error_f": 2.64,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.64,
+            "GFS": 66.95,
+            "NAM": 67.0,
+            "NBM": 71.87
+          },
+          "best_single_model_f": 70.64
+        },
+        {
+          "valid_time": "2026-08-05T18:00:00Z",
+          "init_time": "2026-08-04T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 70.35,
+          "observed_f": 68.0,
+          "error_f": 2.35,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 69.72,
+            "GFS": 75.46,
+            "NAM": 70.26,
+            "NBM": 71.15
+          },
+          "best_single_model_f": 69.72
+        }
+      ],
+      "mae_f": {
+        "6": 2.74,
+        "12": 2.61,
+        "24": 1.7
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 3
+      }
+    },
+    {
+      "date": "2026-08-06",
+      "entries": [
+        {
+          "valid_time": "2026-08-06T00:00:00Z",
+          "init_time": "2026-08-05T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 73.48,
+          "observed_f": 74.0,
+          "error_f": -0.52,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 72.6,
+            "GFS": 75.28,
+            "NAM": 75.01,
+            "NBM": 74.21
+          },
+          "best_single_model_f": 72.6
+        },
+        {
+          "valid_time": "2026-08-06T00:00:00Z",
+          "init_time": "2026-08-05T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 74.11,
+          "observed_f": 74.0,
+          "error_f": 0.11,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.75,
+            "GFS": 78.38,
+            "NAM": 77.57,
+            "NBM": 73.67
+          },
+          "best_single_model_f": 73.75
+        },
+        {
+          "valid_time": "2026-08-06T00:00:00Z",
+          "init_time": "2026-08-05T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 74.47,
+          "observed_f": 74.0,
+          "error_f": 0.47,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 75.18,
+            "GFS": 74.45,
+            "NAM": 76.24,
+            "NBM": 73.13
+          },
+          "best_single_model_f": 75.18
+        },
+        {
+          "valid_time": "2026-08-06T06:00:00Z",
+          "init_time": "2026-08-06T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 63.74,
+          "observed_f": 65.0,
+          "error_f": -1.26,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 63.78,
+            "GFS": 62.64,
+            "NAM": 65.55,
+            "NBM": 63.23
+          },
+          "best_single_model_f": 63.78
+        },
+        {
+          "valid_time": "2026-08-06T06:00:00Z",
+          "init_time": "2026-08-05T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 64.03,
+          "observed_f": 65.0,
+          "error_f": -0.97,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 63.93,
+            "GFS": 64.23,
+            "NAM": 65.91,
+            "NBM": 63.59
+          },
+          "best_single_model_f": 63.93
+        },
+        {
+          "valid_time": "2026-08-06T06:00:00Z",
+          "init_time": "2026-08-05T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 62.85,
+          "observed_f": 65.0,
+          "error_f": -2.15,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 62.67,
+            "GFS": 64.44,
+            "NAM": 64.39,
+            "NBM": 62.69
+          },
+          "best_single_model_f": 62.67
+        },
+        {
+          "valid_time": "2026-08-06T12:00:00Z",
+          "init_time": "2026-08-06T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 63.01,
+          "observed_f": 66.0,
+          "error_f": -2.99,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 64.33,
+            "GFS": 60.99,
+            "NAM": 66.32,
+            "NBM": 60.53
+          },
+          "best_single_model_f": 64.33
+        },
+        {
+          "valid_time": "2026-08-06T12:00:00Z",
+          "init_time": "2026-08-06T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 61.43,
+          "observed_f": 66.0,
+          "error_f": -4.57,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 61.84,
+            "GFS": 61.45,
+            "NAM": 63.85,
+            "NBM": 59.81
+          },
+          "best_single_model_f": 61.84
+        },
+        {
+          "valid_time": "2026-08-06T12:00:00Z",
+          "init_time": "2026-08-05T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 60.0,
+          "observed_f": 66.0,
+          "error_f": -6.0,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 59.44,
+            "GFS": 61.03,
+            "NAM": 58.54,
+            "NBM": 61.07
+          },
+          "best_single_model_f": 59.44
+        },
+        {
+          "valid_time": "2026-08-06T18:00:00Z",
+          "init_time": "2026-08-06T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 76.32,
+          "observed_f": 72.0,
+          "error_f": 4.32,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.58,
+            "GFS": 81.3,
+            "NAM": 77.63,
+            "NBM": 78.17
+          },
+          "best_single_model_f": 74.58
+        },
+        {
+          "valid_time": "2026-08-06T18:00:00Z",
+          "init_time": "2026-08-06T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 75.82,
+          "observed_f": 72.0,
+          "error_f": 3.82,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.62,
+            "GFS": 79.83,
+            "NAM": 77.03,
+            "NBM": 77.81
+          },
+          "best_single_model_f": 74.62
+        },
+        {
+          "valid_time": "2026-08-06T18:00:00Z",
+          "init_time": "2026-08-05T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 74.49,
+          "observed_f": 72.0,
+          "error_f": 2.49,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 71.5,
+            "GFS": 83.57,
+            "NAM": 74.7,
+            "NBM": 78.17
+          },
+          "best_single_model_f": 71.5
+        }
+      ],
+      "mae_f": {
+        "6": 2.27,
+        "12": 2.37,
+        "24": 2.78
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-07",
+      "entries": [
+        {
+          "valid_time": "2026-08-07T00:00:00Z",
+          "init_time": "2026-08-06T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 79.22,
+          "observed_f": 81.0,
+          "error_f": -1.78,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.77,
+            "GFS": 82.22,
+            "NAM": 81.3,
+            "NBM": 80.51
+          },
+          "best_single_model_f": 77.77
+        },
+        {
+          "valid_time": "2026-08-07T00:00:00Z",
+          "init_time": "2026-08-06T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 78.92,
+          "observed_f": 81.0,
+          "error_f": -2.08,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.39,
+            "GFS": 83.4,
+            "NAM": 81.08,
+            "NBM": 79.25
+          },
+          "best_single_model_f": 78.39
+        },
+        {
+          "valid_time": "2026-08-07T00:00:00Z",
+          "init_time": "2026-08-06T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 77.75,
+          "observed_f": 81.0,
+          "error_f": -3.25,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 76.02,
+            "GFS": 80.26,
+            "NAM": 81.83,
+            "NBM": 78.89
+          },
+          "best_single_model_f": 76.02
+        },
+        {
+          "valid_time": "2026-08-07T06:00:00Z",
+          "init_time": "2026-08-07T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 69.05,
+          "observed_f": 69.0,
+          "error_f": 0.05,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 68.2,
+            "GFS": 65.9,
+            "NAM": 68.53,
+            "NBM": 70.25
+          },
+          "best_single_model_f": 68.2
+        },
+        {
+          "valid_time": "2026-08-07T06:00:00Z",
+          "init_time": "2026-08-06T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 69.3,
+          "observed_f": 69.0,
+          "error_f": 0.3,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 68.83,
+            "GFS": 67.43,
+            "NAM": 69.79,
+            "NBM": 70.07
+          },
+          "best_single_model_f": 68.83
+        },
+        {
+          "valid_time": "2026-08-07T06:00:00Z",
+          "init_time": "2026-08-06T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 68.82,
+          "observed_f": 69.0,
+          "error_f": -0.18,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 68.44,
+            "GFS": 66.9,
+            "NAM": 70.06,
+            "NBM": 68.99
+          },
+          "best_single_model_f": 68.44
+        },
+        {
+          "valid_time": "2026-08-07T12:00:00Z",
+          "init_time": "2026-08-07T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 66.99,
+          "observed_f": 70.0,
+          "error_f": -3.01,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 64.91,
+            "GFS": 65.38,
+            "NAM": 67.98,
+            "NBM": 69.35
+          },
+          "best_single_model_f": 64.91
+        },
+        {
+          "valid_time": "2026-08-07T12:00:00Z",
+          "init_time": "2026-08-07T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 68.46,
+          "observed_f": 70.0,
+          "error_f": -1.54,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 68.5,
+            "GFS": 65.07,
+            "NAM": 66.06,
+            "NBM": 69.17
+          },
+          "best_single_model_f": 68.5
+        },
+        {
+          "valid_time": "2026-08-07T12:00:00Z",
+          "init_time": "2026-08-06T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 69.21,
+          "observed_f": 70.0,
+          "error_f": -0.79,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 69.39,
+            "GFS": 66.5,
+            "NAM": 70.59,
+            "NBM": 68.63
+          },
+          "best_single_model_f": 69.39
+        },
+        {
+          "valid_time": "2026-08-07T18:00:00Z",
+          "init_time": "2026-08-07T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 83.74,
+          "observed_f": 86.0,
+          "error_f": -2.26,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.3,
+            "GFS": 87.47,
+            "NAM": 88.71,
+            "NBM": 84.29
+          },
+          "best_single_model_f": 82.3
+        },
+        {
+          "valid_time": "2026-08-07T18:00:00Z",
+          "init_time": "2026-08-07T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 84.19,
+          "observed_f": 86.0,
+          "error_f": -1.81,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.99,
+            "GFS": 88.11,
+            "NAM": 88.3,
+            "NBM": 83.21
+          },
+          "best_single_model_f": 83.99
+        },
+        {
+          "valid_time": "2026-08-07T18:00:00Z",
+          "init_time": "2026-08-06T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 83.95,
+          "observed_f": 86.0,
+          "error_f": -2.05,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 84.72,
+            "GFS": 90.63,
+            "NAM": 80.14,
+            "NBM": 83.93
+          },
+          "best_single_model_f": 84.72
+        }
+      ],
+      "mae_f": {
+        "6": 1.77,
+        "12": 1.43,
+        "24": 1.57
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-08",
+      "entries": [
+        {
+          "valid_time": "2026-08-08T00:00:00Z",
+          "init_time": "2026-08-07T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 85.74,
+          "observed_f": 85.0,
+          "error_f": 0.74,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 84.95,
+            "GFS": 87.8,
+            "NAM": 90.46,
+            "NBM": 85.55
+          },
+          "best_single_model_f": 84.95
+        },
+        {
+          "valid_time": "2026-08-08T00:00:00Z",
+          "init_time": "2026-08-07T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 86.15,
+          "observed_f": 85.0,
+          "error_f": 1.15,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 84.79,
+            "GFS": 90.69,
+            "NAM": 91.22,
+            "NBM": 87.17
+          },
+          "best_single_model_f": 84.79
+        },
+        {
+          "valid_time": "2026-08-08T00:00:00Z",
+          "init_time": "2026-08-07T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 84.05,
+          "observed_f": 85.0,
+          "error_f": -0.95,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.33,
+            "GFS": 95.02,
+            "NAM": 88.03,
+            "NBM": 86.45
+          },
+          "best_single_model_f": 81.33
+        },
+        {
+          "valid_time": "2026-08-08T06:00:00Z",
+          "init_time": "2026-08-08T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 70.15,
+          "observed_f": 69.0,
+          "error_f": 1.15,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.11,
+            "GFS": 64.67,
+            "NAM": 69.99,
+            "NBM": 70.25
+          },
+          "best_single_model_f": 70.11
+        },
+        {
+          "valid_time": "2026-08-08T06:00:00Z",
+          "init_time": "2026-08-07T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 69.6,
+          "observed_f": 69.0,
+          "error_f": 0.6,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 68.95,
+            "GFS": 67.73,
+            "NAM": 70.44,
+            "NBM": 70.61
+          },
+          "best_single_model_f": 68.95
+        },
+        {
+          "valid_time": "2026-08-08T06:00:00Z",
+          "init_time": "2026-08-07T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 71.8,
+          "observed_f": 69.0,
+          "error_f": 2.8,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 72.89,
+            "GFS": 70.66,
+            "NAM": 69.71,
+            "NBM": 70.97
+          },
+          "best_single_model_f": 72.89
+        },
+        {
+          "valid_time": "2026-08-08T12:00:00Z",
+          "init_time": "2026-08-08T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 62.26,
+          "observed_f": 62.0,
+          "error_f": 0.26,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 62.62,
+            "GFS": 59.0,
+            "NAM": 59.47,
+            "NBM": 62.51
+          },
+          "best_single_model_f": 62.62
+        },
+        {
+          "valid_time": "2026-08-08T12:00:00Z",
+          "init_time": "2026-08-08T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 65.42,
+          "observed_f": 62.0,
+          "error_f": 3.42,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 66.16,
+            "GFS": 59.56,
+            "NAM": 64.9,
+            "NBM": 64.13
+          },
+          "best_single_model_f": 66.16
+        },
+        {
+          "valid_time": "2026-08-08T12:00:00Z",
+          "init_time": "2026-08-07T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 64.95,
+          "observed_f": 62.0,
+          "error_f": 2.95,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 64.72,
+            "GFS": 65.22,
+            "NAM": 61.44,
+            "NBM": 66.11
+          },
+          "best_single_model_f": 64.72
+        },
+        {
+          "valid_time": "2026-08-08T18:00:00Z",
+          "init_time": "2026-08-08T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 80.66,
+          "observed_f": 81.0,
+          "error_f": -0.34,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 79.91,
+            "GFS": 82.18,
+            "NAM": 84.98,
+            "NBM": 80.51
+          },
+          "best_single_model_f": 79.91
+        },
+        {
+          "valid_time": "2026-08-08T18:00:00Z",
+          "init_time": "2026-08-08T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 80.75,
+          "observed_f": 81.0,
+          "error_f": -0.25,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 80.74,
+            "GFS": 81.32,
+            "NAM": 82.56,
+            "NBM": 80.15
+          },
+          "best_single_model_f": 80.74
+        },
+        {
+          "valid_time": "2026-08-08T18:00:00Z",
+          "init_time": "2026-08-07T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 81.08,
+          "observed_f": 81.0,
+          "error_f": 0.08,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.16,
+            "GFS": 81.72,
+            "NAM": 84.43,
+            "NBM": 80.15
+          },
+          "best_single_model_f": 81.16
+        }
+      ],
+      "mae_f": {
+        "6": 0.62,
+        "12": 1.35,
+        "24": 1.7
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-09",
+      "entries": [
+        {
+          "valid_time": "2026-08-09T00:00:00Z",
+          "init_time": "2026-08-08T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 81.4,
+          "observed_f": 76.0,
+          "error_f": 5.4,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.45,
+            "GFS": 80.05,
+            "NAM": 87.46,
+            "NBM": 83.57
+          },
+          "best_single_model_f": 78.45
+        },
+        {
+          "valid_time": "2026-08-09T00:00:00Z",
+          "init_time": "2026-08-08T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 84.72,
+          "observed_f": 76.0,
+          "error_f": 8.72,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 84.58,
+            "GFS": 83.79,
+            "NAM": 85.73,
+            "NBM": 84.65
+          },
+          "best_single_model_f": 84.58
+        },
+        {
+          "valid_time": "2026-08-09T00:00:00Z",
+          "init_time": "2026-08-08T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 80.7,
+          "observed_f": 76.0,
+          "error_f": 4.7,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.97,
+            "GFS": 85.34,
+            "NAM": 87.21,
+            "NBM": 82.49
+          },
+          "best_single_model_f": 77.97
+        },
+        {
+          "valid_time": "2026-08-09T06:00:00Z",
+          "init_time": "2026-08-09T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 73.38,
+          "observed_f": 76.0,
+          "error_f": -2.62,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.27,
+            "GFS": 75.65,
+            "NAM": 74.8,
+            "NBM": 76.91
+          },
+          "best_single_model_f": 70.27
+        },
+        {
+          "valid_time": "2026-08-09T06:00:00Z",
+          "init_time": "2026-08-08T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 74.77,
+          "observed_f": 76.0,
+          "error_f": -1.23,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.31,
+            "GFS": 73.85,
+            "NAM": 77.6,
+            "NBM": 76.73
+          },
+          "best_single_model_f": 73.31
+        },
+        {
+          "valid_time": "2026-08-09T06:00:00Z",
+          "init_time": "2026-08-08T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 76.5,
+          "observed_f": 76.0,
+          "error_f": 0.5,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 75.87,
+            "GFS": 79.07,
+            "NAM": 77.99,
+            "NBM": 76.91
+          },
+          "best_single_model_f": 75.87
+        },
+        {
+          "valid_time": "2026-08-09T12:00:00Z",
+          "init_time": "2026-08-09T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 73.61,
+          "observed_f": 77.0,
+          "error_f": -3.39,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 72.25,
+            "GFS": 72.25,
+            "NAM": 75.11,
+            "NBM": 74.93
+          },
+          "best_single_model_f": 72.25
+        },
+        {
+          "valid_time": "2026-08-09T12:00:00Z",
+          "init_time": "2026-08-09T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 73.42,
+          "observed_f": 77.0,
+          "error_f": -3.58,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 72.19,
+            "GFS": 75.83,
+            "NAM": 77.86,
+            "NBM": 74.39
+          },
+          "best_single_model_f": 72.19
+        },
+        {
+          "valid_time": "2026-08-09T12:00:00Z",
+          "init_time": "2026-08-08T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 72.88,
+          "observed_f": 77.0,
+          "error_f": -4.12,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.94,
+            "GFS": 70.45,
+            "NAM": 76.51,
+            "NBM": 74.39
+          },
+          "best_single_model_f": 70.94
+        },
+        {
+          "valid_time": "2026-08-09T18:00:00Z",
+          "init_time": "2026-08-09T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 89.51,
+          "observed_f": 89.0,
+          "error_f": 0.51,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.45,
+            "GFS": 97.22,
+            "NAM": 91.98,
+            "NBM": 88.97
+          },
+          "best_single_model_f": 89.45
+        },
+        {
+          "valid_time": "2026-08-09T18:00:00Z",
+          "init_time": "2026-08-09T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 88.87,
+          "observed_f": 89.0,
+          "error_f": -0.13,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 88.36,
+            "GFS": 99.28,
+            "NAM": 91.06,
+            "NBM": 89.15
+          },
+          "best_single_model_f": 88.36
+        },
+        {
+          "valid_time": "2026-08-09T18:00:00Z",
+          "init_time": "2026-08-08T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 89.87,
+          "observed_f": 89.0,
+          "error_f": 0.87,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.79,
+            "GFS": 95.99,
+            "NAM": 93.14,
+            "NBM": 89.15
+          },
+          "best_single_model_f": 89.79
+        }
+      ],
+      "mae_f": {
+        "6": 2.98,
+        "12": 3.42,
+        "24": 2.55
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-10",
+      "entries": [
+        {
+          "valid_time": "2026-08-10T00:00:00Z",
+          "init_time": "2026-08-09T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 89.06,
+          "observed_f": 84.0,
+          "error_f": 5.06,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 88.47,
+            "GFS": 93.3,
+            "NAM": 93.11,
+            "NBM": 88.79
+          },
+          "best_single_model_f": 88.47
+        },
+        {
+          "valid_time": "2026-08-10T00:00:00Z",
+          "init_time": "2026-08-09T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 89.91,
+          "observed_f": 84.0,
+          "error_f": 5.91,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 90.29,
+            "GFS": 94.48,
+            "NAM": 92.03,
+            "NBM": 88.43
+          },
+          "best_single_model_f": 90.29
+        },
+        {
+          "valid_time": "2026-08-10T00:00:00Z",
+          "init_time": "2026-08-09T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 89.34,
+          "observed_f": 84.0,
+          "error_f": 5.34,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 88.55,
+            "GFS": 89.03,
+            "NAM": 92.61,
+            "NBM": 89.51
+          },
+          "best_single_model_f": 88.55
+        },
+        {
+          "valid_time": "2026-08-10T06:00:00Z",
+          "init_time": "2026-08-10T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 76.86,
+          "observed_f": 78.0,
+          "error_f": -1.14,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.08,
+            "GFS": 73.14,
+            "NAM": 75.58,
+            "NBM": 76.91
+          },
+          "best_single_model_f": 77.08
+        },
+        {
+          "valid_time": "2026-08-10T06:00:00Z",
+          "init_time": "2026-08-09T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 77.56,
+          "observed_f": 78.0,
+          "error_f": -0.44,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.38,
+            "GFS": 76.41,
+            "NAM": 82.17,
+            "NBM": 76.37
+          },
+          "best_single_model_f": 77.38
+        },
+        {
+          "valid_time": "2026-08-10T06:00:00Z",
+          "init_time": "2026-08-09T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 77.19,
+          "observed_f": 78.0,
+          "error_f": -0.81,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 76.36,
+            "GFS": 73.49,
+            "NAM": 79.58,
+            "NBM": 77.63
+          },
+          "best_single_model_f": 76.36
+        },
+        {
+          "valid_time": "2026-08-10T12:00:00Z",
+          "init_time": "2026-08-10T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 72.88,
+          "observed_f": 72.0,
+          "error_f": 0.88,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.15,
+            "GFS": 69.89,
+            "NAM": 71.27,
+            "NBM": 72.95
+          },
+          "best_single_model_f": 73.15
+        },
+        {
+          "valid_time": "2026-08-10T12:00:00Z",
+          "init_time": "2026-08-10T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 73.8,
+          "observed_f": 72.0,
+          "error_f": 1.8,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.25,
+            "GFS": 69.42,
+            "NAM": 75.3,
+            "NBM": 72.41
+          },
+          "best_single_model_f": 74.25
+        },
+        {
+          "valid_time": "2026-08-10T12:00:00Z",
+          "init_time": "2026-08-09T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 72.86,
+          "observed_f": 72.0,
+          "error_f": 0.86,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.95,
+            "GFS": 66.66,
+            "NAM": 69.23,
+            "NBM": 72.41
+          },
+          "best_single_model_f": 73.95
+        },
+        {
+          "valid_time": "2026-08-10T18:00:00Z",
+          "init_time": "2026-08-10T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 87.58,
+          "observed_f": 87.0,
+          "error_f": 0.58,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 87.94,
+            "GFS": 96.64,
+            "NAM": 89.54,
+            "NBM": 86.63
+          },
+          "best_single_model_f": 87.94
+        },
+        {
+          "valid_time": "2026-08-10T18:00:00Z",
+          "init_time": "2026-08-10T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 87.44,
+          "observed_f": 87.0,
+          "error_f": 0.44,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 87.92,
+            "GFS": 93.2,
+            "NAM": 86.95,
+            "NBM": 86.63
+          },
+          "best_single_model_f": 87.92
+        },
+        {
+          "valid_time": "2026-08-10T18:00:00Z",
+          "init_time": "2026-08-09T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 88.47,
+          "observed_f": 87.0,
+          "error_f": 1.47,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 90.7,
+            "GFS": 95.99,
+            "NAM": 91.85,
+            "NBM": 84.83
+          },
+          "best_single_model_f": 90.7
+        }
+      ],
+      "mae_f": {
+        "6": 1.91,
+        "12": 2.15,
+        "24": 2.12
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-11",
+      "entries": [
+        {
+          "valid_time": "2026-08-11T00:00:00Z",
+          "init_time": "2026-08-10T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 91.3,
+          "observed_f": 90.0,
+          "error_f": 1.3,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 92.59,
+            "GFS": 99.28,
+            "NAM": 93.48,
+            "NBM": 89.15
+          },
+          "best_single_model_f": 92.59
+        },
+        {
+          "valid_time": "2026-08-11T00:00:00Z",
+          "init_time": "2026-08-10T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 91.75,
+          "observed_f": 90.0,
+          "error_f": 1.75,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 92.9,
+            "GFS": 103.0,
+            "NAM": 92.63,
+            "NBM": 89.15
+          },
+          "best_single_model_f": 92.9
+        },
+        {
+          "valid_time": "2026-08-11T00:00:00Z",
+          "init_time": "2026-08-10T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 89.7,
+          "observed_f": 90.0,
+          "error_f": -0.3,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 91.95,
+            "GFS": 96.98,
+            "NAM": 88.53,
+            "NBM": 87.17
+          },
+          "best_single_model_f": 91.95
+        },
+        {
+          "valid_time": "2026-08-11T06:00:00Z",
+          "init_time": "2026-08-11T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 77.83,
+          "observed_f": 79.0,
+          "error_f": -1.17,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.02,
+            "GFS": 75.29,
+            "NAM": 78.41,
+            "NBM": 77.45
+          },
+          "best_single_model_f": 78.02
+        },
+        {
+          "valid_time": "2026-08-11T06:00:00Z",
+          "init_time": "2026-08-10T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 78.92,
+          "observed_f": 79.0,
+          "error_f": -0.08,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 79.21,
+            "GFS": 77.49,
+            "NAM": 82.14,
+            "NBM": 77.27
+          },
+          "best_single_model_f": 79.21
+        },
+        {
+          "valid_time": "2026-08-11T06:00:00Z",
+          "init_time": "2026-08-10T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 78.31,
+          "observed_f": 79.0,
+          "error_f": -0.69,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.49,
+            "GFS": 72.42,
+            "NAM": 80.08,
+            "NBM": 78.89
+          },
+          "best_single_model_f": 77.49
+        },
+        {
+          "valid_time": "2026-08-11T12:00:00Z",
+          "init_time": "2026-08-11T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 74.3,
+          "observed_f": 76.0,
+          "error_f": -1.7,
+          "obs_offset_min": 6,
+          "members": {
+            "HRRR": 74.48,
+            "GFS": 74.67,
+            "NAM": 73.03,
+            "NBM": 74.39
+          },
+          "best_single_model_f": 74.48
+        },
+        {
+          "valid_time": "2026-08-11T12:00:00Z",
+          "init_time": "2026-08-11T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 74.43,
+          "observed_f": 76.0,
+          "error_f": -1.57,
+          "obs_offset_min": 6,
+          "members": {
+            "HRRR": 74.46,
+            "GFS": 73.13,
+            "NAM": 75.46,
+            "NBM": 74.03
+          },
+          "best_single_model_f": 74.46
+        },
+        {
+          "valid_time": "2026-08-11T12:00:00Z",
+          "init_time": "2026-08-10T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 74.73,
+          "observed_f": 76.0,
+          "error_f": -1.27,
+          "obs_offset_min": 6,
+          "members": {
+            "HRRR": 74.93,
+            "GFS": 73.28,
+            "NAM": 74.42,
+            "NBM": 74.57
+          },
+          "best_single_model_f": 74.93
+        },
+        {
+          "valid_time": "2026-08-11T18:00:00Z",
+          "init_time": "2026-08-11T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 92.2,
+          "observed_f": 92.0,
+          "error_f": 0.2,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 93.5,
+            "GFS": 95.27,
+            "NAM": 93.56,
+            "NBM": 90.23
+          },
+          "best_single_model_f": 93.5
+        },
+        {
+          "valid_time": "2026-08-11T18:00:00Z",
+          "init_time": "2026-08-11T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 90.62,
+          "observed_f": 92.0,
+          "error_f": -1.38,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 91.96,
+            "GFS": 97.07,
+            "NAM": 84.29,
+            "NBM": 90.05
+          },
+          "best_single_model_f": 91.96
+        },
+        {
+          "valid_time": "2026-08-11T18:00:00Z",
+          "init_time": "2026-08-10T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 90.88,
+          "observed_f": 92.0,
+          "error_f": -1.12,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 93.24,
+            "GFS": 102.51,
+            "NAM": 88.18,
+            "NBM": 88.61
+          },
+          "best_single_model_f": 93.24
+        }
+      ],
+      "mae_f": {
+        "6": 1.09,
+        "12": 1.2,
+        "24": 0.84
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-12",
+      "entries": [
+        {
+          "valid_time": "2026-08-12T00:00:00Z",
+          "init_time": "2026-08-11T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 93.16,
+          "observed_f": 93.0,
+          "error_f": 0.16,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 94.29,
+            "GFS": 94.71,
+            "NAM": 97.02,
+            "NBM": 90.77
+          },
+          "best_single_model_f": 94.29
+        },
+        {
+          "valid_time": "2026-08-12T00:00:00Z",
+          "init_time": "2026-08-11T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 94.38,
+          "observed_f": 93.0,
+          "error_f": 1.38,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 95.56,
+            "GFS": 95.51,
+            "NAM": 95.98,
+            "NBM": 91.49
+          },
+          "best_single_model_f": 95.56
+        },
+        {
+          "valid_time": "2026-08-12T00:00:00Z",
+          "init_time": "2026-08-11T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 91.47,
+          "observed_f": 93.0,
+          "error_f": -1.53,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 93.37,
+            "GFS": 108.51,
+            "NAM": 87.63,
+            "NBM": 90.05
+          },
+          "best_single_model_f": 93.37
+        },
+        {
+          "valid_time": "2026-08-12T06:00:00Z",
+          "init_time": "2026-08-12T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 80.05,
+          "observed_f": 82.0,
+          "error_f": -1.95,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 80.19,
+            "GFS": 74.93,
+            "NAM": 81.12,
+            "NBM": 79.61
+          },
+          "best_single_model_f": 80.19
+        },
+        {
+          "valid_time": "2026-08-12T06:00:00Z",
+          "init_time": "2026-08-11T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 80.34,
+          "observed_f": 82.0,
+          "error_f": -1.66,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 80.61,
+            "GFS": 89.15,
+            "NAM": 80.4,
+            "NBM": 79.79
+          },
+          "best_single_model_f": 80.61
+        },
+        {
+          "valid_time": "2026-08-12T06:00:00Z",
+          "init_time": "2026-08-11T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 77.6,
+          "observed_f": 82.0,
+          "error_f": -4.4,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.2,
+            "GFS": 82.25,
+            "NAM": 77.32,
+            "NBM": 78.17
+          },
+          "best_single_model_f": 77.2
+        },
+        {
+          "valid_time": "2026-08-12T12:00:00Z",
+          "init_time": "2026-08-12T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 75.37,
+          "observed_f": 72.0,
+          "error_f": 3.37,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.82,
+            "GFS": 73.32,
+            "NAM": 77.04,
+            "NBM": 75.65
+          },
+          "best_single_model_f": 74.82
+        },
+        {
+          "valid_time": "2026-08-12T12:00:00Z",
+          "init_time": "2026-08-12T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 74.13,
+          "observed_f": 72.0,
+          "error_f": 2.13,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.31,
+            "GFS": 72.98,
+            "NAM": 76.1,
+            "NBM": 75.11
+          },
+          "best_single_model_f": 73.31
+        },
+        {
+          "valid_time": "2026-08-12T12:00:00Z",
+          "init_time": "2026-08-11T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 74.44,
+          "observed_f": 72.0,
+          "error_f": 2.44,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 75.25,
+            "GFS": 71.33,
+            "NAM": 73.49,
+            "NBM": 73.67
+          },
+          "best_single_model_f": 75.25
+        },
+        {
+          "valid_time": "2026-08-12T18:00:00Z",
+          "init_time": "2026-08-12T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 89.79,
+          "observed_f": 89.0,
+          "error_f": 0.79,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.65,
+            "GFS": 93.3,
+            "NAM": 94.46,
+            "NBM": 88.79
+          },
+          "best_single_model_f": 89.65
+        },
+        {
+          "valid_time": "2026-08-12T18:00:00Z",
+          "init_time": "2026-08-12T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 86.98,
+          "observed_f": 89.0,
+          "error_f": -2.02,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 86.08,
+            "GFS": 91.86,
+            "NAM": 85.89,
+            "NBM": 89.15
+          },
+          "best_single_model_f": 86.08
+        },
+        {
+          "valid_time": "2026-08-12T18:00:00Z",
+          "init_time": "2026-08-11T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 89.42,
+          "observed_f": 89.0,
+          "error_f": 0.42,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 92.33,
+            "GFS": 90.76,
+            "NAM": 78.86,
+            "NBM": 88.43
+          },
+          "best_single_model_f": 92.33
+        }
+      ],
+      "mae_f": {
+        "6": 1.57,
+        "12": 1.8,
+        "24": 2.2
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-13",
+      "entries": [
+        {
+          "valid_time": "2026-08-13T00:00:00Z",
+          "init_time": "2026-08-12T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 89.02,
+          "observed_f": 88.0,
+          "error_f": 1.02,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.49,
+            "GFS": 88.85,
+            "NAM": 90.49,
+            "NBM": 88.07
+          },
+          "best_single_model_f": 89.49
+        },
+        {
+          "valid_time": "2026-08-13T00:00:00Z",
+          "init_time": "2026-08-12T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 89.58,
+          "observed_f": 88.0,
+          "error_f": 1.58,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.86,
+            "GFS": 91.24,
+            "NAM": 93.5,
+            "NBM": 87.71
+          },
+          "best_single_model_f": 89.86
+        },
+        {
+          "valid_time": "2026-08-13T00:00:00Z",
+          "init_time": "2026-08-12T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 86.8,
+          "observed_f": 88.0,
+          "error_f": -1.2,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 86.87,
+            "GFS": 75.82,
+            "NAM": 84.97,
+            "NBM": 87.17
+          },
+          "best_single_model_f": 86.87
+        },
+        {
+          "valid_time": "2026-08-13T06:00:00Z",
+          "init_time": "2026-08-13T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 78.31,
+          "observed_f": 79.0,
+          "error_f": -0.69,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.89,
+            "GFS": 73.72,
+            "NAM": 78.84,
+            "NBM": 78.71
+          },
+          "best_single_model_f": 77.89
+        },
+        {
+          "valid_time": "2026-08-13T06:00:00Z",
+          "init_time": "2026-08-12T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 78.11,
+          "observed_f": 79.0,
+          "error_f": -0.89,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.07,
+            "GFS": 74.57,
+            "NAM": 78.21,
+            "NBM": 78.17
+          },
+          "best_single_model_f": 78.07
+        },
+        {
+          "valid_time": "2026-08-13T06:00:00Z",
+          "init_time": "2026-08-12T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 76.44,
+          "observed_f": 79.0,
+          "error_f": -2.56,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 76.12,
+            "GFS": 72.15,
+            "NAM": 74.74,
+            "NBM": 77.27
+          },
+          "best_single_model_f": 76.12
+        },
+        {
+          "valid_time": "2026-08-13T12:00:00Z",
+          "init_time": "2026-08-13T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 73.46,
+          "observed_f": 72.0,
+          "error_f": 1.46,
+          "obs_offset_min": 1,
+          "members": {
+            "HRRR": 72.57,
+            "GFS": 73.04,
+            "NAM": 76.37,
+            "NBM": 73.85
+          },
+          "best_single_model_f": 72.57
+        },
+        {
+          "valid_time": "2026-08-13T12:00:00Z",
+          "init_time": "2026-08-13T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 72.09,
+          "observed_f": 72.0,
+          "error_f": 0.09,
+          "obs_offset_min": 1,
+          "members": {
+            "HRRR": 70.29,
+            "GFS": 72.63,
+            "NAM": 77.08,
+            "NBM": 74.03
+          },
+          "best_single_model_f": 70.29
+        },
+        {
+          "valid_time": "2026-08-13T12:00:00Z",
+          "init_time": "2026-08-12T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 73.78,
+          "observed_f": 72.0,
+          "error_f": 1.78,
+          "obs_offset_min": 1,
+          "members": {
+            "HRRR": 73.58,
+            "GFS": 72.6,
+            "NAM": 77.36,
+            "NBM": 73.13
+          },
+          "best_single_model_f": 73.58
+        },
+        {
+          "valid_time": "2026-08-13T18:00:00Z",
+          "init_time": "2026-08-13T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 82.66,
+          "observed_f": 82.0,
+          "error_f": 0.66,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 80.67,
+            "GFS": 91.48,
+            "NAM": 86.83,
+            "NBM": 84.11
+          },
+          "best_single_model_f": 80.67
+        },
+        {
+          "valid_time": "2026-08-13T18:00:00Z",
+          "init_time": "2026-08-13T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 85.0,
+          "observed_f": 82.0,
+          "error_f": 3.0,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 84.19,
+            "GFS": 88.26,
+            "NAM": 93.64,
+            "NBM": 83.75
+          },
+          "best_single_model_f": 84.19
+        },
+        {
+          "valid_time": "2026-08-13T18:00:00Z",
+          "init_time": "2026-08-12T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 84.34,
+          "observed_f": 82.0,
+          "error_f": 2.34,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.89,
+            "GFS": 83.5,
+            "NAM": 95.32,
+            "NBM": 84.65
+          },
+          "best_single_model_f": 81.89
+        }
+      ],
+      "mae_f": {
+        "6": 0.96,
+        "12": 1.39,
+        "24": 1.97
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-14",
+      "entries": [
+        {
+          "valid_time": "2026-08-14T00:00:00Z",
+          "init_time": "2026-08-13T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 84.52,
+          "observed_f": 83.0,
+          "error_f": 1.52,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.83,
+            "GFS": 83.84,
+            "NAM": 83.77,
+            "NBM": 86.81
+          },
+          "best_single_model_f": 82.83
+        },
+        {
+          "valid_time": "2026-08-14T00:00:00Z",
+          "init_time": "2026-08-13T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 82.95,
+          "observed_f": 83.0,
+          "error_f": -0.05,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.23,
+            "GFS": 81.6,
+            "NAM": 85.96,
+            "NBM": 83.39
+          },
+          "best_single_model_f": 82.23
+        },
+        {
+          "valid_time": "2026-08-14T00:00:00Z",
+          "init_time": "2026-08-13T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 84.11,
+          "observed_f": 83.0,
+          "error_f": 1.11,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.3,
+            "GFS": 82.95,
+            "NAM": 91.74,
+            "NBM": 83.21
+          },
+          "best_single_model_f": 83.3
+        },
+        {
+          "valid_time": "2026-08-14T06:00:00Z",
+          "init_time": "2026-08-14T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 76.02,
+          "observed_f": 77.0,
+          "error_f": -0.98,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 76.21,
+            "GFS": 71.52,
+            "NAM": 77.26,
+            "NBM": 75.47
+          },
+          "best_single_model_f": 76.21
+        },
+        {
+          "valid_time": "2026-08-14T06:00:00Z",
+          "init_time": "2026-08-13T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 74.57,
+          "observed_f": 77.0,
+          "error_f": -2.43,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.12,
+            "GFS": 72.78,
+            "NAM": 72.91,
+            "NBM": 76.01
+          },
+          "best_single_model_f": 74.12
+        },
+        {
+          "valid_time": "2026-08-14T06:00:00Z",
+          "init_time": "2026-08-13T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 74.46,
+          "observed_f": 77.0,
+          "error_f": -2.54,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.56,
+            "GFS": 72.69,
+            "NAM": 70.61,
+            "NBM": 75.29
+          },
+          "best_single_model_f": 74.56
+        },
+        {
+          "valid_time": "2026-08-14T12:00:00Z",
+          "init_time": "2026-08-14T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 73.98,
+          "observed_f": 71.0,
+          "error_f": 2.98,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.53,
+            "GFS": 71.66,
+            "NAM": 73.93,
+            "NBM": 73.31
+          },
+          "best_single_model_f": 74.53
+        },
+        {
+          "valid_time": "2026-08-14T12:00:00Z",
+          "init_time": "2026-08-14T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 73.43,
+          "observed_f": 71.0,
+          "error_f": 2.43,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.02,
+            "GFS": 71.08,
+            "NAM": 75.16,
+            "NBM": 73.67
+          },
+          "best_single_model_f": 73.02
+        },
+        {
+          "valid_time": "2026-08-14T12:00:00Z",
+          "init_time": "2026-08-13T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 72.0,
+          "observed_f": 71.0,
+          "error_f": 1.0,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 71.17,
+            "GFS": 70.76,
+            "NAM": 70.87,
+            "NBM": 73.31
+          },
+          "best_single_model_f": 71.17
+        },
+        {
+          "valid_time": "2026-08-14T18:00:00Z",
+          "init_time": "2026-08-14T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 79.52,
+          "observed_f": 76.0,
+          "error_f": 3.52,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.13,
+            "GFS": 83.17,
+            "NAM": 83.15,
+            "NBM": 81.59
+          },
+          "best_single_model_f": 77.13
+        },
+        {
+          "valid_time": "2026-08-14T18:00:00Z",
+          "init_time": "2026-08-14T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 80.72,
+          "observed_f": 76.0,
+          "error_f": 4.72,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 80.55,
+            "GFS": 90.13,
+            "NAM": 78.03,
+            "NBM": 81.95
+          },
+          "best_single_model_f": 80.55
+        },
+        {
+          "valid_time": "2026-08-14T18:00:00Z",
+          "init_time": "2026-08-13T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 83.38,
+          "observed_f": 76.0,
+          "error_f": 7.38,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.44,
+            "GFS": 91.48,
+            "NAM": 77.2,
+            "NBM": 86.09
+          },
+          "best_single_model_f": 82.44
+        }
+      ],
+      "mae_f": {
+        "6": 2.25,
+        "12": 2.41,
+        "24": 3.01
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-15",
+      "entries": [
+        {
+          "valid_time": "2026-08-15T00:00:00Z",
+          "init_time": "2026-08-14T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 81.38,
+          "observed_f": 81.0,
+          "error_f": 0.38,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.47,
+            "GFS": 81.21,
+            "NAM": 79.26,
+            "NBM": 85.55
+          },
+          "best_single_model_f": 78.47
+        },
+        {
+          "valid_time": "2026-08-15T00:00:00Z",
+          "init_time": "2026-08-14T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 81.3,
+          "observed_f": 81.0,
+          "error_f": 0.3,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 80.69,
+            "GFS": 75.09,
+            "NAM": 81.96,
+            "NBM": 82.31
+          },
+          "best_single_model_f": 80.69
+        },
+        {
+          "valid_time": "2026-08-15T00:00:00Z",
+          "init_time": "2026-08-14T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 83.15,
+          "observed_f": 81.0,
+          "error_f": 2.15,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.32,
+            "GFS": 83.69,
+            "NAM": 78.4,
+            "NBM": 85.37
+          },
+          "best_single_model_f": 82.32
+        },
+        {
+          "valid_time": "2026-08-15T06:00:00Z",
+          "init_time": "2026-08-15T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 75.14,
+          "observed_f": 76.0,
+          "error_f": -0.86,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.14,
+            "GFS": 69.98,
+            "NAM": 75.18,
+            "NBM": 76.37
+          },
+          "best_single_model_f": 74.14
+        },
+        {
+          "valid_time": "2026-08-15T06:00:00Z",
+          "init_time": "2026-08-14T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 73.75,
+          "observed_f": 76.0,
+          "error_f": -2.25,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 71.85,
+            "GFS": 70.27,
+            "NAM": 74.05,
+            "NBM": 77.45
+          },
+          "best_single_model_f": 71.85
+        },
+        {
+          "valid_time": "2026-08-15T06:00:00Z",
+          "init_time": "2026-08-14T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 74.32,
+          "observed_f": 76.0,
+          "error_f": -1.68,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 72.57,
+            "GFS": 72.26,
+            "NAM": 76.28,
+            "NBM": 76.01
+          },
+          "best_single_model_f": 72.57
+        },
+        {
+          "valid_time": "2026-08-15T12:00:00Z",
+          "init_time": "2026-08-15T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 73.78,
+          "observed_f": 76.0,
+          "error_f": -2.22,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.48,
+            "GFS": 70.24,
+            "NAM": 75.07,
+            "NBM": 72.59
+          },
+          "best_single_model_f": 74.48
+        },
+        {
+          "valid_time": "2026-08-15T12:00:00Z",
+          "init_time": "2026-08-15T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 73.96,
+          "observed_f": 76.0,
+          "error_f": -2.04,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.89,
+            "GFS": 69.84,
+            "NAM": 75.27,
+            "NBM": 73.67
+          },
+          "best_single_model_f": 73.89
+        },
+        {
+          "valid_time": "2026-08-15T12:00:00Z",
+          "init_time": "2026-08-14T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 72.14,
+          "observed_f": 76.0,
+          "error_f": -3.86,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.43,
+            "GFS": 69.14,
+            "NAM": 73.15,
+            "NBM": 74.03
+          },
+          "best_single_model_f": 70.43
+        },
+        {
+          "valid_time": "2026-08-15T18:00:00Z",
+          "init_time": "2026-08-15T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 80.93,
+          "observed_f": 82.0,
+          "error_f": -1.07,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 79.44,
+            "GFS": 84.25,
+            "NAM": 76.41,
+            "NBM": 83.93
+          },
+          "best_single_model_f": 79.44
+        },
+        {
+          "valid_time": "2026-08-15T18:00:00Z",
+          "init_time": "2026-08-15T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 83.52,
+          "observed_f": 82.0,
+          "error_f": 1.52,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.07,
+            "GFS": 84.37,
+            "NAM": 81.22,
+            "NBM": 85.19
+          },
+          "best_single_model_f": 83.07
+        },
+        {
+          "valid_time": "2026-08-15T18:00:00Z",
+          "init_time": "2026-08-14T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 83.26,
+          "observed_f": 82.0,
+          "error_f": 1.26,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 79.66,
+            "GFS": 81.55,
+            "NAM": 87.08,
+            "NBM": 86.81
+          },
+          "best_single_model_f": 79.66
+        }
+      ],
+      "mae_f": {
+        "6": 1.13,
+        "12": 1.53,
+        "24": 2.24
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-16",
+      "entries": [
+        {
+          "valid_time": "2026-08-16T00:00:00Z",
+          "init_time": "2026-08-15T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 79.53,
+          "observed_f": 78.0,
+          "error_f": 1.53,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 79.13,
+            "GFS": 79.7,
+            "NAM": 79.77,
+            "NBM": 79.97
+          },
+          "best_single_model_f": 79.13
+        },
+        {
+          "valid_time": "2026-08-16T00:00:00Z",
+          "init_time": "2026-08-15T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 81.11,
+          "observed_f": 78.0,
+          "error_f": 3.11,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.05,
+            "GFS": 83.2,
+            "NAM": 81.05,
+            "NBM": 79.25
+          },
+          "best_single_model_f": 82.05
+        },
+        {
+          "valid_time": "2026-08-16T00:00:00Z",
+          "init_time": "2026-08-15T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 79.75,
+          "observed_f": 78.0,
+          "error_f": 1.75,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.45,
+            "GFS": 85.01,
+            "NAM": 80.33,
+            "NBM": 81.23
+          },
+          "best_single_model_f": 78.45
+        },
+        {
+          "valid_time": "2026-08-16T06:00:00Z",
+          "init_time": "2026-08-16T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 72.33,
+          "observed_f": 72.0,
+          "error_f": 0.33,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.91,
+            "GFS": 70.9,
+            "NAM": 74.78,
+            "NBM": 73.49
+          },
+          "best_single_model_f": 70.91
+        },
+        {
+          "valid_time": "2026-08-16T06:00:00Z",
+          "init_time": "2026-08-15T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 73.14,
+          "observed_f": 72.0,
+          "error_f": 1.14,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 72.62,
+            "GFS": 72.2,
+            "NAM": 73.56,
+            "NBM": 74.03
+          },
+          "best_single_model_f": 72.62
+        },
+        {
+          "valid_time": "2026-08-16T06:00:00Z",
+          "init_time": "2026-08-15T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 73.61,
+          "observed_f": 72.0,
+          "error_f": 1.61,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.26,
+            "GFS": 74.1,
+            "NAM": 73.01,
+            "NBM": 74.21
+          },
+          "best_single_model_f": 73.26
+        },
+        {
+          "valid_time": "2026-08-16T12:00:00Z",
+          "init_time": "2026-08-16T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 69.8,
+          "observed_f": 72.0,
+          "error_f": -2.2,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 69.11,
+            "GFS": 65.23,
+            "NAM": 72.18,
+            "NBM": 70.07
+          },
+          "best_single_model_f": 69.11
+        },
+        {
+          "valid_time": "2026-08-16T12:00:00Z",
+          "init_time": "2026-08-16T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 68.83,
+          "observed_f": 72.0,
+          "error_f": -3.17,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.85,
+            "GFS": 65.6,
+            "NAM": 70.47,
+            "NBM": 70.25
+          },
+          "best_single_model_f": 67.85
+        },
+        {
+          "valid_time": "2026-08-16T12:00:00Z",
+          "init_time": "2026-08-15T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 70.08,
+          "observed_f": 72.0,
+          "error_f": -1.92,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 69.81,
+            "GFS": 69.01,
+            "NAM": 69.35,
+            "NBM": 70.61
+          },
+          "best_single_model_f": 69.81
+        },
+        {
+          "valid_time": "2026-08-16T18:00:00Z",
+          "init_time": "2026-08-16T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 74.84,
+          "observed_f": 76.0,
+          "error_f": -1.16,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.57,
+            "GFS": 71.28,
+            "NAM": 75.84,
+            "NBM": 74.93
+          },
+          "best_single_model_f": 74.57
+        },
+        {
+          "valid_time": "2026-08-16T18:00:00Z",
+          "init_time": "2026-08-16T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 75.79,
+          "observed_f": 76.0,
+          "error_f": -0.21,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 75.85,
+            "GFS": 69.46,
+            "NAM": 78.05,
+            "NBM": 74.93
+          },
+          "best_single_model_f": 75.85
+        },
+        {
+          "valid_time": "2026-08-16T18:00:00Z",
+          "init_time": "2026-08-15T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 76.14,
+          "observed_f": 76.0,
+          "error_f": 0.14,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 76.2,
+            "GFS": 69.06,
+            "NAM": 72.75,
+            "NBM": 76.91
+          },
+          "best_single_model_f": 76.2
+        }
+      ],
+      "mae_f": {
+        "6": 1.3,
+        "12": 1.91,
+        "24": 1.35
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-17",
+      "entries": [
+        {
+          "valid_time": "2026-08-17T00:00:00Z",
+          "init_time": "2026-08-16T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 77.05,
+          "observed_f": 79.0,
+          "error_f": -1.95,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.47,
+            "GFS": 75.83,
+            "NAM": 79.84,
+            "NBM": 75.83
+          },
+          "best_single_model_f": 77.47
+        },
+        {
+          "valid_time": "2026-08-17T00:00:00Z",
+          "init_time": "2026-08-16T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 76.76,
+          "observed_f": 79.0,
+          "error_f": -2.24,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 76.62,
+            "GFS": 76.28,
+            "NAM": 79.82,
+            "NBM": 76.01
+          },
+          "best_single_model_f": 76.62
+        },
+        {
+          "valid_time": "2026-08-17T00:00:00Z",
+          "init_time": "2026-08-16T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 78.82,
+          "observed_f": 79.0,
+          "error_f": -0.18,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 80.11,
+            "GFS": 78.95,
+            "NAM": 79.31,
+            "NBM": 77.09
+          },
+          "best_single_model_f": 80.11
+        },
+        {
+          "valid_time": "2026-08-17T06:00:00Z",
+          "init_time": "2026-08-17T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 67.0,
+          "observed_f": 67.0,
+          "error_f": 0.0,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.25,
+            "GFS": 64.27,
+            "NAM": 67.9,
+            "NBM": 66.47
+          },
+          "best_single_model_f": 67.25
+        },
+        {
+          "valid_time": "2026-08-17T06:00:00Z",
+          "init_time": "2026-08-16T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 67.09,
+          "observed_f": 67.0,
+          "error_f": 0.09,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 66.8,
+            "GFS": 64.25,
+            "NAM": 69.07,
+            "NBM": 67.01
+          },
+          "best_single_model_f": 66.8
+        },
+        {
+          "valid_time": "2026-08-17T06:00:00Z",
+          "init_time": "2026-08-16T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 67.77,
+          "observed_f": 67.0,
+          "error_f": 0.77,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.5,
+            "GFS": 64.92,
+            "NAM": 70.67,
+            "NBM": 67.37
+          },
+          "best_single_model_f": 67.5
+        },
+        {
+          "valid_time": "2026-08-17T12:00:00Z",
+          "init_time": "2026-08-17T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 61.6,
+          "observed_f": 64.0,
+          "error_f": -2.4,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 61.42,
+            "GFS": 61.26,
+            "NAM": 60.27,
+            "NBM": 62.15
+          },
+          "best_single_model_f": 61.42
+        },
+        {
+          "valid_time": "2026-08-17T12:00:00Z",
+          "init_time": "2026-08-17T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 62.5,
+          "observed_f": 64.0,
+          "error_f": -1.5,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 62.61,
+            "GFS": 60.52,
+            "NAM": 60.77,
+            "NBM": 62.87
+          },
+          "best_single_model_f": 62.61
+        },
+        {
+          "valid_time": "2026-08-17T12:00:00Z",
+          "init_time": "2026-08-16T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 62.23,
+          "observed_f": 64.0,
+          "error_f": -1.77,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 62.06,
+            "GFS": 64.35,
+            "NAM": 61.28,
+            "NBM": 62.69
+          },
+          "best_single_model_f": 62.06
+        },
+        {
+          "valid_time": "2026-08-17T18:00:00Z",
+          "init_time": "2026-08-17T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 79.07,
+          "observed_f": 83.0,
+          "error_f": -3.93,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.78,
+            "GFS": 85.65,
+            "NAM": 82.68,
+            "NBM": 78.53
+          },
+          "best_single_model_f": 78.78
+        },
+        {
+          "valid_time": "2026-08-17T18:00:00Z",
+          "init_time": "2026-08-17T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 79.0,
+          "observed_f": 83.0,
+          "error_f": -4.0,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.84,
+            "GFS": 84.9,
+            "NAM": 83.51,
+            "NBM": 77.81
+          },
+          "best_single_model_f": 78.84
+        },
+        {
+          "valid_time": "2026-08-17T18:00:00Z",
+          "init_time": "2026-08-16T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 80.13,
+          "observed_f": 83.0,
+          "error_f": -2.87,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 80.34,
+            "GFS": 83.39,
+            "NAM": 84.74,
+            "NBM": 78.71
+          },
+          "best_single_model_f": 80.34
+        }
+      ],
+      "mae_f": {
+        "6": 2.07,
+        "12": 1.96,
+        "24": 1.4
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-18",
+      "entries": [
+        {
+          "valid_time": "2026-08-18T00:00:00Z",
+          "init_time": "2026-08-17T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 81.72,
+          "observed_f": 84.0,
+          "error_f": -2.28,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.17,
+            "GFS": 83.13,
+            "NAM": 83.55,
+            "NBM": 80.69
+          },
+          "best_single_model_f": 82.17
+        },
+        {
+          "valid_time": "2026-08-18T00:00:00Z",
+          "init_time": "2026-08-17T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 81.36,
+          "observed_f": 84.0,
+          "error_f": -2.64,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.73,
+            "GFS": 83.36,
+            "NAM": 83.88,
+            "NBM": 79.79
+          },
+          "best_single_model_f": 81.73
+        },
+        {
+          "valid_time": "2026-08-18T00:00:00Z",
+          "init_time": "2026-08-17T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 81.76,
+          "observed_f": 84.0,
+          "error_f": -2.24,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.53,
+            "GFS": 79.63,
+            "NAM": 83.62,
+            "NBM": 80.33
+          },
+          "best_single_model_f": 82.53
+        },
+        {
+          "valid_time": "2026-08-18T06:00:00Z",
+          "init_time": "2026-08-18T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 71.12,
+          "observed_f": 76.0,
+          "error_f": -4.88,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.1,
+            "GFS": 71.02,
+            "NAM": 71.08,
+            "NBM": 72.41
+          },
+          "best_single_model_f": 70.1
+        },
+        {
+          "valid_time": "2026-08-18T06:00:00Z",
+          "init_time": "2026-08-17T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 71.04,
+          "observed_f": 76.0,
+          "error_f": -4.96,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.09,
+            "GFS": 70.39,
+            "NAM": 72.62,
+            "NBM": 72.41
+          },
+          "best_single_model_f": 70.09
+        },
+        {
+          "valid_time": "2026-08-18T06:00:00Z",
+          "init_time": "2026-08-17T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 71.61,
+          "observed_f": 76.0,
+          "error_f": -4.39,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 71.18,
+            "GFS": 68.42,
+            "NAM": 71.99,
+            "NBM": 72.05
+          },
+          "best_single_model_f": 71.18
+        },
+        {
+          "valid_time": "2026-08-18T12:00:00Z",
+          "init_time": "2026-08-18T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 67.81,
+          "observed_f": 70.0,
+          "error_f": -2.19,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.54,
+            "GFS": 64.63,
+            "NAM": 65.9,
+            "NBM": 68.63
+          },
+          "best_single_model_f": 67.54
+        },
+        {
+          "valid_time": "2026-08-18T12:00:00Z",
+          "init_time": "2026-08-18T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 67.4,
+          "observed_f": 70.0,
+          "error_f": -2.6,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.21,
+            "GFS": 64.84,
+            "NAM": 65.36,
+            "NBM": 68.45
+          },
+          "best_single_model_f": 67.21
+        },
+        {
+          "valid_time": "2026-08-18T12:00:00Z",
+          "init_time": "2026-08-17T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 67.73,
+          "observed_f": 70.0,
+          "error_f": -2.27,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 66.21,
+            "GFS": 66.62,
+            "NAM": 73.22,
+            "NBM": 68.27
+          },
+          "best_single_model_f": 66.21
+        },
+        {
+          "valid_time": "2026-08-18T18:00:00Z",
+          "init_time": "2026-08-18T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 79.12,
+          "observed_f": 79.0,
+          "error_f": 0.12,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.49,
+            "GFS": 78.72,
+            "NAM": 80.32,
+            "NBM": 79.61
+          },
+          "best_single_model_f": 78.49
+        },
+        {
+          "valid_time": "2026-08-18T18:00:00Z",
+          "init_time": "2026-08-18T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 77.59,
+          "observed_f": 79.0,
+          "error_f": -1.41,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.35,
+            "GFS": 86.81,
+            "NAM": 77.84,
+            "NBM": 77.99
+          },
+          "best_single_model_f": 77.35
+        },
+        {
+          "valid_time": "2026-08-18T18:00:00Z",
+          "init_time": "2026-08-17T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 73.81,
+          "observed_f": 79.0,
+          "error_f": -5.19,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.87,
+            "GFS": 82.13,
+            "NAM": 76.1,
+            "NBM": 76.91
+          },
+          "best_single_model_f": 70.87
+        }
+      ],
+      "mae_f": {
+        "6": 2.37,
+        "12": 2.9,
+        "24": 3.52
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-19",
+      "entries": [
+        {
+          "valid_time": "2026-08-19T00:00:00Z",
+          "init_time": "2026-08-18T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 81.38,
+          "observed_f": 82.0,
+          "error_f": -0.62,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.74,
+            "GFS": 83.61,
+            "NAM": 85.25,
+            "NBM": 79.97
+          },
+          "best_single_model_f": 81.74
+        },
+        {
+          "valid_time": "2026-08-19T00:00:00Z",
+          "init_time": "2026-08-18T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 82.21,
+          "observed_f": 82.0,
+          "error_f": 0.21,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.96,
+            "GFS": 81.58,
+            "NAM": 83.85,
+            "NBM": 80.15
+          },
+          "best_single_model_f": 82.96
+        },
+        {
+          "valid_time": "2026-08-19T00:00:00Z",
+          "init_time": "2026-08-18T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 77.72,
+          "observed_f": 82.0,
+          "error_f": -4.28,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.23,
+            "GFS": 83.23,
+            "NAM": 78.41,
+            "NBM": 76.91
+          },
+          "best_single_model_f": 78.23
+        },
+        {
+          "valid_time": "2026-08-19T06:00:00Z",
+          "init_time": "2026-08-19T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 73.85,
+          "observed_f": 75.0,
+          "error_f": -1.15,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.57,
+            "GFS": 70.63,
+            "NAM": 75.28,
+            "NBM": 72.59
+          },
+          "best_single_model_f": 74.57
+        },
+        {
+          "valid_time": "2026-08-19T06:00:00Z",
+          "init_time": "2026-08-18T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 73.99,
+          "observed_f": 75.0,
+          "error_f": -1.01,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.52,
+            "GFS": 70.27,
+            "NAM": 75.57,
+            "NBM": 72.41
+          },
+          "best_single_model_f": 74.52
+        },
+        {
+          "valid_time": "2026-08-19T06:00:00Z",
+          "init_time": "2026-08-18T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 71.31,
+          "observed_f": 75.0,
+          "error_f": -3.69,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 71.75,
+            "GFS": 71.93,
+            "NAM": 71.2,
+            "NBM": 70.79
+          },
+          "best_single_model_f": 71.75
+        },
+        {
+          "valid_time": "2026-08-19T12:00:00Z",
+          "init_time": "2026-08-19T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 69.82,
+          "observed_f": 72.0,
+          "error_f": -2.18,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.66,
+            "GFS": 67.46,
+            "NAM": 68.23,
+            "NBM": 69.17
+          },
+          "best_single_model_f": 70.66
+        },
+        {
+          "valid_time": "2026-08-19T12:00:00Z",
+          "init_time": "2026-08-19T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 71.44,
+          "observed_f": 72.0,
+          "error_f": -0.56,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 72.43,
+            "GFS": 66.39,
+            "NAM": 72.28,
+            "NBM": 69.17
+          },
+          "best_single_model_f": 72.43
+        },
+        {
+          "valid_time": "2026-08-19T12:00:00Z",
+          "init_time": "2026-08-18T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 69.94,
+          "observed_f": 72.0,
+          "error_f": -2.06,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.77,
+            "GFS": 66.46,
+            "NAM": 71.77,
+            "NBM": 68.45
+          },
+          "best_single_model_f": 70.77
+        },
+        {
+          "valid_time": "2026-08-19T18:00:00Z",
+          "init_time": "2026-08-19T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 78.4,
+          "observed_f": 78.0,
+          "error_f": 0.4,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 79.39,
+            "GFS": 80.87,
+            "NAM": 81.56,
+            "NBM": 76.37
+          },
+          "best_single_model_f": 79.39
+        },
+        {
+          "valid_time": "2026-08-19T18:00:00Z",
+          "init_time": "2026-08-19T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 77.86,
+          "observed_f": 78.0,
+          "error_f": -0.14,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.51,
+            "GFS": 79.12,
+            "NAM": 82.78,
+            "NBM": 74.93
+          },
+          "best_single_model_f": 78.51
+        },
+        {
+          "valid_time": "2026-08-19T18:00:00Z",
+          "init_time": "2026-08-18T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 76.16,
+          "observed_f": 78.0,
+          "error_f": -1.84,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.09,
+            "GFS": 78.13,
+            "NAM": 67.08,
+            "NBM": 77.27
+          },
+          "best_single_model_f": 77.09
+        }
+      ],
+      "mae_f": {
+        "6": 1.09,
+        "12": 0.48,
+        "24": 2.97
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-20",
+      "entries": [
+        {
+          "valid_time": "2026-08-20T00:00:00Z",
+          "init_time": "2026-08-19T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 76.24,
+          "observed_f": 78.0,
+          "error_f": -1.76,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.82,
+            "GFS": 69.89,
+            "NAM": 77.21,
+            "NBM": 72.77
+          },
+          "best_single_model_f": 78.82
+        },
+        {
+          "valid_time": "2026-08-20T00:00:00Z",
+          "init_time": "2026-08-19T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 76.94,
+          "observed_f": 78.0,
+          "error_f": -1.06,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 79.99,
+            "GFS": 70.43,
+            "NAM": 67.4,
+            "NBM": 74.03
+          },
+          "best_single_model_f": 79.99
+        },
+        {
+          "valid_time": "2026-08-20T00:00:00Z",
+          "init_time": "2026-08-19T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 76.28,
+          "observed_f": 78.0,
+          "error_f": -1.72,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.39,
+            "GFS": 78.76,
+            "NAM": 76.9,
+            "NBM": 74.75
+          },
+          "best_single_model_f": 77.39
+        },
+        {
+          "valid_time": "2026-08-20T06:00:00Z",
+          "init_time": "2026-08-20T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 67.02,
+          "observed_f": 67.0,
+          "error_f": 0.02,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.97,
+            "GFS": 63.29,
+            "NAM": 65.89,
+            "NBM": 66.11
+          },
+          "best_single_model_f": 67.97
+        },
+        {
+          "valid_time": "2026-08-20T06:00:00Z",
+          "init_time": "2026-08-19T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 67.06,
+          "observed_f": 67.0,
+          "error_f": 0.06,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.88,
+            "GFS": 64.01,
+            "NAM": 63.88,
+            "NBM": 66.47
+          },
+          "best_single_model_f": 67.88
+        },
+        {
+          "valid_time": "2026-08-20T06:00:00Z",
+          "init_time": "2026-08-19T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 67.33,
+          "observed_f": 67.0,
+          "error_f": 0.33,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 66.99,
+            "GFS": 62.76,
+            "NAM": 69.55,
+            "NBM": 67.19
+          },
+          "best_single_model_f": 66.99
+        },
+        {
+          "valid_time": "2026-08-20T12:00:00Z",
+          "init_time": "2026-08-20T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 64.03,
+          "observed_f": 62.0,
+          "error_f": 2.03,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 64.35,
+            "GFS": 61.02,
+            "NAM": 64.21,
+            "NBM": 63.59
+          },
+          "best_single_model_f": 64.35
+        },
+        {
+          "valid_time": "2026-08-20T12:00:00Z",
+          "init_time": "2026-08-20T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 63.47,
+          "observed_f": 62.0,
+          "error_f": 1.47,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 63.83,
+            "GFS": 60.69,
+            "NAM": 60.95,
+            "NBM": 63.59
+          },
+          "best_single_model_f": 63.83
+        },
+        {
+          "valid_time": "2026-08-20T12:00:00Z",
+          "init_time": "2026-08-19T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 64.08,
+          "observed_f": 62.0,
+          "error_f": 2.08,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 64.03,
+            "GFS": 60.81,
+            "NAM": 62.64,
+            "NBM": 64.49
+          },
+          "best_single_model_f": 64.03
+        },
+        {
+          "valid_time": "2026-08-20T18:00:00Z",
+          "init_time": "2026-08-20T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 80.23,
+          "observed_f": 82.0,
+          "error_f": -1.77,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 80.12,
+            "GFS": 82.24,
+            "NAM": 81.84,
+            "NBM": 79.97
+          },
+          "best_single_model_f": 80.12
+        },
+        {
+          "valid_time": "2026-08-20T18:00:00Z",
+          "init_time": "2026-08-20T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 80.63,
+          "observed_f": 82.0,
+          "error_f": -1.37,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.22,
+            "GFS": 80.97,
+            "NAM": 81.22,
+            "NBM": 79.25
+          },
+          "best_single_model_f": 81.22
+        },
+        {
+          "valid_time": "2026-08-20T18:00:00Z",
+          "init_time": "2026-08-19T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 80.91,
+          "observed_f": 82.0,
+          "error_f": -1.09,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.46,
+            "GFS": 82.13,
+            "NAM": 83.43,
+            "NBM": 78.35
+          },
+          "best_single_model_f": 82.46
+        }
+      ],
+      "mae_f": {
+        "6": 1.4,
+        "12": 0.99,
+        "24": 1.3
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-21",
+      "entries": [
+        {
+          "valid_time": "2026-08-21T00:00:00Z",
+          "init_time": "2026-08-20T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 82.83,
+          "observed_f": 82.0,
+          "error_f": 0.83,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 84.15,
+            "GFS": 83.03,
+            "NAM": 83.37,
+            "NBM": 81.05
+          },
+          "best_single_model_f": 84.15
+        },
+        {
+          "valid_time": "2026-08-21T00:00:00Z",
+          "init_time": "2026-08-20T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 82.59,
+          "observed_f": 82.0,
+          "error_f": 0.59,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.19,
+            "GFS": 83.31,
+            "NAM": 82.52,
+            "NBM": 81.41
+          },
+          "best_single_model_f": 83.19
+        },
+        {
+          "valid_time": "2026-08-21T00:00:00Z",
+          "init_time": "2026-08-20T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 81.36,
+          "observed_f": 82.0,
+          "error_f": -0.64,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.98,
+            "GFS": 81.95,
+            "NAM": 81.68,
+            "NBM": 80.51
+          },
+          "best_single_model_f": 81.98
+        },
+        {
+          "valid_time": "2026-08-21T06:00:00Z",
+          "init_time": "2026-08-21T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 70.55,
+          "observed_f": 72.0,
+          "error_f": -1.45,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.02,
+            "GFS": 67.5,
+            "NAM": 70.76,
+            "NBM": 71.15
+          },
+          "best_single_model_f": 70.02
+        },
+        {
+          "valid_time": "2026-08-21T06:00:00Z",
+          "init_time": "2026-08-20T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 70.98,
+          "observed_f": 72.0,
+          "error_f": -1.02,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 71.02,
+            "GFS": 68.27,
+            "NAM": 70.8,
+            "NBM": 70.97
+          },
+          "best_single_model_f": 71.02
+        },
+        {
+          "valid_time": "2026-08-21T06:00:00Z",
+          "init_time": "2026-08-20T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 70.3,
+          "observed_f": 72.0,
+          "error_f": -1.7,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 69.85,
+            "GFS": 67.37,
+            "NAM": 70.58,
+            "NBM": 70.79
+          },
+          "best_single_model_f": 69.85
+        },
+        {
+          "valid_time": "2026-08-21T12:00:00Z",
+          "init_time": "2026-08-21T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 66.72,
+          "observed_f": 70.0,
+          "error_f": -3.28,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 66.38,
+            "GFS": 64.64,
+            "NAM": 65.15,
+            "NBM": 67.55
+          },
+          "best_single_model_f": 66.38
+        },
+        {
+          "valid_time": "2026-08-21T12:00:00Z",
+          "init_time": "2026-08-21T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 67.14,
+          "observed_f": 70.0,
+          "error_f": -2.86,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.1,
+            "GFS": 63.58,
+            "NAM": 66.69,
+            "NBM": 67.37
+          },
+          "best_single_model_f": 67.1
+        },
+        {
+          "valid_time": "2026-08-21T12:00:00Z",
+          "init_time": "2026-08-20T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 66.78,
+          "observed_f": 70.0,
+          "error_f": -3.22,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 66.66,
+            "GFS": 64.65,
+            "NAM": 64.26,
+            "NBM": 67.55
+          },
+          "best_single_model_f": 66.66
+        },
+        {
+          "valid_time": "2026-08-21T18:00:00Z",
+          "init_time": "2026-08-21T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 86.3,
+          "observed_f": 86.0,
+          "error_f": 0.3,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 86.89,
+            "GFS": 89.75,
+            "NAM": 87.74,
+            "NBM": 85.19
+          },
+          "best_single_model_f": 86.89
+        },
+        {
+          "valid_time": "2026-08-21T18:00:00Z",
+          "init_time": "2026-08-21T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 84.45,
+          "observed_f": 86.0,
+          "error_f": -1.55,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.64,
+            "GFS": 90.1,
+            "NAM": 87.65,
+            "NBM": 85.01
+          },
+          "best_single_model_f": 83.64
+        },
+        {
+          "valid_time": "2026-08-21T18:00:00Z",
+          "init_time": "2026-08-20T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 82.43,
+          "observed_f": 86.0,
+          "error_f": -3.57,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.98,
+            "GFS": 88.28,
+            "NAM": 87.94,
+            "NBM": 85.37
+          },
+          "best_single_model_f": 78.98
+        }
+      ],
+      "mae_f": {
+        "6": 1.46,
+        "12": 1.5,
+        "24": 2.28
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-22",
+      "entries": [
+        {
+          "valid_time": "2026-08-22T00:00:00Z",
+          "init_time": "2026-08-21T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 86.27,
+          "observed_f": 84.0,
+          "error_f": 2.27,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 88.44,
+            "GFS": 84.54,
+            "NAM": 88.35,
+            "NBM": 83.03
+          },
+          "best_single_model_f": 88.44
+        },
+        {
+          "valid_time": "2026-08-22T00:00:00Z",
+          "init_time": "2026-08-21T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 85.74,
+          "observed_f": 84.0,
+          "error_f": 1.74,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 87.36,
+            "GFS": 78.92,
+            "NAM": 84.11,
+            "NBM": 83.03
+          },
+          "best_single_model_f": 87.36
+        },
+        {
+          "valid_time": "2026-08-22T00:00:00Z",
+          "init_time": "2026-08-21T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 83.84,
+          "observed_f": 84.0,
+          "error_f": -0.16,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.64,
+            "GFS": 82.88,
+            "NAM": 85.95,
+            "NBM": 83.57
+          },
+          "best_single_model_f": 83.64
+        },
+        {
+          "valid_time": "2026-08-22T06:00:00Z",
+          "init_time": "2026-08-22T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 71.78,
+          "observed_f": 74.0,
+          "error_f": -2.22,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 71.99,
+            "GFS": 67.41,
+            "NAM": 72.53,
+            "NBM": 71.33
+          },
+          "best_single_model_f": 71.99
+        },
+        {
+          "valid_time": "2026-08-22T06:00:00Z",
+          "init_time": "2026-08-21T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 72.61,
+          "observed_f": 74.0,
+          "error_f": -1.39,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.03,
+            "GFS": 68.5,
+            "NAM": 75.58,
+            "NBM": 70.79
+          },
+          "best_single_model_f": 73.03
+        },
+        {
+          "valid_time": "2026-08-22T06:00:00Z",
+          "init_time": "2026-08-21T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 72.1,
+          "observed_f": 74.0,
+          "error_f": -1.9,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.05,
+            "GFS": 67.36,
+            "NAM": 71.16,
+            "NBM": 71.15
+          },
+          "best_single_model_f": 73.05
+        },
+        {
+          "valid_time": "2026-08-22T12:00:00Z",
+          "init_time": "2026-08-22T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 66.95,
+          "observed_f": 67.0,
+          "error_f": -0.05,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.47,
+            "GFS": 60.89,
+            "NAM": 65.56,
+            "NBM": 66.65
+          },
+          "best_single_model_f": 67.47
+        },
+        {
+          "valid_time": "2026-08-22T12:00:00Z",
+          "init_time": "2026-08-22T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 66.68,
+          "observed_f": 67.0,
+          "error_f": -0.32,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.02,
+            "GFS": 60.71,
+            "NAM": 65.24,
+            "NBM": 66.47
+          },
+          "best_single_model_f": 67.02
+        },
+        {
+          "valid_time": "2026-08-22T12:00:00Z",
+          "init_time": "2026-08-21T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 66.03,
+          "observed_f": 67.0,
+          "error_f": -0.97,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 66.66,
+            "GFS": 64.88,
+            "NAM": 63.96,
+            "NBM": 65.75
+          },
+          "best_single_model_f": 66.66
+        },
+        {
+          "valid_time": "2026-08-22T18:00:00Z",
+          "init_time": "2026-08-22T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 81.69,
+          "observed_f": 83.0,
+          "error_f": -1.31,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.45,
+            "GFS": 85.81,
+            "NAM": 83.98,
+            "NBM": 81.41
+          },
+          "best_single_model_f": 81.45
+        },
+        {
+          "valid_time": "2026-08-22T18:00:00Z",
+          "init_time": "2026-08-22T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 82.22,
+          "observed_f": 83.0,
+          "error_f": -0.78,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.54,
+            "GFS": 85.33,
+            "NAM": 81.64,
+            "NBM": 81.77
+          },
+          "best_single_model_f": 82.54
+        },
+        {
+          "valid_time": "2026-08-22T18:00:00Z",
+          "init_time": "2026-08-21T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 83.57,
+          "observed_f": 83.0,
+          "error_f": 0.57,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 84.59,
+            "GFS": 87.23,
+            "NAM": 85.68,
+            "NBM": 81.77
+          },
+          "best_single_model_f": 84.59
+        }
+      ],
+      "mae_f": {
+        "6": 1.46,
+        "12": 1.06,
+        "24": 0.9
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-23",
+      "entries": [
+        {
+          "valid_time": "2026-08-23T00:00:00Z",
+          "init_time": "2026-08-22T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 82.07,
+          "observed_f": 82.0,
+          "error_f": 0.07,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.17,
+            "GFS": 82.64,
+            "NAM": 82.83,
+            "NBM": 80.51
+          },
+          "best_single_model_f": 83.17
+        },
+        {
+          "valid_time": "2026-08-23T00:00:00Z",
+          "init_time": "2026-08-22T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 82.27,
+          "observed_f": 82.0,
+          "error_f": 0.27,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.1,
+            "GFS": 83.65,
+            "NAM": 82.62,
+            "NBM": 80.51
+          },
+          "best_single_model_f": 83.1
+        },
+        {
+          "valid_time": "2026-08-23T00:00:00Z",
+          "init_time": "2026-08-22T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 82.47,
+          "observed_f": 82.0,
+          "error_f": 0.47,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.92,
+            "GFS": 82.31,
+            "NAM": 82.38,
+            "NBM": 80.69
+          },
+          "best_single_model_f": 83.92
+        },
+        {
+          "valid_time": "2026-08-23T06:00:00Z",
+          "init_time": "2026-08-23T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 67.76,
+          "observed_f": 67.0,
+          "error_f": 0.76,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 68.54,
+            "GFS": 64.69,
+            "NAM": 68.3,
+            "NBM": 66.65
+          },
+          "best_single_model_f": 68.54
+        },
+        {
+          "valid_time": "2026-08-23T06:00:00Z",
+          "init_time": "2026-08-22T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 68.08,
+          "observed_f": 67.0,
+          "error_f": 1.08,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 68.39,
+            "GFS": 65.27,
+            "NAM": 70.54,
+            "NBM": 66.65
+          },
+          "best_single_model_f": 68.39
+        },
+        {
+          "valid_time": "2026-08-23T06:00:00Z",
+          "init_time": "2026-08-22T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 68.49,
+          "observed_f": 67.0,
+          "error_f": 1.49,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 68.14,
+            "GFS": 65.11,
+            "NAM": 70.38,
+            "NBM": 68.45
+          },
+          "best_single_model_f": 68.14
+        },
+        {
+          "valid_time": "2026-08-23T12:00:00Z",
+          "init_time": "2026-08-23T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 61.77,
+          "observed_f": 65.0,
+          "error_f": -3.23,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 61.3,
+            "GFS": 60.23,
+            "NAM": 61.16,
+            "NBM": 62.51
+          },
+          "best_single_model_f": 61.3
+        },
+        {
+          "valid_time": "2026-08-23T12:00:00Z",
+          "init_time": "2026-08-23T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 62.39,
+          "observed_f": 65.0,
+          "error_f": -2.61,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 62.73,
+            "GFS": 59.15,
+            "NAM": 61.04,
+            "NBM": 62.15
+          },
+          "best_single_model_f": 62.73
+        },
+        {
+          "valid_time": "2026-08-23T12:00:00Z",
+          "init_time": "2026-08-22T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 63.2,
+          "observed_f": 65.0,
+          "error_f": -1.8,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 63.72,
+            "GFS": 62.07,
+            "NAM": 62.69,
+            "NBM": 62.69
+          },
+          "best_single_model_f": 63.72
+        },
+        {
+          "valid_time": "2026-08-23T18:00:00Z",
+          "init_time": "2026-08-23T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 76.3,
+          "observed_f": 76.0,
+          "error_f": 0.3,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.58,
+            "GFS": 69.71,
+            "NAM": 71.78,
+            "NBM": 75.83
+          },
+          "best_single_model_f": 77.58
+        },
+        {
+          "valid_time": "2026-08-23T18:00:00Z",
+          "init_time": "2026-08-23T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 76.67,
+          "observed_f": 76.0,
+          "error_f": 0.67,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.63,
+            "GFS": 74.75,
+            "NAM": 70.2,
+            "NBM": 76.91
+          },
+          "best_single_model_f": 77.63
+        },
+        {
+          "valid_time": "2026-08-23T18:00:00Z",
+          "init_time": "2026-08-22T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 79.65,
+          "observed_f": 76.0,
+          "error_f": 3.65,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.54,
+            "GFS": 68.96,
+            "NAM": 76.1,
+            "NBM": 78.17
+          },
+          "best_single_model_f": 81.54
+        }
+      ],
+      "mae_f": {
+        "6": 1.09,
+        "12": 1.16,
+        "24": 1.85
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-24",
+      "entries": [
+        {
+          "valid_time": "2026-08-24T00:00:00Z",
+          "init_time": "2026-08-23T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 74.7,
+          "observed_f": 75.0,
+          "error_f": -0.3,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.04,
+            "GFS": 73.93,
+            "NAM": 72.18,
+            "NBM": 72.41
+          },
+          "best_single_model_f": 77.04
+        },
+        {
+          "valid_time": "2026-08-24T00:00:00Z",
+          "init_time": "2026-08-23T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 70.58,
+          "observed_f": 75.0,
+          "error_f": -4.42,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 69.14,
+            "GFS": 70.3,
+            "NAM": 69.4,
+            "NBM": 73.85
+          },
+          "best_single_model_f": 69.14
+        },
+        {
+          "valid_time": "2026-08-24T00:00:00Z",
+          "init_time": "2026-08-23T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 77.41,
+          "observed_f": 75.0,
+          "error_f": 2.41,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 79.66,
+            "GFS": 74.72,
+            "NAM": 71.74,
+            "NBM": 76.01
+          },
+          "best_single_model_f": 79.66
+        },
+        {
+          "valid_time": "2026-08-24T06:00:00Z",
+          "init_time": "2026-08-24T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 66.36,
+          "observed_f": 70.0,
+          "error_f": -3.64,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 64.81,
+            "GFS": 63.92,
+            "NAM": 69.33,
+            "NBM": 67.55
+          },
+          "best_single_model_f": 64.81
+        },
+        {
+          "valid_time": "2026-08-24T06:00:00Z",
+          "init_time": "2026-08-23T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 68.67,
+          "observed_f": 70.0,
+          "error_f": -1.33,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 69.66,
+            "GFS": 63.8,
+            "NAM": 66.12,
+            "NBM": 67.55
+          },
+          "best_single_model_f": 69.66
+        },
+        {
+          "valid_time": "2026-08-24T06:00:00Z",
+          "init_time": "2026-08-23T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 67.11,
+          "observed_f": 70.0,
+          "error_f": -2.89,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.49,
+            "GFS": 63.44,
+            "NAM": 66.32,
+            "NBM": 66.83
+          },
+          "best_single_model_f": 67.49
+        },
+        {
+          "valid_time": "2026-08-24T12:00:00Z",
+          "init_time": "2026-08-24T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 66.27,
+          "observed_f": 69.0,
+          "error_f": -2.73,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 66.46,
+            "GFS": 61.76,
+            "NAM": 65.96,
+            "NBM": 66.11
+          },
+          "best_single_model_f": 66.46
+        },
+        {
+          "valid_time": "2026-08-24T12:00:00Z",
+          "init_time": "2026-08-24T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 65.78,
+          "observed_f": 69.0,
+          "error_f": -3.22,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 65.88,
+            "GFS": 61.49,
+            "NAM": 66.34,
+            "NBM": 65.39
+          },
+          "best_single_model_f": 65.88
+        },
+        {
+          "valid_time": "2026-08-24T12:00:00Z",
+          "init_time": "2026-08-23T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 65.06,
+          "observed_f": 69.0,
+          "error_f": -3.94,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 65.34,
+            "GFS": 60.18,
+            "NAM": 64.54,
+            "NBM": 64.85
+          },
+          "best_single_model_f": 65.34
+        },
+        {
+          "valid_time": "2026-08-24T18:00:00Z",
+          "init_time": "2026-08-24T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 74.34,
+          "observed_f": 77.0,
+          "error_f": -2.66,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.8,
+            "GFS": 81.28,
+            "NAM": 73.19,
+            "NBM": 75.29
+          },
+          "best_single_model_f": 73.8
+        },
+        {
+          "valid_time": "2026-08-24T18:00:00Z",
+          "init_time": "2026-08-24T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 74.48,
+          "observed_f": 77.0,
+          "error_f": -2.52,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 72.82,
+            "GFS": 81.64,
+            "NAM": 80.96,
+            "NBM": 75.65
+          },
+          "best_single_model_f": 72.82
+        },
+        {
+          "valid_time": "2026-08-24T18:00:00Z",
+          "init_time": "2026-08-23T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 77.0,
+          "observed_f": 77.0,
+          "error_f": 0.0,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.26,
+            "GFS": 82.06,
+            "NAM": 77.56,
+            "NBM": 75.29
+          },
+          "best_single_model_f": 78.26
+        }
+      ],
+      "mae_f": {
+        "6": 2.33,
+        "12": 2.87,
+        "24": 2.31
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-25",
+      "entries": [
+        {
+          "valid_time": "2026-08-25T00:00:00Z",
+          "init_time": "2026-08-24T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 78.23,
+          "observed_f": 77.0,
+          "error_f": 1.23,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.23,
+            "GFS": 80.2,
+            "NAM": 77.78,
+            "NBM": 78.35
+          },
+          "best_single_model_f": 78.23
+        },
+        {
+          "valid_time": "2026-08-25T00:00:00Z",
+          "init_time": "2026-08-24T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 76.14,
+          "observed_f": 77.0,
+          "error_f": -0.86,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 75.14,
+            "GFS": 82.87,
+            "NAM": 74.95,
+            "NBM": 78.53
+          },
+          "best_single_model_f": 75.14
+        },
+        {
+          "valid_time": "2026-08-25T00:00:00Z",
+          "init_time": "2026-08-24T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 77.67,
+          "observed_f": 77.0,
+          "error_f": 0.67,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 76.5,
+            "GFS": 81.42,
+            "NAM": 80.03,
+            "NBM": 78.53
+          },
+          "best_single_model_f": 76.5
+        },
+        {
+          "valid_time": "2026-08-25T06:00:00Z",
+          "init_time": "2026-08-25T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 67.24,
+          "observed_f": 67.0,
+          "error_f": 0.24,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 65.92,
+            "GFS": 64.16,
+            "NAM": 65.37,
+            "NBM": 69.35
+          },
+          "best_single_model_f": 65.92
+        },
+        {
+          "valid_time": "2026-08-25T06:00:00Z",
+          "init_time": "2026-08-24T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 67.05,
+          "observed_f": 67.0,
+          "error_f": 0.05,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 65.46,
+            "GFS": 65.13,
+            "NAM": 66.49,
+            "NBM": 70.43
+          },
+          "best_single_model_f": 65.46
+        },
+        {
+          "valid_time": "2026-08-25T06:00:00Z",
+          "init_time": "2026-08-24T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 69.2,
+          "observed_f": 67.0,
+          "error_f": 2.2,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.0,
+            "GFS": 67.45,
+            "NAM": 72.35,
+            "NBM": 71.15
+          },
+          "best_single_model_f": 67.0
+        },
+        {
+          "valid_time": "2026-08-25T12:00:00Z",
+          "init_time": "2026-08-25T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 64.64,
+          "observed_f": 66.0,
+          "error_f": -1.36,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 64.14,
+            "GFS": 61.1,
+            "NAM": 65.61,
+            "NBM": 65.03
+          },
+          "best_single_model_f": 64.14
+        },
+        {
+          "valid_time": "2026-08-25T12:00:00Z",
+          "init_time": "2026-08-25T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 65.36,
+          "observed_f": 66.0,
+          "error_f": -0.64,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 64.9,
+            "GFS": 61.84,
+            "NAM": 66.92,
+            "NBM": 65.75
+          },
+          "best_single_model_f": 64.9
+        },
+        {
+          "valid_time": "2026-08-25T12:00:00Z",
+          "init_time": "2026-08-24T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 64.7,
+          "observed_f": 66.0,
+          "error_f": -1.3,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 62.75,
+            "GFS": 62.04,
+            "NAM": 65.25,
+            "NBM": 67.01
+          },
+          "best_single_model_f": 62.75
+        },
+        {
+          "valid_time": "2026-08-25T18:00:00Z",
+          "init_time": "2026-08-25T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 82.58,
+          "observed_f": 79.0,
+          "error_f": 3.58,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.73,
+            "GFS": 88.62,
+            "NAM": 83.65,
+            "NBM": 82.13
+          },
+          "best_single_model_f": 82.73
+        },
+        {
+          "valid_time": "2026-08-25T18:00:00Z",
+          "init_time": "2026-08-25T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 82.57,
+          "observed_f": 79.0,
+          "error_f": 3.57,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 84.06,
+            "GFS": 86.07,
+            "NAM": 77.11,
+            "NBM": 81.41
+          },
+          "best_single_model_f": 84.06
+        },
+        {
+          "valid_time": "2026-08-25T18:00:00Z",
+          "init_time": "2026-08-24T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 82.81,
+          "observed_f": 79.0,
+          "error_f": 3.81,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 85.67,
+            "GFS": 85.05,
+            "NAM": 77.68,
+            "NBM": 80.51
+          },
+          "best_single_model_f": 85.67
+        }
+      ],
+      "mae_f": {
+        "6": 1.6,
+        "12": 1.28,
+        "24": 2.0
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-26",
+      "entries": [
+        {
+          "valid_time": "2026-08-26T00:00:00Z",
+          "init_time": "2026-08-25T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 84.81,
+          "observed_f": 83.0,
+          "error_f": 1.81,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 85.48,
+            "GFS": 89.51,
+            "NAM": 85.71,
+            "NBM": 83.75
+          },
+          "best_single_model_f": 85.48
+        },
+        {
+          "valid_time": "2026-08-26T00:00:00Z",
+          "init_time": "2026-08-25T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 86.56,
+          "observed_f": 83.0,
+          "error_f": 3.56,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 87.84,
+            "GFS": 92.04,
+            "NAM": 87.28,
+            "NBM": 83.75
+          },
+          "best_single_model_f": 87.84
+        },
+        {
+          "valid_time": "2026-08-26T00:00:00Z",
+          "init_time": "2026-08-25T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 84.47,
+          "observed_f": 83.0,
+          "error_f": 1.47,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 87.85,
+            "GFS": 84.82,
+            "NAM": 79.14,
+            "NBM": 81.59
+          },
+          "best_single_model_f": 87.85
+        },
+        {
+          "valid_time": "2026-08-26T06:00:00Z",
+          "init_time": "2026-08-26T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 71.83,
+          "observed_f": 73.0,
+          "error_f": -1.17,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.14,
+            "GFS": 68.53,
+            "NAM": 74.33,
+            "NBM": 73.31
+          },
+          "best_single_model_f": 70.14
+        },
+        {
+          "valid_time": "2026-08-26T06:00:00Z",
+          "init_time": "2026-08-25T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 72.85,
+          "observed_f": 73.0,
+          "error_f": -0.15,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 72.11,
+            "GFS": 67.85,
+            "NAM": 75.95,
+            "NBM": 73.31
+          },
+          "best_single_model_f": 72.11
+        },
+        {
+          "valid_time": "2026-08-26T06:00:00Z",
+          "init_time": "2026-08-25T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 73.49,
+          "observed_f": 73.0,
+          "error_f": 0.49,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.73,
+            "GFS": 67.29,
+            "NAM": 75.19,
+            "NBM": 72.77
+          },
+          "best_single_model_f": 73.73
+        },
+        {
+          "valid_time": "2026-08-26T12:00:00Z",
+          "init_time": "2026-08-26T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 64.03,
+          "observed_f": 64.0,
+          "error_f": 0.03,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 63.23,
+            "GFS": 63.67,
+            "NAM": 64.71,
+            "NBM": 64.85
+          },
+          "best_single_model_f": 63.23
+        },
+        {
+          "valid_time": "2026-08-26T12:00:00Z",
+          "init_time": "2026-08-26T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 64.38,
+          "observed_f": 64.0,
+          "error_f": 0.38,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 64.05,
+            "GFS": 63.56,
+            "NAM": 63.84,
+            "NBM": 65.21
+          },
+          "best_single_model_f": 64.05
+        },
+        {
+          "valid_time": "2026-08-26T12:00:00Z",
+          "init_time": "2026-08-25T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 65.88,
+          "observed_f": 64.0,
+          "error_f": 1.88,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 65.3,
+            "GFS": 60.54,
+            "NAM": 65.03,
+            "NBM": 66.83
+          },
+          "best_single_model_f": 65.3
+        },
+        {
+          "valid_time": "2026-08-26T18:00:00Z",
+          "init_time": "2026-08-26T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 82.67,
+          "observed_f": 84.0,
+          "error_f": -1.33,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.32,
+            "GFS": 89.46,
+            "NAM": 83.68,
+            "NBM": 82.85
+          },
+          "best_single_model_f": 82.32
+        },
+        {
+          "valid_time": "2026-08-26T18:00:00Z",
+          "init_time": "2026-08-26T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 81.8,
+          "observed_f": 84.0,
+          "error_f": -2.2,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.42,
+            "GFS": 89.5,
+            "NAM": 83.58,
+            "NBM": 81.95
+          },
+          "best_single_model_f": 81.42
+        },
+        {
+          "valid_time": "2026-08-26T18:00:00Z",
+          "init_time": "2026-08-25T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 83.33,
+          "observed_f": 84.0,
+          "error_f": -0.67,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.88,
+            "GFS": 87.32,
+            "NAM": 85.36,
+            "NBM": 82.13
+          },
+          "best_single_model_f": 83.88
+        }
+      ],
+      "mae_f": {
+        "6": 1.08,
+        "12": 1.57,
+        "24": 1.13
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-27",
+      "entries": [
+        {
+          "valid_time": "2026-08-27T00:00:00Z",
+          "init_time": "2026-08-26T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 81.39,
+          "observed_f": 81.0,
+          "error_f": 0.39,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.16,
+            "GFS": 85.8,
+            "NAM": 83.21,
+            "NBM": 81.23
+          },
+          "best_single_model_f": 81.16
+        },
+        {
+          "valid_time": "2026-08-27T00:00:00Z",
+          "init_time": "2026-08-26T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 81.27,
+          "observed_f": 81.0,
+          "error_f": 0.27,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.08,
+            "GFS": 87.27,
+            "NAM": 82.48,
+            "NBM": 81.23
+          },
+          "best_single_model_f": 81.08
+        },
+        {
+          "valid_time": "2026-08-27T00:00:00Z",
+          "init_time": "2026-08-26T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 81.5,
+          "observed_f": 81.0,
+          "error_f": 0.5,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.62,
+            "GFS": 84.83,
+            "NAM": 84.16,
+            "NBM": 80.69
+          },
+          "best_single_model_f": 81.62
+        },
+        {
+          "valid_time": "2026-08-27T06:00:00Z",
+          "init_time": "2026-08-27T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 67.34,
+          "observed_f": 65.0,
+          "error_f": 2.34,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.05,
+            "GFS": 63.58,
+            "NAM": 67.95,
+            "NBM": 67.55
+          },
+          "best_single_model_f": 67.05
+        },
+        {
+          "valid_time": "2026-08-27T06:00:00Z",
+          "init_time": "2026-08-26T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 67.2,
+          "observed_f": 65.0,
+          "error_f": 2.2,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 66.52,
+            "GFS": 68.1,
+            "NAM": 69.65,
+            "NBM": 67.73
+          },
+          "best_single_model_f": 66.52
+        },
+        {
+          "valid_time": "2026-08-27T06:00:00Z",
+          "init_time": "2026-08-26T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 66.87,
+          "observed_f": 65.0,
+          "error_f": 1.87,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 65.65,
+            "GFS": 68.09,
+            "NAM": 70.93,
+            "NBM": 67.37
+          },
+          "best_single_model_f": 65.65
+        },
+        {
+          "valid_time": "2026-08-27T12:00:00Z",
+          "init_time": "2026-08-27T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 60.36,
+          "observed_f": 60.0,
+          "error_f": 0.36,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 59.41,
+            "GFS": 58.41,
+            "NAM": 58.65,
+            "NBM": 61.97
+          },
+          "best_single_model_f": 59.41
+        },
+        {
+          "valid_time": "2026-08-27T12:00:00Z",
+          "init_time": "2026-08-27T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 61.21,
+          "observed_f": 60.0,
+          "error_f": 1.21,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 61.24,
+            "GFS": 58.57,
+            "NAM": 58.8,
+            "NBM": 61.97
+          },
+          "best_single_model_f": 61.24
+        },
+        {
+          "valid_time": "2026-08-27T12:00:00Z",
+          "init_time": "2026-08-26T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 60.52,
+          "observed_f": 60.0,
+          "error_f": 0.52,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 59.39,
+            "GFS": 62.45,
+            "NAM": 59.61,
+            "NBM": 62.15
+          },
+          "best_single_model_f": 59.39
+        },
+        {
+          "valid_time": "2026-08-27T18:00:00Z",
+          "init_time": "2026-08-27T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 81.76,
+          "observed_f": 81.0,
+          "error_f": 0.76,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.24,
+            "GFS": 82.13,
+            "NAM": 81.4,
+            "NBM": 82.49
+          },
+          "best_single_model_f": 81.24
+        },
+        {
+          "valid_time": "2026-08-27T18:00:00Z",
+          "init_time": "2026-08-27T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 80.98,
+          "observed_f": 81.0,
+          "error_f": -0.02,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 80.27,
+            "GFS": 81.15,
+            "NAM": 81.8,
+            "NBM": 82.13
+          },
+          "best_single_model_f": 80.27
+        },
+        {
+          "valid_time": "2026-08-27T18:00:00Z",
+          "init_time": "2026-08-26T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 82.63,
+          "observed_f": 81.0,
+          "error_f": 1.63,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.54,
+            "GFS": 88.83,
+            "NAM": 83.64,
+            "NBM": 82.49
+          },
+          "best_single_model_f": 82.54
+        }
+      ],
+      "mae_f": {
+        "6": 0.96,
+        "12": 0.93,
+        "24": 1.13
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-28",
+      "entries": [
+        {
+          "valid_time": "2026-08-28T00:00:00Z",
+          "init_time": "2026-08-27T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 81.7,
+          "observed_f": 80.0,
+          "error_f": 1.7,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.87,
+            "GFS": 80.67,
+            "NAM": 82.06,
+            "NBM": 81.41
+          },
+          "best_single_model_f": 81.87
+        },
+        {
+          "valid_time": "2026-08-28T00:00:00Z",
+          "init_time": "2026-08-27T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 82.05,
+          "observed_f": 80.0,
+          "error_f": 2.05,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 81.42,
+            "GFS": 81.18,
+            "NAM": 81.76,
+            "NBM": 83.39
+          },
+          "best_single_model_f": 81.42
+        },
+        {
+          "valid_time": "2026-08-28T00:00:00Z",
+          "init_time": "2026-08-27T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 82.45,
+          "observed_f": 80.0,
+          "error_f": 2.45,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.06,
+            "GFS": 87.17,
+            "NAM": 81.45,
+            "NBM": 81.95
+          },
+          "best_single_model_f": 83.06
+        },
+        {
+          "valid_time": "2026-08-28T06:00:00Z",
+          "init_time": "2026-08-28T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 67.77,
+          "observed_f": 66.0,
+          "error_f": 1.77,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.34,
+            "GFS": 63.55,
+            "NAM": 70.03,
+            "NBM": 67.73
+          },
+          "best_single_model_f": 67.34
+        },
+        {
+          "valid_time": "2026-08-28T06:00:00Z",
+          "init_time": "2026-08-27T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 67.32,
+          "observed_f": 66.0,
+          "error_f": 1.32,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 66.93,
+            "GFS": 65.76,
+            "NAM": 69.53,
+            "NBM": 67.37
+          },
+          "best_single_model_f": 66.93
+        },
+        {
+          "valid_time": "2026-08-28T06:00:00Z",
+          "init_time": "2026-08-27T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 67.88,
+          "observed_f": 66.0,
+          "error_f": 1.88,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 67.33,
+            "GFS": 65.76,
+            "NAM": 69.04,
+            "NBM": 68.27
+          },
+          "best_single_model_f": 67.33
+        },
+        {
+          "valid_time": "2026-08-28T12:00:00Z",
+          "init_time": "2026-08-28T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 62.78,
+          "observed_f": 69.0,
+          "error_f": -6.22,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 61.75,
+            "GFS": 61.57,
+            "NAM": 61.82,
+            "NBM": 64.31
+          },
+          "best_single_model_f": 61.75
+        },
+        {
+          "valid_time": "2026-08-28T12:00:00Z",
+          "init_time": "2026-08-28T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 63.76,
+          "observed_f": 69.0,
+          "error_f": -5.24,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 63.59,
+            "GFS": 60.79,
+            "NAM": 64.21,
+            "NBM": 63.95
+          },
+          "best_single_model_f": 63.59
+        },
+        {
+          "valid_time": "2026-08-28T12:00:00Z",
+          "init_time": "2026-08-27T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 64.2,
+          "observed_f": 69.0,
+          "error_f": -4.8,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 64.62,
+            "GFS": 62.14,
+            "NAM": 63.14,
+            "NBM": 63.95
+          },
+          "best_single_model_f": 64.62
+        },
+        {
+          "valid_time": "2026-08-28T18:00:00Z",
+          "init_time": "2026-08-28T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 83.07,
+          "observed_f": 82.0,
+          "error_f": 1.07,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 84.24,
+            "GFS": 86.79,
+            "NAM": 83.14,
+            "NBM": 81.59
+          },
+          "best_single_model_f": 84.24
+        },
+        {
+          "valid_time": "2026-08-28T18:00:00Z",
+          "init_time": "2026-08-28T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 83.43,
+          "observed_f": 82.0,
+          "error_f": 1.43,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.4,
+            "GFS": 86.59,
+            "NAM": 83.71,
+            "NBM": 83.39
+          },
+          "best_single_model_f": 83.4
+        },
+        {
+          "valid_time": "2026-08-28T18:00:00Z",
+          "init_time": "2026-08-27T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 84.2,
+          "observed_f": 82.0,
+          "error_f": 2.2,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 84.89,
+            "GFS": 89.54,
+            "NAM": 82.59,
+            "NBM": 83.75
+          },
+          "best_single_model_f": 84.89
+        }
+      ],
+      "mae_f": {
+        "6": 2.69,
+        "12": 2.51,
+        "24": 2.83
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-29",
+      "entries": [
+        {
+          "valid_time": "2026-08-29T00:00:00Z",
+          "init_time": "2026-08-28T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 83.44,
+          "observed_f": 83.0,
+          "error_f": 0.44,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.66,
+            "GFS": 87.85,
+            "NAM": 83.99,
+            "NBM": 83.03
+          },
+          "best_single_model_f": 83.66
+        },
+        {
+          "valid_time": "2026-08-29T00:00:00Z",
+          "init_time": "2026-08-28T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 83.52,
+          "observed_f": 83.0,
+          "error_f": 0.52,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 83.94,
+            "GFS": 89.47,
+            "NAM": 83.57,
+            "NBM": 82.67
+          },
+          "best_single_model_f": 83.94
+        },
+        {
+          "valid_time": "2026-08-29T00:00:00Z",
+          "init_time": "2026-08-28T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 83.41,
+          "observed_f": 83.0,
+          "error_f": 0.41,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 82.75,
+            "GFS": 88.5,
+            "NAM": 82.42,
+            "NBM": 84.47
+          },
+          "best_single_model_f": 82.75
+        },
+        {
+          "valid_time": "2026-08-29T06:00:00Z",
+          "init_time": "2026-08-29T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 73.7,
+          "observed_f": 75.0,
+          "error_f": -1.3,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 71.64,
+            "GFS": 72.03,
+            "NAM": 71.17,
+            "NBM": 76.91
+          },
+          "best_single_model_f": 71.64
+        },
+        {
+          "valid_time": "2026-08-29T06:00:00Z",
+          "init_time": "2026-08-28T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 72.93,
+          "observed_f": 75.0,
+          "error_f": -2.07,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 71.53,
+            "GFS": 76.61,
+            "NAM": 71.57,
+            "NBM": 76.19
+          },
+          "best_single_model_f": 71.53
+        },
+        {
+          "valid_time": "2026-08-29T06:00:00Z",
+          "init_time": "2026-08-28T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 72.83,
+          "observed_f": 75.0,
+          "error_f": -2.17,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.49,
+            "GFS": 76.62,
+            "NAM": 71.83,
+            "NBM": 76.01
+          },
+          "best_single_model_f": 70.49
+        },
+        {
+          "valid_time": "2026-08-29T12:00:00Z",
+          "init_time": "2026-08-29T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 70.34,
+          "observed_f": 71.0,
+          "error_f": -0.66,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 68.62,
+            "GFS": 71.73,
+            "NAM": 69.24,
+            "NBM": 72.77
+          },
+          "best_single_model_f": 68.62
+        },
+        {
+          "valid_time": "2026-08-29T12:00:00Z",
+          "init_time": "2026-08-29T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 70.08,
+          "observed_f": 71.0,
+          "error_f": -0.92,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 69.48,
+            "GFS": 64.51,
+            "NAM": 67.79,
+            "NBM": 72.05
+          },
+          "best_single_model_f": 69.48
+        },
+        {
+          "valid_time": "2026-08-29T12:00:00Z",
+          "init_time": "2026-08-28T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 70.71,
+          "observed_f": 71.0,
+          "error_f": -0.29,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 69.98,
+            "GFS": 63.97,
+            "NAM": 69.02,
+            "NBM": 72.05
+          },
+          "best_single_model_f": 69.98
+        },
+        {
+          "valid_time": "2026-08-29T18:00:00Z",
+          "init_time": "2026-08-29T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 89.44,
+          "observed_f": 83.0,
+          "error_f": 6.44,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 90.01,
+            "GFS": 98.86,
+            "NAM": 89.22,
+            "NBM": 88.79
+          },
+          "best_single_model_f": 90.01
+        },
+        {
+          "valid_time": "2026-08-29T18:00:00Z",
+          "init_time": "2026-08-29T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 87.47,
+          "observed_f": 83.0,
+          "error_f": 4.47,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 86.6,
+            "GFS": 98.54,
+            "NAM": 88.76,
+            "NBM": 88.79
+          },
+          "best_single_model_f": 86.6
+        },
+        {
+          "valid_time": "2026-08-29T18:00:00Z",
+          "init_time": "2026-08-28T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 89.14,
+          "observed_f": 83.0,
+          "error_f": 6.14,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 90.48,
+            "GFS": 98.25,
+            "NAM": 85.95,
+            "NBM": 88.25
+          },
+          "best_single_model_f": 90.48
+        }
+      ],
+      "mae_f": {
+        "6": 2.21,
+        "12": 1.99,
+        "24": 2.25
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-30",
+      "entries": [
+        {
+          "valid_time": "2026-08-30T00:00:00Z",
+          "init_time": "2026-08-29T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 91.28,
+          "observed_f": 89.0,
+          "error_f": 2.28,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.85,
+            "GFS": 102.3,
+            "NAM": 92.52,
+            "NBM": 92.75
+          },
+          "best_single_model_f": 89.85
+        },
+        {
+          "valid_time": "2026-08-30T00:00:00Z",
+          "init_time": "2026-08-29T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 89.29,
+          "observed_f": 89.0,
+          "error_f": 0.29,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 87.74,
+            "GFS": 103.46,
+            "NAM": 89.81,
+            "NBM": 92.21
+          },
+          "best_single_model_f": 87.74
+        },
+        {
+          "valid_time": "2026-08-30T00:00:00Z",
+          "init_time": "2026-08-29T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 90.71,
+          "observed_f": 89.0,
+          "error_f": 1.71,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.62,
+            "GFS": 100.85,
+            "NAM": 90.83,
+            "NBM": 92.03
+          },
+          "best_single_model_f": 89.62
+        },
+        {
+          "valid_time": "2026-08-30T06:00:00Z",
+          "init_time": "2026-08-30T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 79.98,
+          "observed_f": 78.0,
+          "error_f": 1.98,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 76.83,
+            "GFS": 87.0,
+            "NAM": 82.14,
+            "NBM": 83.39
+          },
+          "best_single_model_f": 76.83
+        },
+        {
+          "valid_time": "2026-08-30T06:00:00Z",
+          "init_time": "2026-08-29T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 79.02,
+          "observed_f": 78.0,
+          "error_f": 1.02,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 76.37,
+            "GFS": 73.5,
+            "NAM": 80.18,
+            "NBM": 83.93
+          },
+          "best_single_model_f": 76.37
+        },
+        {
+          "valid_time": "2026-08-30T06:00:00Z",
+          "init_time": "2026-08-29T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 79.12,
+          "observed_f": 78.0,
+          "error_f": 1.12,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 75.36,
+            "GFS": 76.02,
+            "NAM": 80.15,
+            "NBM": 83.57
+          },
+          "best_single_model_f": 75.36
+        },
+        {
+          "valid_time": "2026-08-30T12:00:00Z",
+          "init_time": "2026-08-30T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 76.54,
+          "observed_f": 76.0,
+          "error_f": 0.54,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 75.69,
+            "GFS": 73.59,
+            "NAM": 73.57,
+            "NBM": 78.35
+          },
+          "best_single_model_f": 75.69
+        },
+        {
+          "valid_time": "2026-08-30T12:00:00Z",
+          "init_time": "2026-08-30T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 75.15,
+          "observed_f": 76.0,
+          "error_f": -0.85,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.33,
+            "GFS": 78.17,
+            "NAM": 77.02,
+            "NBM": 78.17
+          },
+          "best_single_model_f": 73.33
+        },
+        {
+          "valid_time": "2026-08-30T12:00:00Z",
+          "init_time": "2026-08-29T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 76.15,
+          "observed_f": 76.0,
+          "error_f": 0.15,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.79,
+            "GFS": 79.21,
+            "NAM": 75.52,
+            "NBM": 79.25
+          },
+          "best_single_model_f": 73.79
+        },
+        {
+          "valid_time": "2026-08-30T18:00:00Z",
+          "init_time": "2026-08-30T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 91.4,
+          "observed_f": 89.0,
+          "error_f": 2.4,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 90.66,
+            "GFS": 100.85,
+            "NAM": 94.03,
+            "NBM": 91.67
+          },
+          "best_single_model_f": 90.66
+        },
+        {
+          "valid_time": "2026-08-30T18:00:00Z",
+          "init_time": "2026-08-30T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 92.24,
+          "observed_f": 89.0,
+          "error_f": 3.24,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 93.14,
+            "GFS": 101.23,
+            "NAM": 88.52,
+            "NBM": 91.67
+          },
+          "best_single_model_f": 93.14
+        },
+        {
+          "valid_time": "2026-08-30T18:00:00Z",
+          "init_time": "2026-08-29T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 91.4,
+          "observed_f": 89.0,
+          "error_f": 2.4,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.62,
+            "GFS": 102.13,
+            "NAM": 93.44,
+            "NBM": 93.11
+          },
+          "best_single_model_f": 89.62
+        }
+      ],
+      "mae_f": {
+        "6": 1.8,
+        "12": 1.35,
+        "24": 1.34
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-08-31",
+      "entries": [
+        {
+          "valid_time": "2026-08-31T00:00:00Z",
+          "init_time": "2026-08-30T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 92.62,
+          "observed_f": 92.0,
+          "error_f": 0.62,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 91.3,
+            "GFS": 98.77,
+            "NAM": 95.07,
+            "NBM": 93.65
+          },
+          "best_single_model_f": 91.3
+        },
+        {
+          "valid_time": "2026-08-31T00:00:00Z",
+          "init_time": "2026-08-30T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 92.86,
+          "observed_f": 92.0,
+          "error_f": 0.86,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 92.7,
+            "GFS": 101.07,
+            "NAM": 93.59,
+            "NBM": 92.93
+          },
+          "best_single_model_f": 92.7
+        },
+        {
+          "valid_time": "2026-08-31T00:00:00Z",
+          "init_time": "2026-08-30T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 92.18,
+          "observed_f": 92.0,
+          "error_f": 0.18,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.89,
+            "GFS": 99.31,
+            "NAM": 94.19,
+            "NBM": 94.55
+          },
+          "best_single_model_f": 89.89
+        },
+        {
+          "valid_time": "2026-08-31T06:00:00Z",
+          "init_time": "2026-08-31T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 79.09,
+          "observed_f": 76.0,
+          "error_f": 3.09,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.85,
+            "GFS": 78.43,
+            "NAM": 79.64,
+            "NBM": 80.51
+          },
+          "best_single_model_f": 77.85
+        },
+        {
+          "valid_time": "2026-08-31T06:00:00Z",
+          "init_time": "2026-08-30T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 79.19,
+          "observed_f": 76.0,
+          "error_f": 3.19,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.71,
+            "GFS": 74.8,
+            "NAM": 79.78,
+            "NBM": 81.95
+          },
+          "best_single_model_f": 77.71
+        },
+        {
+          "valid_time": "2026-08-31T06:00:00Z",
+          "init_time": "2026-08-30T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 80.8,
+          "observed_f": 76.0,
+          "error_f": 4.8,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.74,
+            "GFS": 75.87,
+            "NAM": 80.76,
+            "NBM": 83.39
+          },
+          "best_single_model_f": 78.74
+        },
+        {
+          "valid_time": "2026-08-31T12:00:00Z",
+          "init_time": "2026-08-31T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 74.3,
+          "observed_f": 75.0,
+          "error_f": -0.7,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.66,
+            "GFS": 74.59,
+            "NAM": 74.24,
+            "NBM": 75.11
+          },
+          "best_single_model_f": 73.66
+        },
+        {
+          "valid_time": "2026-08-31T12:00:00Z",
+          "init_time": "2026-08-31T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 73.81,
+          "observed_f": 75.0,
+          "error_f": -1.19,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 72.78,
+            "GFS": 73.15,
+            "NAM": 73.42,
+            "NBM": 76.01
+          },
+          "best_single_model_f": 72.78
+        },
+        {
+          "valid_time": "2026-08-31T12:00:00Z",
+          "init_time": "2026-08-30T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 74.82,
+          "observed_f": 75.0,
+          "error_f": -0.18,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 73.03,
+            "GFS": 71.85,
+            "NAM": 74.72,
+            "NBM": 77.09
+          },
+          "best_single_model_f": 73.03
+        },
+        {
+          "valid_time": "2026-08-31T18:00:00Z",
+          "init_time": "2026-08-31T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 88.39,
+          "observed_f": 85.0,
+          "error_f": 3.39,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 87.64,
+            "GFS": 94.37,
+            "NAM": 87.66,
+            "NBM": 89.51
+          },
+          "best_single_model_f": 87.64
+        },
+        {
+          "valid_time": "2026-08-31T18:00:00Z",
+          "init_time": "2026-08-31T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 89.36,
+          "observed_f": 85.0,
+          "error_f": 4.36,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.34,
+            "GFS": 95.12,
+            "NAM": 87.91,
+            "NBM": 89.87
+          },
+          "best_single_model_f": 89.34
+        },
+        {
+          "valid_time": "2026-08-31T18:00:00Z",
+          "init_time": "2026-08-30T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 90.15,
+          "observed_f": 85.0,
+          "error_f": 5.15,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.19,
+            "GFS": 97.17,
+            "NAM": 94.63,
+            "NBM": 90.23
+          },
+          "best_single_model_f": 89.19
+        }
+      ],
+      "mae_f": {
+        "6": 1.95,
+        "12": 2.4,
+        "24": 2.58
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-09-01",
+      "entries": [
+        {
+          "valid_time": "2026-09-01T00:00:00Z",
+          "init_time": "2026-08-31T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 89.88,
+          "observed_f": 86.0,
+          "error_f": 3.88,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 90.83,
+            "GFS": 91.28,
+            "NAM": 92.41,
+            "NBM": 88.07
+          },
+          "best_single_model_f": 90.83
+        },
+        {
+          "valid_time": "2026-09-01T00:00:00Z",
+          "init_time": "2026-08-31T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 91.25,
+          "observed_f": 86.0,
+          "error_f": 5.25,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 91.92,
+            "GFS": 95.65,
+            "NAM": 91.34,
+            "NBM": 89.87
+          },
+          "best_single_model_f": 91.92
+        },
+        {
+          "valid_time": "2026-09-01T00:00:00Z",
+          "init_time": "2026-08-31T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 90.16,
+          "observed_f": 86.0,
+          "error_f": 4.16,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 91.83,
+            "GFS": 100.0,
+            "NAM": 85.1,
+            "NBM": 89.33
+          },
+          "best_single_model_f": 91.83
+        },
+        {
+          "valid_time": "2026-09-01T06:00:00Z",
+          "init_time": "2026-09-01T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 76.52,
+          "observed_f": 74.0,
+          "error_f": 2.52,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 75.95,
+            "GFS": 75.6,
+            "NAM": 79.22,
+            "NBM": 76.55
+          },
+          "best_single_model_f": 75.95
+        },
+        {
+          "valid_time": "2026-09-01T06:00:00Z",
+          "init_time": "2026-08-31T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 77.25,
+          "observed_f": 74.0,
+          "error_f": 3.25,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 76.95,
+            "GFS": 75.61,
+            "NAM": 80.57,
+            "NBM": 76.73
+          },
+          "best_single_model_f": 76.95
+        },
+        {
+          "valid_time": "2026-09-01T06:00:00Z",
+          "init_time": "2026-08-31T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 78.87,
+          "observed_f": 74.0,
+          "error_f": 4.87,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 79.1,
+            "GFS": 72.41,
+            "NAM": 79.84,
+            "NBM": 78.35
+          },
+          "best_single_model_f": 79.1
+        },
+        {
+          "valid_time": "2026-09-01T12:00:00Z",
+          "init_time": "2026-09-01T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 72.3,
+          "observed_f": 75.0,
+          "error_f": -2.7,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 72.06,
+            "GFS": 69.33,
+            "NAM": 72.33,
+            "NBM": 72.59
+          },
+          "best_single_model_f": 72.06
+        },
+        {
+          "valid_time": "2026-09-01T12:00:00Z",
+          "init_time": "2026-09-01T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 71.65,
+          "observed_f": 75.0,
+          "error_f": -3.35,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 70.76,
+            "GFS": 69.65,
+            "NAM": 73.58,
+            "NBM": 72.77
+          },
+          "best_single_model_f": 70.76
+        },
+        {
+          "valid_time": "2026-09-01T12:00:00Z",
+          "init_time": "2026-08-31T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 74.6,
+          "observed_f": 75.0,
+          "error_f": -0.4,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 76.33,
+            "GFS": 69.53,
+            "NAM": 72.59,
+            "NBM": 72.95
+          },
+          "best_single_model_f": 76.33
+        },
+        {
+          "valid_time": "2026-09-01T18:00:00Z",
+          "init_time": "2026-09-01T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 91.23,
+          "observed_f": 90.0,
+          "error_f": 1.23,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 91.97,
+            "GFS": 99.73,
+            "NAM": 92.29,
+            "NBM": 90.05
+          },
+          "best_single_model_f": 91.97
+        },
+        {
+          "valid_time": "2026-09-01T18:00:00Z",
+          "init_time": "2026-09-01T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 91.63,
+          "observed_f": 90.0,
+          "error_f": 1.63,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 91.82,
+            "GFS": 100.38,
+            "NAM": 93.66,
+            "NBM": 90.59
+          },
+          "best_single_model_f": 91.82
+        },
+        {
+          "valid_time": "2026-09-01T18:00:00Z",
+          "init_time": "2026-08-31T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 92.53,
+          "observed_f": 90.0,
+          "error_f": 2.53,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 93.2,
+            "GFS": 101.2,
+            "NAM": 95.45,
+            "NBM": 90.95
+          },
+          "best_single_model_f": 93.2
+        }
+      ],
+      "mae_f": {
+        "6": 2.58,
+        "12": 3.37,
+        "24": 2.99
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-09-02",
+      "entries": [
+        {
+          "valid_time": "2026-09-02T00:00:00Z",
+          "init_time": "2026-09-01T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 92.8,
+          "observed_f": 95.0,
+          "error_f": -2.2,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 93.05,
+            "GFS": 100.85,
+            "NAM": 95.39,
+            "NBM": 91.85
+          },
+          "best_single_model_f": 93.05
+        },
+        {
+          "valid_time": "2026-09-02T00:00:00Z",
+          "init_time": "2026-09-01T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 92.29,
+          "observed_f": 95.0,
+          "error_f": -2.71,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 92.63,
+            "GFS": 102.9,
+            "NAM": 94.3,
+            "NBM": 90.95
+          },
+          "best_single_model_f": 92.63
+        },
+        {
+          "valid_time": "2026-09-02T00:00:00Z",
+          "init_time": "2026-09-01T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 92.13,
+          "observed_f": 95.0,
+          "error_f": -2.87,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 91.68,
+            "GFS": 101.93,
+            "NAM": 94.73,
+            "NBM": 92.03
+          },
+          "best_single_model_f": 91.68
+        },
+        {
+          "valid_time": "2026-09-02T06:00:00Z",
+          "init_time": "2026-09-02T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 80.04,
+          "observed_f": 78.0,
+          "error_f": 2.04,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.04,
+            "GFS": 89.39,
+            "NAM": 80.96,
+            "NBM": 82.31
+          },
+          "best_single_model_f": 78.04
+        },
+        {
+          "valid_time": "2026-09-02T06:00:00Z",
+          "init_time": "2026-09-01T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 80.47,
+          "observed_f": 78.0,
+          "error_f": 2.47,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 79.13,
+            "GFS": 91.02,
+            "NAM": 82.42,
+            "NBM": 82.49
+          },
+          "best_single_model_f": 79.13
+        },
+        {
+          "valid_time": "2026-09-02T06:00:00Z",
+          "init_time": "2026-09-01T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 79.52,
+          "observed_f": 78.0,
+          "error_f": 1.52,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 77.12,
+            "GFS": 92.72,
+            "NAM": 81.82,
+            "NBM": 81.95
+          },
+          "best_single_model_f": 77.12
+        },
+        {
+          "valid_time": "2026-09-02T12:00:00Z",
+          "init_time": "2026-09-02T06:00:00Z",
+          "lead_h": 6,
+          "blend_f": 73.71,
+          "observed_f": 71.0,
+          "error_f": 2.71,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 71.94,
+            "GFS": 74.57,
+            "NAM": 70.48,
+            "NBM": 76.73
+          },
+          "best_single_model_f": 71.94
+        },
+        {
+          "valid_time": "2026-09-02T12:00:00Z",
+          "init_time": "2026-09-02T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 74.92,
+          "observed_f": 71.0,
+          "error_f": 3.92,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 74.36,
+            "GFS": 75.28,
+            "NAM": 72.29,
+            "NBM": 76.91
+          },
+          "best_single_model_f": 74.36
+        },
+        {
+          "valid_time": "2026-09-02T12:00:00Z",
+          "init_time": "2026-09-01T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 73.06,
+          "observed_f": 71.0,
+          "error_f": 2.06,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 71.32,
+            "GFS": 77.46,
+            "NAM": 72.15,
+            "NBM": 75.47
+          },
+          "best_single_model_f": 71.32
+        },
+        {
+          "valid_time": "2026-09-02T18:00:00Z",
+          "init_time": "2026-09-02T12:00:00Z",
+          "lead_h": 6,
+          "blend_f": 93.16,
+          "observed_f": 94.0,
+          "error_f": -0.84,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 95.16,
+            "GFS": 101.41,
+            "NAM": 92.75,
+            "NBM": 90.77
+          },
+          "best_single_model_f": 95.16
+        },
+        {
+          "valid_time": "2026-09-02T18:00:00Z",
+          "init_time": "2026-09-02T06:00:00Z",
+          "lead_h": 12,
+          "blend_f": 93.39,
+          "observed_f": 94.0,
+          "error_f": -0.61,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 93.88,
+            "GFS": 101.94,
+            "NAM": 95.65,
+            "NBM": 91.67
+          },
+          "best_single_model_f": 93.88
+        },
+        {
+          "valid_time": "2026-09-02T18:00:00Z",
+          "init_time": "2026-09-01T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 91.33,
+          "observed_f": 94.0,
+          "error_f": -2.67,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 89.52,
+            "GFS": 91.13,
+            "NAM": 97.53,
+            "NBM": 92.03
+          },
+          "best_single_model_f": 89.52
+        }
+      ],
+      "mae_f": {
+        "6": 1.95,
+        "12": 2.43,
+        "24": 2.28
+      },
+      "n_by_lead": {
+        "6": 4,
+        "12": 4,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-09-03",
+      "entries": [
+        {
+          "valid_time": "2026-09-03T00:00:00Z",
+          "init_time": "2026-09-02T18:00:00Z",
+          "lead_h": 6,
+          "blend_f": 93.75,
+          "observed_f": 96.0,
+          "error_f": -2.25,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 93.04,
+            "GFS": 97.21,
+            "NAM": 96.28,
+            "NBM": 94.01
+          },
+          "best_single_model_f": 93.04
+        },
+        {
+          "valid_time": "2026-09-03T00:00:00Z",
+          "init_time": "2026-09-02T12:00:00Z",
+          "lead_h": 12,
+          "blend_f": 93.47,
+          "observed_f": 96.0,
+          "error_f": -2.53,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 93.84,
+            "GFS": 100.52,
+            "NAM": 95.07,
+            "NBM": 92.21
+          },
+          "best_single_model_f": 93.84
+        },
+        {
+          "valid_time": "2026-09-03T00:00:00Z",
+          "init_time": "2026-09-02T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 92.07,
+          "observed_f": 96.0,
+          "error_f": -3.93,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 91.58,
+            "GFS": 95.48,
+            "NAM": 96.14,
+            "NBM": 91.67
+          },
+          "best_single_model_f": 91.58
+        },
+        {
+          "valid_time": "2026-09-03T06:00:00Z",
+          "init_time": "2026-09-03T00:00:00Z",
+          "lead_h": 6,
+          "blend_f": 81.27,
+          "observed_f": 83.0,
+          "error_f": -1.73,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.54,
+            "GFS": 84.39,
+            "NAM": 82.12,
+            "NBM": 84.47
+          },
+          "best_single_model_f": 78.54
+        },
+        {
+          "valid_time": "2026-09-03T06:00:00Z",
+          "init_time": "2026-09-02T18:00:00Z",
+          "lead_h": 12,
+          "blend_f": 81.01,
+          "observed_f": 83.0,
+          "error_f": -1.99,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.84,
+            "GFS": 78.7,
+            "NAM": 83.15,
+            "NBM": 84.65
+          },
+          "best_single_model_f": 78.84
+        },
+        {
+          "valid_time": "2026-09-03T06:00:00Z",
+          "init_time": "2026-09-02T06:00:00Z",
+          "lead_h": 24,
+          "blend_f": 80.36,
+          "observed_f": 83.0,
+          "error_f": -2.64,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 78.02,
+            "GFS": 82.3,
+            "NAM": 82.06,
+            "NBM": 82.85
+          },
+          "best_single_model_f": 78.02
+        },
+        {
+          "valid_time": "2026-09-03T12:00:00Z",
+          "init_time": "2026-09-03T00:00:00Z",
+          "lead_h": 12,
+          "blend_f": 78.35,
+          "observed_f": 78.0,
+          "error_f": 0.35,
+          "obs_offset_min": 7,
+          "members": {
+            "HRRR": 78.02,
+            "GFS": 81.56,
+            "NAM": 76.51,
+            "NBM": 79.61
+          },
+          "best_single_model_f": 78.02
+        },
+        {
+          "valid_time": "2026-09-03T12:00:00Z",
+          "init_time": "2026-09-02T12:00:00Z",
+          "lead_h": 24,
+          "blend_f": 76.35,
+          "observed_f": 78.0,
+          "error_f": -1.65,
+          "obs_offset_min": 7,
+          "members": {
+            "HRRR": 75.37,
+            "GFS": 87.05,
+            "NAM": 76.84,
+            "NBM": 77.45
+          },
+          "best_single_model_f": 75.37
+        },
+        {
+          "valid_time": "2026-09-03T18:00:00Z",
+          "init_time": "2026-09-02T18:00:00Z",
+          "lead_h": 24,
+          "blend_f": 92.1,
+          "observed_f": 90.0,
+          "error_f": 2.1,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 91.97,
+            "GFS": 100.05,
+            "NAM": 96.62,
+            "NBM": 91.13
+          },
+          "best_single_model_f": 91.97
+        }
+      ],
+      "mae_f": {
+        "6": 1.99,
+        "12": 1.62,
+        "24": 2.58
+      },
+      "n_by_lead": {
+        "6": 2,
+        "12": 3,
+        "24": 4
+      }
+    },
+    {
+      "date": "2026-09-04",
+      "entries": [
+        {
+          "valid_time": "2026-09-04T00:00:00Z",
+          "init_time": "2026-09-03T00:00:00Z",
+          "lead_h": 24,
+          "blend_f": 93.49,
+          "observed_f": 93.0,
+          "error_f": 0.49,
+          "obs_offset_min": -8,
+          "members": {
+            "HRRR": 92.93,
+            "GFS": 103.19,
+            "NAM": 93.49,
+            "NBM": 94.19
+          },
+          "best_single_model_f": 92.93
+        }
+      ],
+      "mae_f": {
+        "24": 0.49
+      },
+      "n_by_lead": {
+        "24": 1
+      }
+    }
+  ]
+}

@@ -1090,3 +1090,191 @@ html[data-stale="true"] .cycle-run-label { color: var(--orange-700) }
 /* The pill and the reason line sit under the run label inside the headline
    stat card. Spacing only — the rules above own everything visible. */
 #headline-card .cycle-stale { margin-top: var(--s-2); }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE BACK-ARROW HISTORY REGION — F6, design-target §1.6
+   Appended for F6. Nothing above this line was edited.
+
+   Two visibility mechanisms, neither of them a JS display write:
+
+     * html[data-history="ready"] reveals the stepper and its note. The
+       attribute is SET when the history payload rendered and is ABSENT
+       otherwise — it is never written with a negated value, because a
+       selector matching a positive value does not match a negated one.
+     * :empty hides the omitted-day block and the history-503 block. They
+       carry children only when there is something to say, which is the same
+       trick .strip-note already uses above.
+
+   .num / .mono-value are NOT restated here: they live in tokens.css and are
+   applied as classes. Every numeric cell below sets only what it changes —
+   size, colour, alignment — on top of them. No model colour token is
+   declared here, and no palette forks on the theme attribute; this file
+   styles layout, tokens.css styles palettes. */
+
+.history-section {
+  margin-top: var(--s-8);
+  padding-top: var(--s-6);
+  border-top: 1px solid var(--border);
+}
+.history-heading {
+  margin: 0 0 var(--s-4);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* The stepper and its note appear together or not at all. */
+.history-controls { display: none; }
+html[data-history="ready"] .history-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
+}
+
+/* ── The day stepper — the sunken-track / raised-pill idiom ────────────────
+   Same shape as .segmented above: a sunken track holding a raised current
+   value. The date is the pill; the two arrows are the track. */
+
+.day-stepper {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+.day-stepper button {
+  height: 28px;
+  padding: 0 var(--s-3);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.day-stepper button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+/* At either end of the window: dimmed, NOT removed. A control that vanishes
+   is a control the viewer thinks they broke. */
+.day-stepper button[aria-disabled="true"] {
+  color: var(--text-subtle);
+  cursor: not-allowed;
+}
+.day-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 var(--s-3);
+  border-radius: 6px;
+  background: var(--bg-elev);
+  color: var(--text);
+  box-shadow: var(--shadow-1);
+  font-size: 12.5px;
+}
+
+.history-leads-note {
+  margin: 0;
+  max-width: 88ch;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* ── The per-day card ──────────────────────────────────────────────────────
+   The header carries the date and that day's MEAN ABSOLUTE ERROR per lead,
+   with the entry count beside each one: a one-sample daily MAE must not read
+   like a four-sample one, and an unsigned aggregate must not read as a bias,
+   which is why the label is spelled out rather than abbreviated to "MAE". */
+
+.history-day-card .card-header { flex-wrap: wrap; }
+.history-day-card .card-body { padding: 0; }
+
+.history-mae {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-left: auto;
+}
+.history-mae-label {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+.history-mae-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.history-mae-value {
+  font-size: 12.5px;
+  color: var(--text);
+}
+.history-mae-n {
+  font-size: 11.5px;
+  color: var(--text-subtle);
+}
+
+/* Wide table, narrow viewport: the table scrolls inside its own box rather
+   than pushing the page sideways. */
+.history-table-wrap { overflow-x: auto; }
+
+.history-time {
+  text-align: left;
+  color: var(--text-muted);
+}
+.history-value {
+  font-size: 13px;
+  color: var(--text);
+}
+.history-secondary { color: var(--text-muted); }
+.history-offset    { color: var(--text-subtle); }
+
+/* ── The signed error and its word ─────────────────────────────────────────
+   The word is never dropped, never abbreviated to an arrow and never
+   truncated at a narrow width. Tone stays neutral in ALL THREE cases: a warm
+   bias is a finding, not an error state, so it takes neither --danger nor
+   --success. */
+
+.history-error-cell { white-space: nowrap; }
+.history-error-value {
+  font-size: 13px;
+  color: var(--text);
+}
+.history-error-word {
+  margin-left: var(--s-2);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* The join note, once, under the table. */
+.history-offset-note {
+  display: block;
+  padding: var(--s-3) 16px var(--s-4);
+}
+
+/* ── Omitted dates and the history 503 ─────────────────────────────────────
+   Both speak in the empty-state voice already re-authored above: centre,
+   hint the next action, never apologize. Both are hidden while empty, so a
+   window in which every date matched shows nothing at all rather than an
+   explanatory box about an absence that is not there. */
+
+.history-omitted:empty,
+.history-unavailable:empty { display: none; }
+
+.history-omitted .card,
+.history-unavailable .card { margin: var(--s-6) auto; }
+
+.history-omitted-item { margin-top: var(--s-4); }
+.history-omitted-item .empty-body { margin-bottom: var(--s-1); }

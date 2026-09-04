@@ -443,7 +443,14 @@ def test_the_default_output_is_the_gitignored_served_payload() -> None:
 
 
 def test_refresh_supersedes_the_live_harness_and_adds_no_third_cli() -> None:
-    """The docstring is the contract with the next reader; the module list is the proof."""
+    """The docstring is the contract with the next reader; the module list is the proof.
+
+    The inventory is an allowlist, not a ceiling: it exists so a CLI surface cannot appear
+    under `forecast/` without someone deciding it should. `history.py` was added by F6 with
+    that decision made in the open — it builds `data/forecast_history.json` from the two
+    parquets and is named in the F6 plan's Task 2.4 and handoff checklist. Registering it
+    here keeps the guard at full strength: a *fifth* entry point still fails this test.
+    """
     assert "supersede" in (refresh.__doc__ or "").lower()
     assert "forecast/live.py" in (refresh.__doc__ or "")
 
@@ -452,6 +459,8 @@ def test_refresh_supersedes_the_live_harness_and_adds_no_third_cli() -> None:
         for path in (REPO / "forecast").glob("*.py")
         if "__main__" in path.read_text(encoding="utf-8")
     )
-    assert entry_points == ["live.py", "make_fixture.py", "refresh.py"], (
-        f"a fourth CLI surface has appeared under forecast/: {entry_points}"
+    assert entry_points == ["history.py", "live.py", "make_fixture.py", "refresh.py"], (
+        f"an unregistered CLI surface has appeared under forecast/: {entry_points}. Each "
+        f"entry point is a way to produce a published artifact; adding one is a decision, "
+        f"not a convenience, so it is registered here deliberately or it is not added"
     )

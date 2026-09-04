@@ -240,6 +240,71 @@
 
   </div>
 
+  <!-- ── The back-arrow history region — design-target §1.6 ────────────────
+       Nothing in this region is a forecast. Every number in it has already
+       been settled by an observation, which is why it sits BELOW the forward
+       grid rather than beside it: the two are different tenses.
+
+       Same architecture rule as the rest of this file. The markup is present
+       unconditionally and visibility is a CSS rule keyed on an attribute that
+       forecast.js SETS when the condition holds and leaves ABSENT otherwise:
+       html[data-history="ready"] reveals the stepper. Typing that attribute
+       onto <html> in devtools raises the control with zero JS loaded. The two
+       message blocks below hide themselves with :empty, so there is no JS
+       display write anywhere in this region either.
+
+       NOTHING HERE CARRIES A PAYLOAD VALUE. Not the date in the pill, not a
+       lead, not a model name, not a temperature, not the join tolerance, not
+       the offset figure. Every one of them is bound by forecast.js from
+       /api/forecast/history, so a refit, a re-join or a site change cannot
+       leave a stale number behind in the markup. -->
+  <section class="history-section" id="history-section" aria-labelledby="history-heading">
+    <h2 class="history-heading" id="history-heading">Here is what we said. Here is what happened.</h2>
+
+    <!-- The sunken-track / raised-pill segmented idiom, one day at a time.
+         The arrow glyphs are decoration; each button carries a real
+         aria-label, because a glyph is never the accessible name. At either
+         end of the window the button is dimmed and marked aria-disabled — it
+         is never removed and never hidden, because a control that vanishes is
+         a control the viewer thinks they broke. -->
+    <div class="history-controls" id="history-controls">
+      <div class="day-stepper" id="day-stepper" role="group" aria-label="Past day">
+        <button type="button" class="day-step" id="day-prev" aria-label="Previous day">‹</button>
+        <span class="day-pill mono-value" id="day-pill"></span>
+        <button type="button" class="day-step" id="day-next" aria-label="Next day">›</button>
+      </div>
+
+      <!-- Why the past is at three leads while the forward strip is not. Not
+           collapsible and not a footnote: this is the one place a viewer would
+           otherwise conclude the past view is the forward view with rows
+           removed. Composed by forecast.js from the payload's own lead list
+           and the forward payload's own step, never typed. -->
+      <p class="history-leads-note" id="history-leads-note"></p>
+    </div>
+
+    <!-- One .card per scored day; the stepper shows one at a time. THE ROW
+         COUNT IS DATA — a day may match at some leads and not at others — so
+         this container is filled from days[i].entries and never from an
+         assumed three rows. A dropped observation is simply an absent row:
+         no fill, no carry-forward, no nearest-hour substitution. -->
+    <div class="history-days" id="history-days"></div>
+
+    <!-- Dates the join could not match, listed once, below the day card, with
+         the payload's own recorded reason verbatim beneath each. They are
+         absent from the stepper and are NEVER rendered as a day with a
+         perfect score: an empty join scores perfectly and is fake. Empty when
+         every date in the window matched, and forecast.css hides it on :empty
+         rather than by a display write. -->
+    <div class="history-omitted" id="history-omitted"></div>
+
+    <!-- The history 503, in the empty-state voice. The forward page above is
+         already rendered and STAYS rendered — this fetch is its own chain and
+         its own subtree, and it never touches the shell. The server's reason
+         is shown verbatim in mono rather than the region going
+         blank-but-styled. -->
+    <div class="history-unavailable" id="history-unavailable"></div>
+  </section>
+
 </div>
 
 <!-- The 503 card is rendered here, outside the shell, by forecast.js:

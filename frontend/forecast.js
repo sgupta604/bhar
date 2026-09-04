@@ -148,7 +148,9 @@
     firstExtrapIdx: -1,
     currentIdx: 0,      // the step the headline shows
     selected: 0,
-    pinned: 0
+    pinned: 0,
+    history: null,      // the /api/forecast/history payload, or null until it lands
+    dayIdx: 0           // the day the stepper is on, an index over history.days
   };
 
   /* ── boot + 3.1 error path (the shape of app.js:29-43) ──────────────── */
@@ -169,6 +171,36 @@
       renderEmptyState(err && err.userDetail ? err.userDetail
         : (err && err.message ? err.message : String(err)));
     });
+
+  /* ── 4.2 the second fetch — the scored past ───────────────────────────
+     ITS OWN CHAIN, ITS OWN SUBTREE, ON PURPOSE. A 503 here resolves in this
+     .catch, writes one card into #history-unavailable and touches nothing
+     else: it never calls renderEmptyState, never hides the shell and never
+     reaches a forward-page node. The forward view renders regardless of what
+     this endpoint does, and this region names what went wrong in the
+     server's own words rather than going blank-but-styled. */
+  fetch(API_BASE + '/api/forecast/history')
+    .then(function (r) {
+      if (!r.ok) {
+        return r.text().then(function (body) {
+          var detail = body;
+          try { var j = JSON.parse(body); if (j && j.detail) detail = j.detail; } catch (e) { /* raw body */ }
+          throw { userDetail: String(detail), status: r.status };
+        });
+      }
+      return r.json();
+    })
+    .then(function (payload) {
+      state.history = payload;
+      state.dayIdx = 0;
+      renderHistory();
+    })
+    .catch(function (err) {
+      renderHistoryUnavailable(err && err.userDetail ? err.userDetail
+        : (err && err.message ? err.message : String(err)));
+    });
+
+  mountStepper();    // the buttons are in the markup, so they bind once, up front
 
   mountTheme();      // works with or without a payload, so the 503 page toggles too
 
@@ -193,6 +225,9 @@
     renderNote();
     selectCell(0, true);          // the panel is never empty on first paint
     window.addEventListener('resize', onResize);
+    /* The two fetches settle in either order and the history note names the
+       forward step, so the history is re-rendered here if it landed first. */
+    renderHistory();
   }
 
   /* ── 3.2 the grid merge ─────────────────────────────────────────────── */
@@ -838,6 +873,325 @@
     card.appendChild(el('div', 'empty-icon', '◍'));
     card.appendChild(el('p', 'empty-title', 'No forecast cache. Fetch a cycle.'));
     card.appendChild(el('p', 'empty-body', 'Run: uv run python -m forecast.refresh'));
+    card.appendChild(el('p', 'empty-detail', String(detail)));   // the server's reason, verbatim
+    host.appendChild(card);
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     4.2-4.4 THE BACK-ARROW HISTORY REGION — design-target §1.6
+
+     Nothing rendered below is a forecast. Every value here has already been
+     settled by an observation, and it is presented as one: no band, no
+     ribbon, no shaded envelope, no whisker, and no plus-or-minus figure
+     attached to any value, here or anywhere on this page.
+
+     Every string this block puts on the page that names a lead, a model, a
+     site, a tolerance or a count is composed FROM THE PAYLOAD. The lead keys
+     are the bare decimal hour count — String(lead_h) — which is the form the
+     §10 contract locks; a padded or suffixed key would miss every lookup and
+     render a quietly empty table.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* Counts read as words in prose and as digits in data. Nine is plenty: past
+     that the sentence takes the digits, which is better than a wrong word. */
+  var COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five',
+    'six', 'seven', 'eight', 'nine'];
+
+  function countWord(n) {
+    return (n >= 0 && n < COUNT_WORDS.length) ? COUNT_WORDS[n] : String(n);
+  }
+
+  /* "6, 12 and 24" — built from whatever the payload lists, in its order. */
+  function joinList(values) {
+    var parts = values.map(function (v) { return String(v); });
+    if (parts.length < 2) return parts.join('');
+    return parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1];
+  }
+
+  function historyDays() {
+    return (state.history && state.history.days) ? state.history.days : [];
+  }
+
+  /* The leads a given day actually carries, ascending. Read from the day's own
+     summary rather than from meta.leads_available: the two partial days at the
+     edges of the window match at only some leads, and padding the row set out
+     to the full lead list would invent an entry that was never scored. */
+  function leadsPresent(day) {
+    return Object.keys(day.mae_f || {}).map(Number).sort(function (a, b) { return a - b; });
+  }
+
+  function leadLabel(lead) { return String(lead) + ' h'; }
+
+  function mountStepper() {
+    var prev = $('day-prev');
+    var next = $('day-next');
+    if (prev) prev.addEventListener('click', function () { stepDay(-1); });
+    if (next) next.addEventListener('click', function () { stepDay(1); });
+  }
+
+  /* At either end the button is present, focusable and dimmed, and the step is
+     a no-op. It is never removed: a control that vanishes is a control the
+     viewer thinks they broke. */
+  function stepDay(delta) {
+    var days = historyDays();
+    if (!days.length) return;
+    var target = state.dayIdx + delta;
+    if (target < 0 || target > days.length - 1) return;
+    state.dayIdx = target;
+    renderHistory();
+  }
+
+  function setEndState(button, atEnd) {
+    if (!button) return;
+    /* Set when the condition holds, ABSENT when it does not — the same rule
+       the state attributes on <html> follow. */
+    if (atEnd) button.setAttribute('aria-disabled', 'true');
+    else button.removeAttribute('aria-disabled');
+  }
+
+  function renderHistory() {
+    var doc = state.history;
+    if (!doc || !doc.meta) return;
+    var meta = doc.meta;
+    var days = historyDays();
+
+    if (!days.length) {
+      /* An empty history renders an empty back-arrow and scores perfectly
+         against nothing. Say so; do not draw a stepper over it. */
+      renderHistoryUnavailable('The history document carries no scored day. A window with ' +
+        'nothing in it scores perfectly against nothing and must not be rendered as history.');
+      return;
+    }
+
+    if (state.dayIdx > days.length - 1) state.dayIdx = days.length - 1;
+    if (state.dayIdx < 0) state.dayIdx = 0;
+
+    var slot = $('history-unavailable');
+    if (slot) slot.textContent = '';
+
+    renderLeadsNote(meta);
+    renderStepper(days);
+    renderDayCard(days[state.dayIdx], meta);
+    renderOmitted(meta);
+
+    document.documentElement.setAttribute('data-history', 'ready');
+  }
+
+  function renderStepper(days) {
+    var pill = $('day-pill');
+    if (pill) pill.textContent = String(days[state.dayIdx].date);
+    setEndState($('day-prev'), state.dayIdx <= 0);
+    setEndState($('day-next'), state.dayIdx >= days.length - 1);
+  }
+
+  /* 4.4 — why the past is at these leads, stated on the page, not collapsed
+     behind a disclosure. The lead list and the forward step both come from
+     their own payloads; neither is typed here. */
+  function renderLeadsNote(meta) {
+    var host = $('history-leads-note');
+    if (!host) return;
+    var leads = meta.leads_available || [];
+    var word = countWord(leads.length);
+    var step = (state.meta && state.meta.step_h != null)
+      ? String(state.meta.step_h) + '-hourly' : '';
+
+    var text = 'The past view shows ' + word + ' leads because ' + word +
+      ' leads is what the archive was fetched at — it is not a downsample of the forward view.';
+    if (step) {
+      text += ' The forward strip is ' + step + '; the archive is ' + joinList(leads) +
+        ' hours. A ' + step + ' past curve means refetching the archive at every step, ' +
+        'and that is v2.';
+    } else {
+      text += ' The archive is ' + joinList(leads) + ' hours. A past curve on the forward ' +
+        'strip’s step means refetching the archive at every step, and that is v2.';
+    }
+    host.textContent = text;
+  }
+
+  /* 4.3 — one .card for the day the stepper is on. */
+  function renderDayCard(day, meta) {
+    var host = $('history-days');
+    if (!host) return;
+    host.textContent = '';
+
+    var card = el('section', 'card history-day-card');
+
+    var header = el('div', 'card-header');
+    header.appendChild(el('h3', 'card-title', String(day.date)));
+
+    /* The aggregate is UNSIGNED BY CONSTRUCTION and is labelled so it is not
+       read as a bias, and every figure carries the count it was taken over:
+       a one-sample daily mean must not read like a four-sample one. */
+    var summary = el('div', 'history-mae');
+    summary.appendChild(el('span', 'history-mae-label', 'Mean absolute error'));
+    leadsPresent(day).forEach(function (lead) {
+      var key = String(lead);
+      var item = el('span', 'history-mae-item');
+      item.appendChild(el('span', 'badge-pill', leadLabel(lead)));
+      item.appendChild(el('span', 'num history-mae-value',
+        withUnit(fmt(day.mae_f[key], 2), meta.units)));
+      item.appendChild(el('span', 'num history-mae-n',
+        'n = ' + String((day.n_by_lead || {})[key])));
+      summary.appendChild(item);
+    });
+    header.appendChild(summary);
+    card.appendChild(header);
+
+    var body = el('div', 'card-body');
+    body.appendChild(historyTable(day, meta));
+    body.appendChild(offsetNote(meta));
+    card.appendChild(body);
+
+    host.appendChild(card);
+  }
+
+  /* The comparison model is named by the payload. Where the backtest picked
+     the same one at every lead the header can say which; where it did not,
+     the header stays generic and each row names its own. */
+  function bestSingleNames(meta) {
+    var byLead = meta.best_single_model_by_lead || {};
+    var names = [];
+    Object.keys(byLead).forEach(function (key) {
+      var name = String(byLead[key]).toUpperCase();
+      if (names.indexOf(name) === -1) names.push(name);
+    });
+    return names;
+  }
+
+  function historyColumns(meta) {
+    var names = bestSingleNames(meta);
+    var best = names.length === 1 ? 'Best single (' + names[0] + ')' : 'Best single';
+    return [
+      { label: 'Lead', cls: '' },
+      { label: 'Init (UTC)', cls: '' },
+      { label: 'Valid (UTC)', cls: '' },
+      { label: 'We said', cls: 'col-right' },
+      { label: 'Observed', cls: 'col-right' },
+      { label: 'Error', cls: 'col-right' },
+      { label: best, cls: 'col-right' },
+      { label: 'Obs offset', cls: 'col-right' }
+    ];
+  }
+
+  function historyTable(day, meta) {
+    var wrap = el('div', 'history-table-wrap');
+    var table = el('table', 'tbl history-tbl');
+
+    var head = el('thead');
+    var headRow = el('tr');
+    historyColumns(meta).forEach(function (col) {
+      headRow.appendChild(el('th', col.cls, col.label));
+    });
+    head.appendChild(headRow);
+    table.appendChild(head);
+
+    /* ONE ROW PER ENTRY. The row count is data: a day may match at some leads
+       and not at others, and a missing observation drops its row entirely —
+       no fill, no carry-forward, no placeholder standing in for it. */
+    var bodyRows = el('tbody');
+    (day.entries || []).forEach(function (entry) {
+      bodyRows.appendChild(historyRow(entry, meta));
+    });
+    table.appendChild(bodyRows);
+
+    wrap.appendChild(table);
+    return wrap;
+  }
+
+  function historyRow(entry, meta) {
+    var row = el('tr');
+
+    var lead = el('td');
+    lead.appendChild(el('span', 'badge-pill', leadLabel(entry.lead_h)));
+    row.appendChild(lead);
+
+    row.appendChild(el('td', 'num history-time', utcStamp(entry.init_time)));
+    row.appendChild(el('td', 'num history-time', utcStamp(entry.valid_time)));
+    row.appendChild(el('td', 'num history-value', withUnit(fmt(entry.blend_f, 1), meta.units)));
+    row.appendChild(el('td', 'num history-value', withUnit(fmt(entry.observed_f, 1), meta.units)));
+    row.appendChild(errorCell(entry, meta));
+    row.appendChild(el('td', 'num history-secondary',
+      withUnit(fmt(entry.best_single_model_f, 1), meta.units)));
+
+    /* Signed, in minutes, because a matched observation can sit either side of
+       the valid time and which side it sat is part of the record. */
+    row.appendChild(el('td', 'num history-offset',
+      fmt(entry.obs_offset_min, 0, true) + ' min'));
+
+    return row;
+  }
+
+  /* 4.4 — the signed error, with the sign LABELLED. A bare negative does not
+     tell a grower anything, so the direction is spelled out beside it in
+     words. The value's tone is neutral in all three cases: a warm bias is a
+     finding, not an error state. The sign itself is a real U+2212 in the text
+     node, put there by the shared formatter — never a hyphen, never dropped,
+     never split into a magnitude and a direction icon. */
+  function errorCell(entry, meta) {
+    var cell = el('td', 'num history-error-cell');
+    var value = Number(entry.error_f);
+    cell.appendChild(el('span', 'history-error-value',
+      withUnit(fmt(entry.error_f, 1, true), meta.units)));
+    cell.appendChild(el('span', 'history-error-word',
+      value > 0 ? 'warm' : (value < 0 ? 'cold' : 'exact')));
+    return cell;
+  }
+
+  /* 4.4 — the observation offset, stated once under the table. The window and
+     the mean offset are both read from meta.join; neither is a literal here,
+     because the join is a parameter of the backtest and a number typed on the
+     page would outlive a change to it. */
+  function offsetNote(meta) {
+    var join = meta.join || {};
+    var note = el('p', 'card-sub history-offset-note');
+    note.textContent = 'Observations are matched within a ' + String(join.tolerance_min) +
+      '-minute nearest-observation window; METAR at ' + String((meta.site || {}).id) +
+      ' reports near :53, and the mean absolute offset over this window was ' +
+      fmt(join.mean_abs_offset_min, 2) + ' minutes.';
+    return note;
+  }
+
+  /* 4.4 — the dates the join could not match, listed once below the day card.
+     They are absent from the stepper and are never drawn as a day with a
+     perfect score. The human sentence says what happened; the payload's own
+     recorded reason sits beneath it as machine output, verbatim, so a viewer
+     can paste it into a bug report. */
+  function renderOmitted(meta) {
+    var host = $('history-omitted');
+    if (!host) return;
+    host.textContent = '';
+
+    var omitted = meta.omitted_days || [];
+    if (!omitted.length) return;      // :empty hides the block; no display write
+
+    var card = el('div', 'card empty-state');
+    card.appendChild(el('div', 'empty-icon', '◍'));
+    card.appendChild(el('p', 'empty-title', countWord(omitted.length) +
+      (omitted.length === 1 ? ' date is not in the stepper.' : ' dates are not in the stepper.')));
+
+    omitted.forEach(function (day) {
+      var item = el('div', 'history-omitted-item');
+      item.appendChild(el('p', 'empty-body', String(day.date) +
+        ' is not shown: no forecast-observation pair matched within the join window.'));
+      item.appendChild(el('p', 'empty-detail', String(day.reason)));
+      card.appendChild(item);
+    });
+
+    host.appendChild(card);
+  }
+
+  /* The history 503. The forward page above is already on screen and stays
+     there; only this block changes. The next action is a command, because
+     there is no refetch route by design. Never apologize. */
+  function renderHistoryUnavailable(detail) {
+    var host = $('history-unavailable');
+    if (!host) return;
+    host.textContent = '';
+
+    var card = el('div', 'card empty-state');
+    card.appendChild(el('div', 'empty-icon', '◍'));
+    card.appendChild(el('p', 'empty-title', 'No scored history. Build it.'));
+    card.appendChild(el('p', 'empty-body', 'Run: uv run python -m forecast.history'));
     card.appendChild(el('p', 'empty-detail', String(detail)));   // the server's reason, verbatim
     host.appendChild(card);
   }
