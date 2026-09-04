@@ -54,7 +54,7 @@ acceptance floors and the dependency graph are unchanged.
 |---|---------|-----------|--------|
 | F1 | `forecast-design` | — | DONE — finalized 2026-09-04, no PR (see FORECAST-SPEC §12) |
 | F2 | `forecast-live-fetch` | — | GREEN — finalized 2026-09-04, commit `96d0d55`, no PR (FORECAST-SPEC §12) |
-| F3 | `forecast-payload` | F2 | GREEN — finalized 2026-09-04, commit PENDING_SHA (updated below after commit), no PR (FORECAST-SPEC §12) |
+| F3 | `forecast-payload` | F2 | GREEN — finalized 2026-09-04, commit `dc97165`, no PR (FORECAST-SPEC §12) |
 | F4 | `forecast-api` | F3 | TODO (needs main.py — 2 lines; boundary) |
 | F5 | `forecast-page` | F1, F3 | TODO |
 | F6 | `forecast-history` | F4, F5 | TODO |
