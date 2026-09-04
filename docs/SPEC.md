@@ -53,7 +53,17 @@ cron (post-demo); bias correction / MOS (see §5).
 **Timezone: UTC everywhere.** Convert Kelvin to F: `F = (K - 273.15) * 9/5 + 32`.
 
 **Do NOT use folkweather** — it does not archive and it lies convincingly (spike F1).
-**Do NOT use Herbie** (spike F8). **Parse the `.idx` every time; NBM's message index moves** (F2).
+**Do NOT use Herbie** (spike F8). **Parse the `.idx` every time; NBM's message index moves**
+(F2, F10: NBM is 187/192/195 at f006/f012/f024).
+
+**GRIB variable selection — anchored, or you get the wrong variable (spike F9):**
+- Match **`":TMP:2 m above ground:"`** with the leading colon. The unanchored string is a
+  **substring of `APTMP:2 m above ground`** (apparent temperature), which is message 1 in NBM.
+  This was hit for real during validation and silently returned apparent temperature.
+- **Reject any index line containing `ens std dev`.**
+- **Assert the decoded short name is `t2m`, never `aptmp`.** Cheap, and it kills the whole class.
+- NBM CONUS key (`.co`; `ak`/`hi`/`pr`/`gu` exist and are wrong for KOMA):
+  `blend.{YYYYMMDD}/{HH}/core/blend.t{HH}z.core.f{FFF}.co.grib2`
 
 ## 4. The join — highest-risk correctness issue
 
@@ -182,6 +192,8 @@ Branch: `feat/site-tuned-blend`.
 Set up `uv` with pinned Python 3.12, `pyproject.toml`, dependencies, `pytest` wired, repo layout,
 and fill the empty **Commands** block in `CLAUDE.md` (the test-agent reads its commands from there
 and currently has none).
+**Provisioning is already complete (§17) — do not redo it.** T1's job is `pyproject.toml`, repo
+layout, pytest wiring, and the `CLAUDE.md` Commands block.
 **Acceptance floor:** `uv run pytest` exits 0. `uv run python -c "import cfgrib, xarray, pandas, pyarrow, fastapi"` succeeds. `CLAUDE.md` Commands block is populated. Committed.
 
 ### T2 `grib-point-fetch` — HIGHEST RISK, do early
@@ -189,10 +201,20 @@ Parse a NOAA `.idx`, issue an HTTP range request for the `TMP:2 m above ground` 
 extract the nearest grid cell to KOMA, convert to degrees F.
 **First task is a probe** (plan-agent's verification-first rule): fetch one real message before
 building anything on top.
-**Acceptance floor:** returns a plausible temperature (say -40 to 130 F) for HRRR, GFS, NAM and NBM at
-2026-08-05 12z f006. Unit test for `.idx` parsing against a fixture. **NBM message index is read
-from the `.idx`, never hardcoded** — test this explicitly at f006, f012 and f024.
-**Named fallback:** see §11 R1.
+**This is already proven to work — spike F9–F11 contains the validated approach and exact
+expected values. Reproduce it as tested code; do not re-derive it.**
+**Acceptance floor — integration fixture, 2026-08-05 12z f006 (valid 18:00Z), nearest cell to
+KOMA. The fetcher MUST reproduce these:**
+
+| HRRR | GFS | NAM | NBM |
+|---|---|---|---|
+| 68.24 F | 71.65 F | 69.53 F | 70.61 F |
+
+Plus: unit test for `.idx` parsing against a captured fixture; **a test that the anchored needle
+rejects `APTMP:2 m above ground` and `ens std dev`** (spike F9 — this bug was hit for real);
+an assert that the decoded short name is `t2m`; and **NBM's message index read from the `.idx`,
+verified at f006/f012/f024** (187/192/195).
+**Named fallback:** see §11 R1 — now RETIRED, do not use.
 
 ### T3 `demo-shell` — the "never stare at nothing at midnight" insurance
 Lock the §7 contract. Generate a synthetic `results.json` fixture. Build the FastAPI backend
@@ -279,9 +301,11 @@ The MVP's value is that the number is trustworthy. Therefore:
 
 ## 11. Risk register with named fallbacks
 
-**R1 — `cfgrib`/`eccodes` will not install or will not decode. (Top risk.)**
-Mitigation: pinned Python 3.12, not the host's 3.14; smoke-tested while the user is awake.
-**Named fallback, after two genuine failures:** Open-Meteo previous-runs API.
+**R1 — `cfgrib`/`eccodes` will not install or will not decode. ~~Top risk.~~ RETIRED 2026-09-04
+02:45.** Validated live: `uv` + Python 3.12.14, `cfgrib` decoding real NOAA GRIB2 byte-ranges for
+all four models at f006/f012/f024 (spike F10–F12). **The GRIB path is proven. Do NOT trigger the
+fallback below.** It remains documented only in case the archive itself becomes unreachable.
+~~Named fallback, after two genuine failures:~~ Open-Meteo previous-runs API.
 Cost: **24 h lead only** — the 6 h and 12 h columns are lost and the lead-time toggle collapses to
 one value. Use `gfs_global`, **never `gfs_seamless`** (spike F3). Set `meta.source` to
 `"open_meteo_previous_runs"` and state it on the page. A one-lead demo beats no demo.
@@ -417,7 +441,14 @@ arises, apply §9's blocked-ticket rule: log it, skip it, keep going.
 
 **Before the first ticket**, verify the environment is provisioned (§17). If it is not, T1 does it.
 
-## 17. Provisioning (done while the user was awake, or by T1 if not)
+## 17. Provisioning — ALREADY DONE (verified 2026-09-04 02:45, user awake)
+
+**Do not re-provision. Do not reinstall. `.venv/` exists and works.** Verified: `uv 0.12.9`,
+CPython 3.12.14, and `pandas` / `pyarrow` / `numpy` / `requests` / `xarray 2026.7.0` / `cfgrib` /
+`eccodes` / `fastapi` / `uvicorn` / `pytest 9.1.1` / `httpx` all installed and importing.
+`agent-browser 0.36.0` installed with Chrome 152. `cfgrib` decodes real GRIB2. See spike F12.
+
+Commands are recorded below for reference only:
 
 ```bash
 brew install uv

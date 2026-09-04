@@ -7,7 +7,7 @@
 | Field | Value |
 |-------|-------|
 | Feature | `project-scaffold` (T1 of 6) |
-| Phase | ready — requirements settled, not yet started |
+| Phase | ready — requirements settled, environment provisioned and validated |
 | Next | `/research project-scaffold` |
 | Branch | `feat/site-tuned-blend` |
 
@@ -18,7 +18,9 @@ Start at SPEC §16 (cold-start handoff). Verified facts that override the BRIEF 
 `.claude/features/site-tuned-blend/2026-09-04T02-10-00_spike.md`.
 
 Requirements were fully settled in a grilling session on 2026-09-04 ~02:00. **There are no open
-questions.** The user is asleep, wakes 07:30, leaves 08:15, and **demos at 16:00**.
+questions.** The environment is **already provisioned** and the GRIB path is **already validated
+end to end for all four models** — see the spike addendum (F9–F12). Do not re-provision, do not
+re-probe, and do NOT trigger the Open-Meteo fallback: the top project risk is retired. The user is asleep, wakes 07:30, leaves 08:15, and **demos at 16:00**.
 The loop must not need them — see SPEC §9.
 
 ## Ticket backlog (SPEC §8)
