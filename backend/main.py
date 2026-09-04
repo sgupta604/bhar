@@ -24,6 +24,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.contract import ContractError, load_and_validate
+from backend.forecast_api import router as forecast_router
 
 # Resolved from this file, never from the CWD -- uvicorn may be started from anywhere.
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -42,6 +43,7 @@ app.add_middleware(
     allow_methods=["GET"],
     allow_headers=["*"],
 )
+app.include_router(forecast_router)
 
 
 @app.get("/health")
