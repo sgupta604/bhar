@@ -36,6 +36,8 @@ first.
 
 ## 2. Run the demo
 
+**Easiest path:** `./demo.sh` — picks free ports itself and opens the right URL. Or explicitly:
+
 ```
 BHAR_BACKEND_PORT=8011 BHAR_FRONTEND_PORT=5184 ./run.sh
 ```
