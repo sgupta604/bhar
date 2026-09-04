@@ -22,3 +22,5 @@ venv/
 data/raw/
 data/*.parquet
 *.grib2
+data/live/
+data/forecast.json
