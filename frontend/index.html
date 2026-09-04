@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bhar — Site-Tuned Model Blend</title>
+<!-- Load order is load-bearing: vendored tokens -> vendored fonts -> local tokens -> layout. -->
+<link rel="stylesheet" href="vendor/clarity-tokens.css">
+<link rel="stylesheet" href="vendor/fonts.css">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- Banner markup is unconditional. Visibility is CSS, gated on
+     html[data-synthetic="true"], which JS sets from meta.is_synthetic alone. -->
+<div class="synthetic-banner" id="synthetic-banner"></div>
+
+<div class="shell" id="shell">
+
+  <header class="page-header">
+    <div class="page-header-main">
+      <h1 class="page-title">Omaha Eppley (KOMA)</h1>
+      <p class="page-sub" id="header-scope">Last 30 days</p>
+      <p class="page-sub" id="header-site"></p>
+    </div>
+    <div class="page-header-aside">
+      <div class="segmented" id="lead-toggle" role="group" aria-label="Forecast lead time"></div>
+    </div>
+  </header>
+
+  <div class="model-bar" id="model-bar">
+    <span class="model-bar-label">Models</span>
+  </div>
+
+  <section class="card provenance" id="honesty-card">
+    <p class="improvement-line" id="improvement-line"></p>
+    <div class="honesty-grid" id="honesty-grid"></div>
+  </section>
+
+  <div class="grid-main">
+    <section class="card" id="leaderboard-card">
+      <div class="card-header">
+        <h2 class="card-title">Leaderboard</h2>
+        <span class="page-sub" id="leaderboard-sub"></span>
+      </div>
+      <div id="leaderboard-body">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th class="col-rank">Rank</th>
+              <th>Blend</th>
+              <th>Weights</th>
+              <th class="right">Error (°F)</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="col-side">
+      <section class="card" id="slider-card">
+        <div class="card-header">
+          <h2 class="card-title">Try your own blend</h2>
+        </div>
+        <div class="card-body">
+          <div id="slider-rows"></div>
+          <div class="readout">
+            <span class="readout-label">Out-of-sample MAE</span>
+            <span class="readout-value" id="weight-readout">—</span>
+          </div>
+          <p class="readout-note" id="readout-note"></p>
+        </div>
+      </section>
+
+    <section class="card chart-card" id="chart-card">
+      <div class="card-header">
+        <h2 class="card-title">Error vs weight — two-model slice</h2>
+        <select class="select" id="chart-pair" aria-label="Chart model pair"></select>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrap" id="chart-wrap"></div>
+        <p class="chart-caption" id="chart-caption"></p>
+      </div>
+    </section>
+    </div>
+  </div>
+
+</div>
+
+<div id="error-slot"></div>
+
+<script defer src="models.js"></script>
+<script defer src="format.js"></script>
+<script defer src="chart.js"></script>
+<script defer src="app.js"></script>
+</body>
+</html>

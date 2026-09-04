@@ -31,6 +31,27 @@ cleanup() {
         pkill -P "$pid" 2>/dev/null || true   # uv run spawns a child; kill it too or it orphans
         kill "$pid" 2>/dev/null || true
     done
+    # Belt and braces. On Ctrl-C the signal reaches the whole process group, so the
+    # `uv run` wrapper can exit BEFORE the trap runs -- its python child is reparented to
+    # init, `pkill -P` then matches nothing, and the child keeps the port. Observed:
+    # the http.server on the frontend port survived every time. A held port is not a
+    # cosmetic problem, because the preflight above refuses to start on a busy port, so
+    # one Ctrl-C would otherwise make the next `./run.sh` fail.
+    # Only sweep ports we actually bound: this runs after the preflight proved them free,
+    # so anything listening there now is ours. Never reached on a preflight failure
+    # (the trap is installed after it), which is what keeps this from killing a squatter.
+    if [ -n "${BACKEND_PID:-}${FRONTEND_PID:-}" ]; then
+        for port in "$BACKEND_PORT" "$FRONTEND_PORT"; do
+            for stray in $(lsof -nP -iTCP:"$port" -sTCP:LISTEN -t 2>/dev/null); do
+                kill "$stray" 2>/dev/null || true
+                sleep 0.2
+                kill -9 "$stray" 2>/dev/null || true
+            done
+        done
+    fi
+
+    # Reap last. This has to come AFTER the port sweep: if a child survived the signal,
+    # `wait` blocks on it forever and nothing below it would ever run.
     wait 2>/dev/null || true
 }
 trap cleanup EXIT INT TERM

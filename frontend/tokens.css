@@ -1,0 +1,214 @@
+/* Bhar-local tokens and the two Clarity gap blocks (range slider, chart/axis).
+   Authored under :root only, so a [data-theme=dark] block can drop in later (D11).
+   Light mode only in this ticket. Semantic Clarity tokens everywhere else. */
+
+:root {
+  /* Model -> color map. Single source of truth for the page: stacked weight
+     bars, slider fills, model checkbox dots and chart series all read these
+     (JS reads them back out of getComputedStyle, see models.js). */
+  --model-hrrr: var(--blue-500);
+  --model-gfs:  var(--orange-500);
+  --model-nam:  var(--purple-500);
+  --model-nbm:  var(--green-500);
+
+  /* Slider defaults (overridden inline per instance by JS) */
+  --slider-fill: var(--accent);
+  --slider-pct: 0%;
+}
+
+/* ── Synthetic-data signals — keyed ONLY off <html data-synthetic="true"> ──
+   The markup is unconditional; only the attribute gates it. Flipping
+   meta.is_synthetic to false makes all of this vanish with zero code edits. */
+
+html[data-synthetic="true"] {
+  box-shadow: inset 0 0 0 3px var(--danger);
+}
+
+html[data-synthetic="true"] .synthetic-banner {
+  display: flex;
+}
+.synthetic-banner {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-4);
+  background: var(--danger);
+  color: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  /* no close affordance — no button, no dismiss icon, ever */
+}
+
+/* ── Weight slider — Clarity gap #1 (no native range styling exists in Clarity) ──
+   Set --slider-fill to the model's color on each <input type="range"> instance.
+   Falls back to --accent if unset. */
+
+input[type="range"].weight-slider {
+  --slider-fill: var(--accent);
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 20px;               /* generous hit target; track itself stays 6px, see below */
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Track — WebKit/Blink */
+input[type="range"].weight-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--slider-fill) 0%,
+    var(--slider-fill) calc(var(--slider-pct, 0%)),
+    var(--bg-subtle) calc(var(--slider-pct, 0%)),
+    var(--bg-subtle) 100%
+  );
+}
+
+/* Track — Firefox */
+input[type="range"].weight-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+}
+input[type="range"].weight-slider::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--slider-fill);
+}
+
+/* Thumb — WebKit/Blink */
+input[type="range"].weight-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -5px;           /* centers 16px thumb on a 6px track: (6 - 16) / 2 */
+  border-radius: 999px;
+  background: var(--bg-elev);
+  border: 2px solid var(--slider-fill);
+  box-shadow: var(--shadow-1);
+  transition: box-shadow 0.12s, border-color 0.12s;
+}
+
+/* Thumb — Firefox */
+input[type="range"].weight-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--bg-elev);
+  border: 2px solid var(--slider-fill);
+  box-shadow: var(--shadow-1);
+  transition: box-shadow 0.12s, border-color 0.12s;
+}
+
+/* Focus — 3px ring, per the token doc's input focus rule. */
+input[type="range"].weight-slider:focus-visible {
+  outline: none;
+}
+input[type="range"].weight-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--ring);
+}
+input[type="range"].weight-slider:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+/* Disabled — model unchecked. */
+input[type="range"].weight-slider:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+input[type="range"].weight-slider:disabled::-webkit-slider-runnable-track {
+  background: var(--bg-subtle);   /* fill hidden entirely — no partial color when disabled */
+}
+input[type="range"].weight-slider:disabled::-moz-range-progress {
+  background: var(--border-strong);
+}
+input[type="range"].weight-slider:disabled::-webkit-slider-thumb,
+input[type="range"].weight-slider:disabled::-moz-range-thumb {
+  border-color: var(--border-strong);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ── Chart / axis — Clarity gap #2 (no chart-series or axis tokens exist in Clarity) ── */
+
+.chart-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-1);
+}
+
+.chart-svg .gridline {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.chart-svg .axis-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  fill: var(--text-subtle);
+}
+
+.chart-svg .axis-title {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 500;
+  fill: var(--text-subtle);
+}
+
+.chart-svg .series-line {
+  fill: none;
+  stroke: var(--series-color, var(--accent));
+  stroke-width: 2;
+}
+.chart-svg .series-point {
+  fill: var(--series-color, var(--accent));
+  stroke: var(--bg-elev);
+  stroke-width: 1.5;
+}
+.chart-svg .series-point.is-endpoint {
+  stroke-dasharray: 2 2;
+}
+.chart-svg .series-min-marker {
+  fill: var(--bg-elev);
+  stroke: var(--series-color, var(--accent));
+  stroke-width: 2;
+}
+
+.chart-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--bg-elev);
+  box-shadow: var(--shadow-3);
+  border-radius: var(--r-md);
+  padding: var(--s-2) var(--s-3);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--text);
+}
+
+.chart-caption {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: var(--s-2);
+}
+
+/* ── Page-wide numeric formatting ── */
+.num, .mono-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}

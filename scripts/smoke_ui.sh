@@ -86,7 +86,15 @@ agent-browser eval 'new Promise(r => setTimeout(() => r(1), 1200))' >/dev/null 2
 
 IS_SYN="$(python3 -c 'import json,sys; print(str(json.load(open(sys.argv[1]))["meta"]["is_synthetic"]).lower())' "$PAYLOAD")"
 SYN_ATTR="$(agent-browser eval 'document.documentElement.getAttribute("data-synthetic")' | tr -d '"')"
-BANNER="$(agent-browser eval 'document.querySelector("#synthetic-banner") ? "yes" : "no"' | tr -d '"')"
+# Visibility, not presence: the banner element is always in the HTML and is revealed by
+# the [data-synthetic] CSS rule, so querySelector() alone would report "yes" for real data
+# too and this check would fail the moment T5 swaps in a non-synthetic file.
+BANNER="$(agent-browser eval '(() => {
+    const el = document.querySelector("#synthetic-banner");
+    if (!el) return "no";
+    const s = getComputedStyle(el);
+    return (s.display !== "none" && s.visibility !== "hidden" && el.offsetHeight > 0) ? "yes" : "no";
+})()' | tr -d '"')"
 DOC_TITLE="$(agent-browser eval 'document.title' | tr -d '"')"
 
 if [ "$IS_SYN" = "true" ]; then
