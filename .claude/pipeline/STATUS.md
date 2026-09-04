@@ -1,14 +1,14 @@
 # Pipeline Status
 
-**Updated:** 2026-09-04 02:30 local
+**Updated:** 2026-09-04 02:44 local
 
 ## Active
 
 | Field | Value |
 |-------|-------|
 | Feature | `project-scaffold` (T1 of 6) |
-| Phase | ready — requirements settled, environment provisioned and validated |
-| Next | `/research project-scaffold` |
+| Phase | `implement` (in progress) — plan complete |
+| Next | `/test project-scaffold` |
 | Branch | `feat/site-tuned-blend` |
 
 ## Context for a cold session
@@ -27,7 +27,7 @@ The loop must not need them — see SPEC §9.
 
 | # | Feature | Depends on | Status |
 |---|---------|-----------|--------|
-| T1 | `project-scaffold` | — | not started |
+| T1 | `project-scaffold` | — | IN PROGRESS — implement |
 | T2 | `grib-point-fetch` | T1 | not started |
 | T3 | `demo-shell` | T1 | not started |
 | T4 | `data-backfill` | T2 | not started |

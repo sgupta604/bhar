@@ -95,9 +95,43 @@ Not used, deliberately: Herbie, Docker, Playwright, AWS CLI. See `docs/SPEC.md` 
 
 ### Commands
 ```bash
-# T1 (project-scaffold) MUST populate this block. The test-agent reads its
-# commands from here and currently has none, so /test is a no-op until it does.
-# Provisioning steps are in docs/SPEC.md §17.
+# Environment is ALREADY PROVISIONED and validated (SPEC §17, spike F12).
+# Never re-run `uv pip install` for the core deps. `uv run` syncs from the pinned
+# pyproject.toml + uv.lock; if it ever tries to change the venv, use `uv run --no-sync`.
+
+# --- Tests (SPEC §13: pure-logic pytest only, no live network) ---
+uv run pytest -q                       # full suite — MUST exit 0
+uv run pytest -q -m "not integration"  # default set; integration = captured fixtures only
+
+# --- Lint ---
+uv run ruff check .                    # narrow rule set (E4,E7,E9,F) — real errors, not style
+
+# --- Type checks ---
+# NONE. Deliberate: SPEC §13 requires none and no type checker is installed.
+# test-agent: report "n/a", do not install or invent one.
+
+# --- Build ---
+# NONE. Python runs from source; the frontend is static files with no bundler.
+# test-agent: report "n/a".
+
+# --- Run the demo (SPEC §14.3 — the one command) ---
+./run.sh                               # backend :8000 + frontend :5173
+uv run uvicorn backend.main:app --port 8000             # backend only
+uv run python -m http.server 5173 --directory frontend  # frontend only
+# NOTE (verified T1): port 8000 is occupied on this machine by a VS Code helper that
+# also answers /health with {"status":"ok"} — a squatter that fakes a passing smoke
+# check. run.sh now refuses to start on a busy port. Override when 8000 is taken:
+#   BHAR_BACKEND_PORT=8001 BHAR_FRONTEND_PORT=5174 ./run.sh
+
+# --- Data pipeline (never on the demo path — SPEC §6) ---
+uv run python -m fetch.backfill        # T4 -> data/forecasts.parquet, data/obs.parquet
+uv run python -m score.run             # T5 -> data/results.json
+
+# --- Environment smoke check (SPEC §17) ---
+uv run python -c "import cfgrib, xarray, pandas, pyarrow, fastapi; print('ok')"
+
+# --- UI smoke check (SPEC §13; droppable per §11 R5, must never block a ticket) ---
+agent-browser open http://localhost:5173 && agent-browser snapshot -i && agent-browser close
 ```
 
 ### Repo Structure
