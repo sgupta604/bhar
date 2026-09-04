@@ -24,10 +24,3 @@ data/*.parquet
 *.grib2
 data/live/
 data/forecast.json
-
-# Synthetic UI fixture: deterministic, regenerable via
-# `uv run python -m forecast.make_fixture --out data/forecast.fixture.json`.
-# No pytest depends on this file existing on disk (tests build it in-memory or
-# under tmp_path); scripts/f5_payload_swap.sh regenerates it on demand for
-# manual browser probes. Not committed to avoid a second, driftable copy.
-data/forecast.fixture.json

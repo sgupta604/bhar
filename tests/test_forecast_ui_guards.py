@@ -1448,49 +1448,64 @@ def test_numstat_parser_positive_control() -> None:
 
 @pytest.mark.usefixtures("git_repo")
 def test_diff_gate_no_tracked_demo_path_file_was_modified() -> None:
-    """Half one of the pair: the WORKING TREE matches the base commit across the demo path.
+    """Half one of the pair: nothing pre-existing on the demo path was modified or deleted.
 
-    Note the missing `HEAD`. `git diff <base> -- <paths>` compares the base against the files
-    on disk, so an uncommitted edit to `frontend/app.js` or `run.sh` shows up here. Written as
-    `<base> HEAD` it would compare two identical commits and pass no matter what the disk
-    said — which is the exact failure mode this gate is shaped to avoid.
+    Commit-to-commit on purpose, matching `test_diff_gate_backend_main_gained_exactly_two_lines`
+    below — not base-vs-working-tree. Base-vs-working-tree was this test's first form, and it
+    broke the moment F5 was actually committed: the three new files are legitimate content of
+    the diff against `base` once they're part of history, so an empty-diff assertion over all of
+    `DEMO_PATHS` would fail on the very thing this ticket is supposed to do, not on a regression.
+    What must stay empty forever is the set of entries whose status isn't `A` (added) — that is
+    the "someone touched something that already shipped" signature this gate exists to catch,
+    and it reads the same way whether run today or a year from now.
     """
     base = resolved(DEMO_PATH_BASE)
 
-    result = git("diff", "--stat", base, "--", *DEMO_PATHS)
+    result = git("diff", "--name-status", base, "HEAD", "--", *DEMO_PATHS)
     assert result.returncode == 0, result.stderr
 
-    assert result.stdout.strip() == "", (
-        f"F5 modified tracked file(s) on the demo path since {base[:7]}:\n{result.stdout}\n"
-        f"This ticket adds three new files and changes nothing that already ships."
+    non_additions = [
+        line for line in result.stdout.splitlines() if line.strip() and not line.startswith("A\t")
+    ]
+    assert non_additions == [], (
+        f"F5 modified or deleted tracked file(s) on the demo path since {base[:7]}:\n"
+        + "\n".join(non_additions)
+        + "\nThis ticket adds three new files and changes nothing that already ships."
     )
 
 
 @pytest.mark.usefixtures("git_repo")
 def test_diff_gate_the_three_new_files_are_present_and_untracked() -> None:
-    """Half two: the three files exist as untracked additions, and nothing under `frontend/`
-    is modified.
+    """Half two: the three files exist as pure additions since `base`, and nothing else does.
 
-    THIS IS THE HALF THAT CANNOT PASS VACUOUSLY. The empty-diff assertion above is satisfied
-    by a repository in which the three files were never written; this one is not, because it
-    asserts their presence positively, by name, with the `??` status that says "new, not yet
-    committed".
+    THIS IS THE HALF THAT CANNOT PASS VACUOUSLY. Half one above is satisfied by a repository in
+    which the three files were never written; this one is not, because it asserts their
+    presence positively, by name, with the `A` status `git diff --name-status` assigns to a path
+    that exists now and did not exist at `base`.
+
+    Commit-to-commit, matching the fix to half one — the name is kept even though `git status`
+    (which only reports uncommitted/staged entries) stopped being able to see these files the
+    moment they were committed. `git diff --name-status base HEAD` sees a committed pure
+    addition exactly as clearly as `git status` once saw an untracked one; it just keeps seeing
+    it after commit, which is the property this module needs for the life of the branch.
     """
-    result = git("status", "--porcelain", "frontend/")
+    result = git("diff", "--name-status", resolved(DEMO_PATH_BASE), "HEAD", "--", "frontend/")
     assert result.returncode == 0, result.stderr
 
-    entries = [line for line in result.stdout.splitlines() if line.strip()]
-    untracked = sorted(line[3:].strip() for line in entries if line[:2].strip() == "??")
-    modified = sorted(line[3:].strip() for line in entries if "M" in line[:2])
-
-    assert modified == [], (
-        f"F5 modified existing file(s) under frontend/: {modified}. The demo path is frozen; "
-        f"this ticket only adds forecast.html, forecast.js and forecast.css."
+    lines = [line for line in result.stdout.splitlines() if line.strip()]
+    additions = sorted(line.split("\t", 1)[1].strip() for line in lines if line.startswith("A\t"))
+    others = sorted(
+        line.split("\t", 1)[1].strip() for line in lines if not line.startswith("A\t")
     )
-    assert untracked == sorted(EXPECTED_UNTRACKED), (
-        f"expected exactly {sorted(EXPECTED_UNTRACKED)} as untracked additions under frontend/, "
-        f"got {untracked}. Missing entries mean the page was never written; extra ones mean "
-        f"this ticket grew."
+
+    assert others == [], (
+        f"F5 modified or deleted existing file(s) under frontend/: {others}. The demo path is "
+        f"frozen; this ticket only adds forecast.html, forecast.js and forecast.css."
+    )
+    assert additions == sorted(EXPECTED_UNTRACKED), (
+        f"expected exactly {sorted(EXPECTED_UNTRACKED)} as pure additions under frontend/ since "
+        f"{DEMO_PATH_BASE}, got {additions}. Missing entries mean the page was never written; "
+        f"extra ones mean this ticket grew."
     )
 
 

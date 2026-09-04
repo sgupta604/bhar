@@ -23,20 +23,67 @@ already-committed two lines.
 | frontend | `frontend/forecast.css` | NEW — 1092 lines, design-target §2 (44 blocks) + §3 pasted verbatim, Clarity components re-authored (`app.css` is off-limits) |
 | frontend | `frontend/forecast.js` | NEW — 845 lines, single file, no imports, attribute-gated state on `<html>` |
 | tooling | `scripts/f5_payload_swap.sh` | NEW — 351 lines, trap-restoring swap harness with SHA-256 verification, repo-root guard pinned to this worktree only |
-| tests | `tests/test_forecast_ui_guards.py` | NEW — 1540 lines, 56 test functions / 149 cases: non-vacuous BANLIST gate + static guards + regression-diff gate |
-| config | `.gitignore` | +6 lines — `data/forecast.fixture.json` added (see Fixture Decision below) |
+| tests | `tests/test_forecast_ui_guards.py` | NEW — ~1555 lines (149 test cases, plus a post-commit fix to two of them — see Known Issue below), 56 test functions: non-vacuous BANLIST gate + static guards + regression-diff gate |
+
+`.gitignore` was touched and then reverted in the same finalize pass (see Key Decision 8) — net
+change is zero; it does not appear in the final diff.
 
 ## Tests
 
-- Full pytest: 977 passing (828 baseline + 149 new), exit 0
-- Guard module alone: `tests/test_forecast_ui_guards.py` — 149/149 passing
+- Full pytest, run against the **pushed, committed** tree (not the pre-commit tree test-agent
+  saw): **976 passing, 1 failing**, not the 977/0 that `test-pass.md` reported. The failure is
+  `tests/test_forecast_api_guards.py::test_test10_diff_names_no_off_limits_path` — pre-existing,
+  F4-owned, **not caused by any content F5 wrote**. Full explanation in **Known Issue** below;
+  treat that section as required reading before trusting "green" on this branch.
+- Guard module alone: `tests/test_forecast_ui_guards.py` — 149/149 passing (after the post-commit
+  fix described below)
 - Build: n/a (static frontend, source-run Python) | Lint: `ruff check .` clean | Types: n/a (SPEC §13 — none installed)
-- Regression gate (§3): `git diff --stat 00e3441 -- frontend/ backend/ score/ docs/ run.sh demo.sh`
-  is empty; all nine pre-existing `frontend/` files (`index.html`, `overview.html`, `app.js`,
-  `app.css`, `models.js`, `theme.js`, `tokens.css`, `chart.js`, `format.js`) plus `vendor/` are
-  byte-identical to `HEAD`; `git diff --numstat 740dfb0 -- backend/main.py` is exactly `2 0`;
-  `data/results.json` byte-identical; `data/forecast.json` SHA-256 still `9a860e1d…`, matching the
-  verified backup throughout.
+- Regression gate (§3), re-verified against actual `HEAD` (not `HEAD` compared to itself, which is
+  what running this before the commit would silently give you): `git diff --stat 00e3441 HEAD --
+  frontend/ backend/ score/ docs/ run.sh demo.sh` shows exactly the three new files as pure
+  additions, nothing else; all nine pre-existing `frontend/` files (`index.html`, `overview.html`,
+  `app.js`, `app.css`, `models.js`, `theme.js`, `tokens.css`, `chart.js`, `format.js`) plus
+  `vendor/` are byte-identical to `HEAD`; `git diff --numstat 740dfb0 HEAD -- backend/main.py` is
+  exactly `2 0`; `data/results.json` byte-identical; `data/forecast.json` SHA-256 still
+  `9a860e1d…`, matching the verified backup throughout.
+
+## Known Issue — suite is not fully green, and the cause is not F5's content
+
+Discovered during finalize's own re-verification, **after** the commit, by re-running the full
+suite against the actual committed tree instead of trusting `test-pass.md`'s pre-commit number.
+Two distinct problems, handled two different ways:
+
+1. **Fixed here (in-scope):** two of F5's own new guard tests
+   (`test_diff_gate_no_tracked_demo_path_file_was_modified`,
+   `test_diff_gate_the_three_new_files_are_present_and_untracked`) compared the base commit to the
+   **working tree** (`git diff <base> --`, `git status --porcelain`) instead of to `HEAD`. That
+   reads correctly before a commit and is permanently, unfixably red after one — the moment
+   `forecast.{html,js,css}` are tracked, `git status` can never again show them as `??`. A sibling
+   test in the same file (`test_diff_gate_backend_main_gained_exactly_two_lines`) already used the
+   correct commit-to-commit pattern and says so explicitly in its docstring ("Commit-to-commit on
+   purpose ... already committed"). Rewrote both to use `git diff --name-status <base> HEAD`,
+   matching that sibling. This file is F5's own, so fixing it is in scope; behavior asserted is
+   unchanged, only the mechanism.
+2. **NOT fixed here (out of scope — another ticket's protected file):**
+   `tests/test_forecast_api_guards.py::test_test10_diff_names_no_off_limits_path` is F4's guard.
+   Its `OFF_LIMITS` tuple includes a blanket `"frontend/"` prefix, and its base is
+   `branch_point()` — `git merge-base HEAD develop`, i.e. **the whole branch's divergence point**,
+   not F4's own commit range (contrast `MAIN_PY_BASE = "740dfb0"`, used two tests above it in the
+   same file, which correctly scopes to F4 alone). Because every ticket after F1 shares this one
+   branch, that test was always going to break the instant *any* later ticket added a file under
+   `frontend/` — and STATUS.md's mid-branch update explicitly **lifted** the frontend/ hold for F5
+   ("F5 may now create `frontend/forecast.{html,js,css}`"). F4's guard was never updated to match
+   that authorization. This is a stale guard, not a regression: F5 did exactly what it was told to
+   do, and the guard's scope predates being told that. `tests/test_forecast_api_guards.py` belongs
+   to F4, not F5 — F5's own guard file says so explicitly in its header comment ("belongs to
+   another ticket") — so it was left untouched rather than edited unilaterally.
+
+**This blocks a fully-green suite for F6 onward until someone with authority over F4's guard file
+narrows its `OFF_LIMITS` entry from the blanket `"frontend/"` to the specific paths STATUS.md
+actually still protects** (`frontend/index.html`, `overview.html`, `app.js`, `app.css`,
+`models.js`, `theme.js`, `tokens.css`, `vendor/**` — not `frontend/forecast.*`, which F5 was
+authorized to add). Recommend a small coordinated fix — not a fresh ticket — before F6 starts, so
+F6 inherits a green baseline rather than one known-red test it has to rediscover.
 
 Full detail was recorded in `.claude/active-work/forecast-page/test-pass.md` (PASS, recommended
 for finalize) before cleanup.
@@ -82,8 +129,8 @@ for finalize) before cleanup.
 7. **Scope boundary confirmed, not assumed:** `best_single_model` and `improvement_pct` belong to
    F7, not F5. `grep -c` for both against `frontend/forecast.js` returns 0 (the only hit is a
    comment noting them as a "never do this here" reminder).
-8. **Fixture-commit decision: NOT committed.** `data/forecast.fixture.json` is untracked and, as
-   of this ticket, gitignored. Reasoning: it is deterministic and regenerable via
+8. **Fixture-commit decision: NOT committed, and left un-gitignored.** `data/forecast.fixture.json`
+   stays untracked. Reasoning: it is deterministic and regenerable via
    `uv run --no-sync python -m forecast.make_fixture --out data/forecast.fixture.json`; no pytest
    in the suite depends on the repo-root copy existing on disk — `tests/test_forecast_fixture.py`
    and `tests/test_forecast_api.py` both build their fixture documents in memory or under
@@ -92,8 +139,12 @@ for finalize) before cleanup.
    `scripts/f5_payload_swap.sh` (manual browser-probe tool) — it does **not** auto-regenerate the
    file and exits with "fixture not found" if it's absent, so **F6–F9 sessions must run the
    `make_fixture` command above once before their first `f5_payload_swap.sh fixture` call.**
-   Committing a second, driftable copy of a generated artifact was judged worse than that one-time
-   setup step.
+   A `.gitignore` entry for it was tried and then reverted in this same finalize pass: it tripped
+   `tests/test_live_guards.py::test_t30_gitignore_gained_exactly_the_two_expected_lines`, F2's own
+   guard, hardcoded to accept only F2's two specific additions — another other-ticket-owned file
+   this ticket must not edit (see Known Issue). Leaving the fixture untracked-and-unignored avoids
+   that collision; it will show as `??` in `git status` for anyone with a stale copy on disk,
+   which is a minor, known cosmetic cost, not a functional one.
 
 ## Deferred Items
 
@@ -108,6 +159,9 @@ for finalize) before cleanup.
 - The page is reachable only at `/forecast.html` directly — no nav link, because `index.html` and
   `overview.html` are frozen per FORECAST-SPEC §3. The other session (main checkout) adds the link
   after its demo. F8's README must say this explicitly.
+- **Blocking, not merely deferred:** `tests/test_forecast_api_guards.py`'s F4-owned `OFF_LIMITS`
+  guard needs its blanket `"frontend/"` entry narrowed — see Known Issue above. Whoever picks up
+  F6 should resolve this before relying on "pytest passes" as a baseline.
 
 ## Retrospective
 
@@ -133,6 +187,17 @@ for finalize) before cleanup.
   of `best_single_model`/`improvement_pct` to F5 were both wrong (off-by-two and wrong-ticket,
   respectively) — research caught both before they became implementation bugs, but a plan or brief
   should not be trusted for exact citations without a source check.
+- **`test-pass.md`'s "977 passed" was true only of the pre-commit tree, and nobody re-ran the
+  suite against the actual committed `HEAD` before this finalize pass did.** Two of F5's own new
+  diff-gate tests compared base-commit-vs-working-tree, which silently flips from green to
+  permanently red the instant the files they check for get committed — the exact moment `/finalize`
+  exists to produce. A third, pre-existing test (F4's `OFF_LIMITS` guard) had the same class of bug
+  in the other direction: scoped to the whole branch's divergence point instead of its own ticket,
+  so it was guaranteed to break the first time any later ticket touched `frontend/`, which
+  STATUS.md had already authorized F5 to do. **Lesson: any test that shells out to `git diff` or
+  `git status` needs an explicit note on which side of a commit it's meant to run on, and finalize
+  must re-run the full suite against the actual post-commit `HEAD` — not trust a pre-commit
+  `test-pass.md` number — before reporting green.**
 
 ### Process
 - Pipeline flow: smooth once research corrected the two premise errors (dark-mode ownership,

@@ -56,11 +56,30 @@ acceptance floors and the dependency graph are unchanged.
 | F2 | `forecast-live-fetch` | — | GREEN — finalized 2026-09-04, commit `96d0d55`, no PR (FORECAST-SPEC §12) |
 | F3 | `forecast-payload` | F2 | GREEN — finalized 2026-09-04, commit `dc97165`, no PR (FORECAST-SPEC §12) |
 | F4 | `forecast-api` | F3 | GREEN — finalized 2026-09-04, commit `56967fd`, no PR (FORECAST-SPEC §12) |
-| F5 | `forecast-page` | F1, F3 | GREEN — finalized 2026-09-04, commit `72f0630`, no PR (FORECAST-SPEC §12) |
+| F5 | `forecast-page` | F1, F3 | GREEN — finalized 2026-09-04, commit `72f0630`, no PR (FORECAST-SPEC §12) — **see Known Issue below before trusting the full suite** |
 | F6 | `forecast-history` | F4, F5 | TODO |
 | F7 | `forecast-skill-panel` | F4, F5 | TODO |
 | F8 | `forecast-docs` | all | TODO |
 | F9 | `forecast-scorecard` | F3, F4 | TODO — **user-approved 11:44**; added on develop @ 37ca272 |
+
+## KNOWN ISSUE — full suite is 976 passed / 1 failed, not fully green
+
+Discovered post-commit during F5's finalize, re-running `pytest` against actual `HEAD` (not the
+pre-commit tree `test-pass.md` measured). `tests/test_forecast_api_guards.py::test_test10_diff_names_no_off_limits_path`
+(F4's guard) fails: its `OFF_LIMITS` tuple has a blanket `"frontend/"` entry and compares against
+`branch_point()` (this whole branch's divergence from `develop`), not F4's own commit range. It
+was always going to break the first time any ticket added a file under `frontend/` — which is
+exactly what the "Hard boundary" section above says F5 was authorized to do. **Not caused by F5's
+content.** `tests/test_forecast_api_guards.py` is F4's own guard file (F5's guard file says so
+explicitly — "belongs to another ticket") so F5's finalize left it untouched rather than editing
+it unilaterally.
+
+**Fix needed before F6 relies on a green baseline:** narrow F4's `OFF_LIMITS` entry from the
+blanket `"frontend/"` to the specific paths still actually protected —
+`frontend/index.html`, `overview.html`, `app.js`, `app.css`, `models.js`, `theme.js`,
+`tokens.css`, `vendor/**` — matching the "Hard boundary" list above, which already excludes
+`frontend/forecast.*`. Small, coordinated fix; not a new ticket. Full detail:
+`.claude/features/forecast-page-ui/SUMMARY.md`, "Known Issue" section.
 
 ## Completed
 
