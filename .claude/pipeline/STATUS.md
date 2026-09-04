@@ -1,14 +1,14 @@
 # Pipeline Status
 
-**Updated:** 2026-09-04 03:53 local
+**Updated:** 2026-09-04 08:10 local — **RUN COMPLETE, ALL SIX TICKETS GREEN**
 
 ## Active
 
 | Field | Value |
 |-------|-------|
-| Feature | `score-and-blend` (T5 of 6) |
-| Phase | T3 `test` / T4 `test` / T5 `research` |
-| Next | finalize T3 + T4, then `/plan score-and-blend` |
+| Feature | — (none active; backlog complete) |
+| Phase | **DONE** — all six tickets green and committed |
+| Next | nothing queued. Demo at 16:00. SPEC §9 stop condition reached. |
 | Branch | `feat/site-tuned-blend` |
 
 ## Context for a cold session
@@ -29,12 +29,31 @@ The loop must not need them — see SPEC §9.
 |---|---------|-----------|--------|
 | T1 | `project-scaffold` | — | **GREEN** — committed `a487f6c` + `22b7972` |
 | T2 | `grib-point-fetch` | T1 | **GREEN** — committed `93a4817` + `4e87789` |
-| T3 | `demo-shell` | T1 | IN PROGRESS — test (committed `b40b381` + `8c4bf20`) |
-| T4 | `data-backfill` | T2 | IN PROGRESS — test (committed `46d58c9`) |
-| T5 | `score-and-blend` | T4 | IN PROGRESS — research |
-| T6 | `readme-and-caveats` | T5 | not started |
+| T3 | `demo-shell` | T1 | **GREEN** — committed `b40b381` + `8c4bf20` + `c957a14` |
+| T4 | `data-backfill` | T2 | **GREEN** — committed `46d58c9` + `10b08db` |
+| T5 | `score-and-blend` | T4 | **GREEN** — committed `78046e7` + `864c781` |
+| T6 | `readme-and-caveats` | T5 | **GREEN** — committed `3710898` + `d657931` + `06d50ec` |
 
-T3 is independent of the data path. If T2 blocks, T3 still runs — log the blocker and move on.
+**All six complete. No ticket was ever BLOCKED.** The only interruption was an account-level API
+spend limit at ~04:15 that killed T5 and T6 mid-flight; both were resumed from disk at 07:52 and
+completed. That is why the 07:30 handoff was missed — not a blocker, and not a broken tree.
+
+## Start the demo
+
+```bash
+BHAR_BACKEND_PORT=8011 BHAR_FRONTEND_PORT=5184 ./run.sh
+```
+Then open the `Frontend:` URL it prints (it carries the `?api=` override). Port 8000 is held by a
+VS Code helper that answers `/health` with a byte-identical `{"status":"ok"}` — verify identity
+via `/openapi.json`'s title, never `/health`.
+
+## The result, in one paragraph
+
+A blend beats the best single model at all three leads: **+9.02% / +13.82% / +16.51%** at
+6h/12h/24h out of sample. **HRRR, not NBM, is the best single model** at every lead. But most of
+that gain is **avoiding GFS**, not the fitted weights: an *un-fitted* "drop GFS, average the rest"
+blend beats the fitted winner at 12h and is the floor of all 286 vectors at 24h. Fitted weighting
+buys a little at 6h and nothing measurable at 12h or 24h. README §1 and §5.1 say this plainly.
 
 ## Queue
 
@@ -47,7 +66,11 @@ T3 is independent of the data path. If T2 blocks, T3 still runs — log the bloc
 | Feature | Date | PR |
 |---------|------|----|
 | `project-scaffold` (T1) | 2026-09-04 03:04 | none — no remote (SPEC §8) |
-| `grib-point-fetch` (T2) | 2026-09-04 03:48 | none — no remote (SPEC §8) |
+| `grib-point-fetch` (T2) | 2026-09-04 03:19 | none — no remote (SPEC §8) |
+| `data-backfill` (T4) | 2026-09-04 03:51 | none — no remote (SPEC §8) |
+| `demo-shell` (T3) | 2026-09-04 03:57 | none — no remote (SPEC §8) |
+| `score-and-blend` (T5) | 2026-09-04 08:08 | none — no remote (SPEC §8) |
+| `readme-and-caveats` (T6) | 2026-09-04 08:10 | none — no remote (SPEC §8) |
 
 ## Parked
 
