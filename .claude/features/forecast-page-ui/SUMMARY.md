@@ -1,7 +1,8 @@
 # Summary: forecast-page-ui (F5)
 
-**Completed:** 2026-09-04 | **Branch:** `feat/forecast-page` | **PR:** none — FORECAST-SPEC §12 opens a
-single PR for all nine tickets at F9; this ticket only commits and pushes to the shared branch.
+**Completed:** 2026-09-04 | **Branch:** `feat/forecast-page` | **Commit:** `72f0630` | **PR:** none —
+FORECAST-SPEC §12 opens a single PR for all nine tickets at F9; this ticket only commits and pushes
+to the shared branch.
 
 ## What Was Built
 
