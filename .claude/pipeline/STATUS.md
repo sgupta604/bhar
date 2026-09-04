@@ -1,14 +1,14 @@
 # Pipeline Status
 
-**Updated:** 2026-09-04 02:44 local
+**Updated:** 2026-09-04 03:53 local
 
 ## Active
 
 | Field | Value |
 |-------|-------|
-| Feature | `project-scaffold` (T1 of 6) |
-| Phase | `implement` (in progress) — plan complete |
-| Next | `/test project-scaffold` |
+| Feature | `score-and-blend` (T5 of 6) |
+| Phase | T3 `test` / T4 `test` / T5 `research` |
+| Next | finalize T3 + T4, then `/plan score-and-blend` |
 | Branch | `feat/site-tuned-blend` |
 
 ## Context for a cold session
@@ -27,11 +27,11 @@ The loop must not need them — see SPEC §9.
 
 | # | Feature | Depends on | Status |
 |---|---------|-----------|--------|
-| T1 | `project-scaffold` | — | IN PROGRESS — implement |
-| T2 | `grib-point-fetch` | T1 | not started |
-| T3 | `demo-shell` | T1 | not started |
-| T4 | `data-backfill` | T2 | not started |
-| T5 | `score-and-blend` | T4 | not started |
+| T1 | `project-scaffold` | — | **GREEN** — committed `a487f6c` + `22b7972` |
+| T2 | `grib-point-fetch` | T1 | **GREEN** — committed `93a4817` + `4e87789` |
+| T3 | `demo-shell` | T1 | IN PROGRESS — test (committed `b40b381` + `8c4bf20`) |
+| T4 | `data-backfill` | T2 | IN PROGRESS — test (committed `46d58c9`) |
+| T5 | `score-and-blend` | T4 | IN PROGRESS — research |
 | T6 | `readme-and-caveats` | T5 | not started |
 
 T3 is independent of the data path. If T2 blocks, T3 still runs — log the blocker and move on.
@@ -46,7 +46,8 @@ T3 is independent of the data path. If T2 blocks, T3 still runs — log the bloc
 
 | Feature | Date | PR |
 |---------|------|----|
-| - | - | - |
+| `project-scaffold` (T1) | 2026-09-04 03:04 | none — no remote (SPEC §8) |
+| `grib-point-fetch` (T2) | 2026-09-04 03:48 | none — no remote (SPEC §8) |
 
 ## Parked
 
