@@ -505,10 +505,14 @@ F4_BRANCH_POINT = "740dfb0"
 EXPECTED_MAIN_NUMSTAT = (2, 0)
 
 #: Paths F4 may not touch. Trailing `/` means "anything under here"; the rest are exact.
+#: **`frontend/` is deliberately absent.** It used to sit here as a blanket prefix, which
+#: encoded the wrong rule: FORECAST-SPEC 3 forbids *modifying the existing demo-path files*,
+#: and explicitly permits new `frontend/forecast.*` files. F5 was authorized to create three
+#: of them and did; F6, F7 and F9 add more. The real rule is enforced by
+#: `PROTECTED_FRONTEND` below — by change *status*, not by path prefix.
 OFF_LIMITS = (
     "fetch/",
     "score/",
-    "frontend/",
     "docs/",
     "run.sh",
     "demo.sh",
@@ -517,6 +521,29 @@ OFF_LIMITS = (
     "backend/contract.py",
     "data/results.json",
 )
+
+#: The pre-existing demo-path frontend files. These may not be MODIFIED, RENAMED or DELETED;
+#: files ADDED under `frontend/` are legitimate new forecast-page work. Pinned as literals
+#: rather than globbed from the working tree: a glob would quietly shrink to nothing if the
+#: directory moved, and a check over zero files passes perfectly and is fake.
+PROTECTED_FRONTEND = (
+    "frontend/index.html",
+    "frontend/overview.html",
+    # `overview.css` / `overview.js` are pre-existing demo-path files too; the ticket brief's
+    # nine-name list omitted them, and under-protecting is the failure mode that matters here.
+    "frontend/overview.css",
+    "frontend/overview.js",
+    "frontend/app.js",
+    "frontend/app.css",
+    "frontend/models.js",
+    "frontend/theme.js",
+    "frontend/tokens.css",
+    "frontend/chart.js",
+    "frontend/format.js",
+)
+
+#: Everything under here is vendored third-party asset bytes — protected wholesale.
+PROTECTED_FRONTEND_PREFIXES = ("frontend/vendor/",)
 
 
 def git(*args: str) -> subprocess.CompletedProcess:
@@ -562,8 +589,66 @@ def off_limits_hits(paths: list[str]) -> list[str]:
     )
 
 
-def test_test10_off_limits_matcher_fires_on_a_bad_sample() -> None:
-    """A guard that cannot fail is not a guard — prove the matcher catches both rule shapes."""
+def parse_name_status(output: str) -> list[tuple[str, tuple[str, ...]]]:
+    """`git diff --name-status` output as `[(status_letter, (path, ...)), ...]`.
+
+    A rename or copy line carries two paths (`R100\told\tnew`); both are returned, because
+    renaming a protected file *away* and renaming something *onto* one are equally forbidden.
+    Only the leading letter of the status is kept — `R100` and `R` mean the same thing here.
+    """
+    entries: list[tuple[str, tuple[str, ...]]] = []
+    for line in output.splitlines():
+        fields = [field for field in line.split("\t") if field.strip()]
+        if len(fields) < 2:
+            continue
+        entries.append((fields[0][:1], tuple(fields[1:])))
+    return entries
+
+
+def changed_paths(entries: list[tuple[str, tuple[str, ...]]]) -> list[str]:
+    """Every path named by the diff, both sides of a rename included."""
+    return sorted({path for _status, paths in entries for path in paths})
+
+
+def is_protected_frontend(path: str) -> bool:
+    """Is `path` one of the pre-existing demo-path frontend files?"""
+    return path in PROTECTED_FRONTEND or path.startswith(PROTECTED_FRONTEND_PREFIXES)
+
+
+def frontend_mutations(entries: list[tuple[str, tuple[str, ...]]]) -> list[str]:
+    """Protected frontend files the diff MODIFIES, RENAMES or DELETES.
+
+    `A` (added) is the one status that is allowed under `frontend/` — that is exactly how the
+    authorized new `frontend/forecast.{html,js,css}` files appear. Anything else touching a
+    protected path is a demo-path regression.
+    """
+    return sorted(
+        {
+            path
+            for status, paths in entries
+            for path in paths
+            if status != "A" and is_protected_frontend(path)
+        }
+    )
+
+
+def blob_at(base: str, path: str) -> str | None:
+    """The blob sha of `path` at `base`, or `None` when it does not exist there."""
+    result = git("rev-parse", "--verify", f"{base}:{path}")
+    return result.stdout.strip() if result.returncode == 0 and result.stdout.strip() else None
+
+
+def blob_on_disk(path: str) -> str | None:
+    """The blob sha of the working-tree bytes at `path`, or `None` when the file is gone."""
+    if not (REPO / path).is_file():
+        return None
+    result = git("hash-object", "--", str(REPO / path))
+    return result.stdout.strip() if result.returncode == 0 and result.stdout.strip() else None
+
+
+def test_test10_diff_matchers_fire_on_a_bad_sample_and_stay_silent_on_clean_work() -> None:
+    """A guard that cannot fail is not a guard — prove both matchers catch every rule shape,
+    and that neither one fires on the frontend additions F5 onward are authorized to make."""
     assert off_limits_hits(["fetch/grib.py", "backend/main.py", ".gitignore"]) == [
         ".gitignore",
         "fetch/grib.py",
@@ -575,6 +660,55 @@ def test_test10_off_limits_matcher_fires_on_a_bad_sample() -> None:
         "demo.sh",
         "docs/SPEC.md",
         "run.sh",
+    ]
+
+    # `frontend/` is no longer a blanket prefix — the prefix matcher must ignore it entirely,
+    # including the new forecast-page files the later tickets add.
+    assert off_limits_hits(["frontend/forecast.js", "frontend/index.html"]) == []
+
+    # ...and the status-aware matcher that replaced it must bite. Modified, deleted, renamed
+    # away, renamed onto, and a vendored asset: every one of these is a demo-path regression.
+    assert frontend_mutations(parse_name_status("M\tfrontend/index.html\n")) == [
+        "frontend/index.html"
+    ]
+    assert frontend_mutations(parse_name_status("D\tfrontend/app.js\n")) == ["frontend/app.js"]
+    assert frontend_mutations(parse_name_status("M\tfrontend/vendor/fonts.css\n")) == [
+        "frontend/vendor/fonts.css"
+    ]
+    assert frontend_mutations(parse_name_status("R100\tfrontend/theme.js\tfrontend/t.js\n")) == [
+        "frontend/theme.js"
+    ]
+    assert frontend_mutations(parse_name_status("R100\tfrontend/x.js\tfrontend/chart.js\n")) == [
+        "frontend/chart.js"
+    ]
+    assert frontend_mutations(
+        parse_name_status("M\tfrontend/app.css\nM\tfrontend/tokens.css\n")
+    ) == ["frontend/app.css", "frontend/tokens.css"]
+
+    # Every pinned name is spelled the way the matcher will see it, and each is caught.
+    for pinned in PROTECTED_FRONTEND:
+        assert frontend_mutations(parse_name_status(f"M\t{pinned}\n")) == [pinned]
+
+    # ...and a guard that fires on everything is noise: F5 onward may ADD frontend files.
+    # These are the exact `--name-status` lines F5's three authorized new files produce, plus
+    # the ones F6/F7/F9 will produce. None of them may register as a violation.
+    added = "A\tfrontend/forecast.html\nA\tfrontend/forecast.js\nA\tfrontend/forecast.css\n"
+    assert frontend_mutations(parse_name_status(added)) == []
+    assert off_limits_hits(changed_paths(parse_name_status(added))) == []
+    assert frontend_mutations(parse_name_status("A\tfrontend/forecast.chart.js\n")) == []
+
+    # Non-frontend churn is the other guard's business, not this matcher's.
+    assert frontend_mutations(parse_name_status("M\tbackend/main.py\nA\ttests/t.py\n")) == []
+
+    # The parser must not silently swallow lines, or every assertion above is vacuous.
+    assert changed_paths(parse_name_status(added)) == [
+        "frontend/forecast.css",
+        "frontend/forecast.html",
+        "frontend/forecast.js",
+    ]
+    assert changed_paths(parse_name_status("R100\tfrontend/a.js\tfrontend/b.js\n")) == [
+        "frontend/a.js",
+        "frontend/b.js",
     ]
 
 
@@ -601,7 +735,13 @@ def test_test10_main_py_gained_exactly_two_lines() -> None:
 
 @pytest.mark.usefixtures("git_repo")
 def test_test10_diff_names_no_off_limits_path() -> None:
-    """Nothing on F4's off-limits list appears in the diff since the branch point.
+    """Nothing on F4's off-limits list appears in the diff since the branch point, and no
+    pre-existing demo-path frontend file is modified, renamed or deleted.
+
+    The frontend half is a **status** rule, not a path rule: FORECAST-SPEC 3 protects the
+    files the demo already ships and explicitly permits new `frontend/forecast.*` ones. An
+    earlier version of this gate listed `frontend/` as a blanket off-limits prefix and so
+    failed on F5's authorized new files — the wrong rule, correctly enforced.
 
     Tracked changes only, on purpose: `.venv` and `data/raw` are untracked **symlinks** in this
     worktree and `.claude/features/forecast-api/` is untracked, so a `git status --porcelain`
@@ -609,13 +749,55 @@ def test_test10_diff_names_no_off_limits_path() -> None:
     """
     base = branch_point()
 
-    result = git("diff", "--name-only", base)
+    result = git("diff", "--name-status", base)
     assert result.returncode == 0, result.stderr
 
-    changed = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+    entries = parse_name_status(result.stdout)
+    changed = changed_paths(entries)
     hits = off_limits_hits(changed)
 
     assert hits == [], (
         f"F4 must not touch {hits} — the diff since {base[:7]} names them.\n"
         f"Full change set:\n" + "\n".join(changed)
+    )
+
+    mutated = frontend_mutations(entries)
+    assert mutated == [], (
+        f"the pre-existing demo-path frontend files {mutated} are modified, renamed or deleted "
+        f"since {base[:7]}. New `frontend/forecast.*` files are permitted; touching the shipped "
+        f"demo path is not.\nFull change set:\n{result.stdout}"
+    )
+
+    # Belt and braces over the status check: the demo-path *bytes* have not moved either.
+    # `--name-status` reads git's summary of the change; this reads the content, so it also
+    # catches a file modified and then re-added, and edits that are staged or uncommitted.
+    # The vendored assets are enumerated from the branch-point tree rather than pinned, so a
+    # new vendored file is covered the moment it lands.
+    vendored = git("ls-tree", "-r", "--name-only", base, "--", *PROTECTED_FRONTEND_PREFIXES)
+    assert vendored.returncode == 0, vendored.stderr
+    protected = list(PROTECTED_FRONTEND) + sorted(
+        line.strip() for line in vendored.stdout.splitlines() if line.strip()
+    )
+
+    # A comparison over zero files passes perfectly and is fake. Every pinned name must exist
+    # at the branch point, and the vendor directory must not have come back empty.
+    expected = {path: blob_at(base, path) for path in protected}
+    missing = sorted(path for path, sha in expected.items() if sha is None)
+    assert missing == [], (
+        f"{missing} do not exist at {base[:7]} — the pinned protected set is stale and this "
+        f"guard would be comparing nothing."
+    )
+    assert len(protected) >= len(PROTECTED_FRONTEND) + 1, (
+        f"only {len(protected)} protected paths resolved; the vendor enumeration came back "
+        f"empty, which would silently narrow this guard."
+    )
+
+    on_disk = {path: blob_on_disk(path) for path in expected}
+    drifted = {path: (sha, on_disk[path]) for path, sha in expected.items() if on_disk[path] != sha}
+    assert drifted == {}, (
+        f"pre-existing demo-path frontend files changed since {base[:7]}: "
+        + ", ".join(
+            f"{path} ({was[:7]} -> {'deleted' if now is None else now[:7]})"
+            for path, (was, now) in sorted(drifted.items())
+        )
     )
