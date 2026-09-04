@@ -1,79 +1,75 @@
 # Pipeline Status
 
-**Updated:** 2026-09-04 08:10 local — **RUN COMPLETE, ALL SIX TICKETS GREEN**
+**Updated:** 2026-09-04 17:20 local — F1 finalized
 
 ## Active
 
 | Field | Value |
 |-------|-------|
-| Feature | — (none active; backlog complete) |
-| Phase | **DONE** — all six tickets green and committed |
-| Next | nothing queued. Demo at 16:00. SPEC §9 stop condition reached. |
-| Branch | `feat/site-tuned-blend` |
+| Feature | `forecast-page` (FORECAST-SPEC §12, tickets F1–F9) |
+| Phase | F1 done — ready for F2 |
+| Next | `/research forecast-live-fetch` (F2) |
+| Branch | `feat/forecast-page` (off `develop`) |
+| Worktree | **`/Users/sanjaygupta/Projects/Bhar-forecast`** — NOT the main checkout |
 
-## Context for a cold session
+## CRITICAL: isolated worktree
 
-**Read `docs/SPEC.md` first — it is the contract and it overrides `docs/BRIEF.md`.**
-Start at SPEC §16 (cold-start handoff). Verified facts that override the BRIEF live in
-`.claude/features/site-tuned-blend/2026-09-04T02-10-00_spike.md`.
+The main checkout `/Users/sanjaygupta/Projects/Bhar` is **occupied by another session**
+building the 16:00 demo overview page on `feat/demo-overview`. It switched branches under
+us at 11:10. All forecast-page work happens in the **worktree** above so the two sessions
+cannot collide. `.venv`, `data/*.parquet` and `data/raw` are symlinked back to the main
+checkout (they are gitignored and cannot be checked out).
 
-Requirements were fully settled in a grilling session on 2026-09-04 ~02:00. **There are no open
-questions.** The environment is **already provisioned** and the GRIB path is **already validated
-end to end for all four models** — see the spike addendum (F9–F12). Do not re-provision, do not
-re-probe, and do NOT trigger the Open-Meteo fallback: the top project risk is retired. The user is asleep, wakes 07:30, leaves 08:15, and **demos at 16:00**.
-The loop must not need them — see SPEC §9.
+Run everything as `uv run --no-sync ...` from the worktree root.
 
-## Ticket backlog (SPEC §8)
+## Hard boundary — UPDATED 11:44, user cleared it
+
+The user has **lifted** the hold on `frontend/` and `backend/main.py`. F5 may now create
+`frontend/forecast.{html,js,css}`; F4 may add its two lines to `backend/main.py`.
+
+**Still off-limits, permanently, by FORECAST-SPEC §3** (not a temporary hold):
+`frontend/index.html`, `overview.html`, `app.js`, `app.css`, `models.js`, `theme.js`,
+`tokens.css`, `vendor/**`, `backend/contract.py`, `score/**`, `data/results.json`,
+`docs/SPEC.md`, `docs/BRIEF.md`, `docs/FORECAST-SPEC.md`. Read-only reuse only.
+
+The 16:00 demo still outranks the forecast page (§16 R4): if a change breaks the demo path,
+revert the ticket.
+
+## Rebased onto develop @ 37ca272 (11:43)
+
+Picked up ticket **F9 `forecast-scorecard`** (additive; depends on F3+F4; does not gate F8) and
+the **corrected §3 GRIB rule**: assert the *data variable* and `GRIB_cfVarName` are `t2m`;
+`GRIB_shortName` is `"2t"` on valid data and must never be compared to `"t2m"`. F1-F8 scope,
+acceptance floors and the dependency graph are unchanged.
+
+## Baseline gate (FORECAST-SPEC §1) — verified 11:12
+
+- `uv run --no-sync python -c "import cfgrib, xarray, pandas, pyarrow, fastapi"` → ok
+- `uv run --no-sync pytest -q` → **308 passed**
+- `uv run --no-sync ruff check .` → clean
+
+## Ticket backlog (FORECAST-SPEC §12)
 
 | # | Feature | Depends on | Status |
 |---|---------|-----------|--------|
-| T1 | `project-scaffold` | — | **GREEN** — committed `a487f6c` + `22b7972` |
-| T2 | `grib-point-fetch` | T1 | **GREEN** — committed `93a4817` + `4e87789` |
-| T3 | `demo-shell` | T1 | **GREEN** — committed `b40b381` + `8c4bf20` + `c957a14` |
-| T4 | `data-backfill` | T2 | **GREEN** — committed `46d58c9` + `10b08db` |
-| T5 | `score-and-blend` | T4 | **GREEN** — committed `78046e7` + `864c781` |
-| T6 | `readme-and-caveats` | T5 | **GREEN** — committed `3710898` + `d657931` + `06d50ec` |
-
-**All six complete. No ticket was ever BLOCKED.** The only interruption was an account-level API
-spend limit at ~04:15 that killed T5 and T6 mid-flight; both were resumed from disk at 07:52 and
-completed. That is why the 07:30 handoff was missed — not a blocker, and not a broken tree.
-
-## Start the demo
-
-```bash
-BHAR_BACKEND_PORT=8011 BHAR_FRONTEND_PORT=5184 ./run.sh
-```
-Then open the `Frontend:` URL it prints (it carries the `?api=` override). Port 8000 is held by a
-VS Code helper that answers `/health` with a byte-identical `{"status":"ok"}` — verify identity
-via `/openapi.json`'s title, never `/health`.
-
-## The result, in one paragraph
-
-A blend beats the best single model at all three leads: **+9.02% / +13.82% / +16.51%** at
-6h/12h/24h out of sample. **HRRR, not NBM, is the best single model** at every lead. But most of
-that gain is **avoiding GFS**, not the fitted weights: an *un-fitted* "drop GFS, average the rest"
-blend beats the fitted winner at 12h and is the floor of all 286 vectors at 24h. Fitted weighting
-buys a little at 6h and nothing measurable at 12h or 24h. README §1 and §5.1 say this plainly.
-
-## Queue
-
-| Feature | Priority | Notes |
-|---------|----------|-------|
-| - | - | - |
+| F1 | `forecast-design` | — | DONE — finalized 2026-09-04, no PR (see FORECAST-SPEC §12) |
+| F2 | `forecast-live-fetch` | — | TODO |
+| F3 | `forecast-payload` | F2 (fixture path needs no F2) | TODO |
+| F4 | `forecast-api` | F3 | TODO (needs main.py — 2 lines; boundary) |
+| F5 | `forecast-page` | F1, F3 | TODO |
+| F6 | `forecast-history` | F4, F5 | TODO |
+| F7 | `forecast-skill-panel` | F4, F5 | TODO |
+| F8 | `forecast-docs` | all | TODO |
+| F9 | `forecast-scorecard` | F3, F4 | TODO — **user-approved 11:44**; added on develop @ 37ca272 |
 
 ## Completed
 
 | Feature | Date | PR |
 |---------|------|----|
-| `project-scaffold` (T1) | 2026-09-04 03:04 | none — no remote (SPEC §8) |
-| `grib-point-fetch` (T2) | 2026-09-04 03:19 | none — no remote (SPEC §8) |
-| `data-backfill` (T4) | 2026-09-04 03:51 | none — no remote (SPEC §8) |
-| `demo-shell` (T3) | 2026-09-04 03:57 | none — no remote (SPEC §8) |
-| `score-and-blend` (T5) | 2026-09-04 08:08 | none — no remote (SPEC §8) |
-| `readme-and-caveats` (T6) | 2026-09-04 08:10 | none — no remote (SPEC §8) |
+| - | - | - |
 
-## Parked
+## Blocked
 
-| Feature | Phase | Reason |
-|---------|-------|--------|
+| Feature | Reason | Tried |
+|---------|--------|-------|
 | - | - | - |
