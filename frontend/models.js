@@ -23,6 +23,17 @@
     return _colors;
   }
 
+  /* Drop the memoized map so the next modelColors() re-reads the custom
+     properties. The theme toggle MUST call this: --model-* resolve to the
+     500 weights in light and the 300 weights in dark, and app.js/chart.js
+     bake the resolved hex inline at render time. Without this the page
+     repaints its background and leaves every coloured mark on the old
+     palette — which is the difference between a dark mode and a dark mode
+     that works. */
+  function resetColors() {
+    _colors = null;
+  }
+
   /* The grid is a 0.1 lattice, so slider positions snap to 10 (percent units). */
   function snapTo10(v) {
     var n = Math.round(Number(v) / 10) * 10;
@@ -120,6 +131,7 @@
   window.BharModels = {
     MODELS: MODELS,
     modelColors: modelColors,
+    resetColors: resetColors,
     snapTo10: snapTo10,
     renormalize: renormalize,
     sumsToOne: sumsToOne,

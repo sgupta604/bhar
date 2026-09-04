@@ -212,3 +212,70 @@ input[type="range"].weight-slider:disabled::-moz-range-thumb {
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   DARK MODE — appended for T7 (demo-overview). Additions only; nothing
+   above this line was edited.
+
+   Values are transcribed VERBATIM from the Clarity tokens doc §4, which is
+   the only place they exist (vendor/clarity-tokens.css ships the light
+   :root block alone). Only the SEMANTIC layer and the shadows are
+   redefined — never the raw scales.
+
+   There is deliberately NO system-preference media query anywhere:
+   Clarity §4 specifies an explicit toggle only, and a theme that flips
+   under a presenter mid-demo is worse than one that does not.
+   (The handoff checklist greps this tree for that query name and requires
+   zero hits, so it is not spelled out here either.)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Native form controls and scrollbars need this or accent-color and the
+   scrollbars render light-on-dark. Not optional. */
+:root { color-scheme: light; }
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Semantic surfaces — tokens doc §4, verbatim. */
+  --bg:            var(--charcoal-950);  /* #15181c */
+  --bg-elev:       var(--charcoal-900);  /* #212529 */
+  --bg-subtle:     var(--charcoal-800);  /* #2d333b */
+  --bg-sunken:     var(--charcoal-950);  /* #15181c */
+  --border:        var(--charcoal-800);  /* #2d333b */
+  --border-strong: var(--charcoal-700);  /* #404750 */
+  --text:          #f3f5f7;
+  --text-muted:    var(--charcoal-400);  /* #adb5bd */
+  --text-subtle:   var(--charcoal-500);  /* #868e96 */
+  --accent:        var(--blue-400);      /* #4eaff5 */
+  --accent-strong: var(--blue-300);      /* #72c3fc */
+  --accent-soft:   #329af026;            /* blue @ 15% */
+  --on-accent:     var(--charcoal-950);  /* #15181c */
+  --success-soft:  #51cf6624;
+  --warn-soft:     #ff922b26;
+  --danger-soft:   #f0329a26;
+  --info-soft:     #329af026;
+  --shadow-1:   0 1px 0 #0006, 0 1px 2px #0006;
+  --shadow-2:   0 1px 0 #0006, 0 6px 16px #0006;
+  --shadow-3:   0 8px 28px #00000080, 0 2px 6px #0000004d;
+  --shadow-pop: 0 24px 60px #0009, 0 8px 20px #0006;
+
+  /* Chart/model series step from the 500 weights to the 300 weights in
+     dark (tokens §1.2, §8.2). models.js memoizes the resolved values, so
+     BharModels.resetColors() MUST be called on every theme change or the
+     page repaints its background and leaves every mark on the old palette. */
+  --model-hrrr: var(--blue-300);    /* #72c3fc */
+  --model-gfs:  var(--orange-300);  /* #ffc078 */
+  --model-nam:  var(--purple-300);  /* #ba79da */
+  --model-nbm:  var(--green-300);   /* #8ce99a */
+}
+
+/* Verbatim tokens §4. */
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--charcoal-700);
+  background-clip: content-box;
+}
+
+/* --success / --warn / --danger / --info / --ring are UNCHANGED in dark by
+   design (tokens §4). That is why the synthetic banner needs no dark variant
+   — and must not be given one (SPEC §10) — and why .improvement-line needs
+   the explicit 300-weight override in app.css. */

@@ -508,5 +508,33 @@
     host.appendChild(card);
   }
 
+  /* ── Theme (R1) ───────────────────────────────────────────────────
+     models.js MEMOIZES the model -> colour map, and this file bakes the
+     resolved hex inline: stacked bar segments (renderLeaderboard),
+     model dots (renderModelBar, renderSliders) and slider fills
+     (renderSliders). chart.js does the same for the series, points, min
+     marker and endpoint labels. Repainting the background is therefore not
+     enough — without dropping the cache and re-rendering every panel that
+     carries a colour, the page goes dark and every coloured mark stays on
+     the light palette. This is an acceptance criterion, not polish.
+
+     The five renders below are exactly the body of renderLead(), called
+     directly rather than through it so that a theme toggle does NOT reset
+     the presenter's slider position or chart pair back to the winner's
+     defaults mid-demo. */
+  if (window.BharTheme) {
+    window.BharTheme.mount($('theme-toggle'));
+    window.BharTheme.onChange(function () {
+      M.resetColors();
+      if (!state.data) return;          // empty state carries no coloured marks
+      renderModelBar();
+      renderLeaderboard();
+      renderSliders();
+      renderReadout();
+      renderChartRegion();
+      renderFooter();
+    });
+  }
+
   window.BharApp = { state: state, renormalize: M.renormalize };
 })();

@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bhar — Site-Tuned Model Blend</title>
+<link rel="icon" href="vendor/s2-mark.png">
+<!-- Pre-hydration theme. MUST be inline and MUST come before the stylesheets:
+     a deferred script paints the light theme first and the presenter sees a
+     flash. Mirrors theme.js exactly; theme.js re-asserts it on DOMContentLoaded. -->
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('internal-portal:theme');
+    document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
+<!-- Load order is load-bearing, and identical to index.html:
+     vendored tokens -> vendored fonts -> local tokens -> layout. -->
+<link rel="stylesheet" href="vendor/clarity-tokens.css">
+<link rel="stylesheet" href="vendor/fonts.css">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="overview.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     EVERY RESULT NUMBER ON THIS PAGE IS A PLACEHOLDER.
+
+     <span data-live="dot.path" data-fmt="degF">—</span>
+
+     overview.js reads GET /api/results once, builds one view-model, walks
+     [data-live], resolves the dot path and writes textContent. The em dash
+     is the ONLY numeric-position literal in this file, on purpose: if the
+     backend is down the walk never runs, every number stays "—", and the
+     prose still reads. A re-run can therefore never make this page lie.
+
+     If you are about to type a figure into this file: don't. Bind it.
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<!-- Banner markup is unconditional. Visibility is CSS, gated on
+     html[data-synthetic="true"], which JS sets from meta.is_synthetic alone.
+     Same three signals as the product page. Never softened (SPEC §10). -->
+<div class="synthetic-banner" id="synthetic-banner"></div>
+
+<header class="ov-chrome">
+  <div class="ov-chrome-inner">
+    <!-- S2 monogram only. The full SHYFT SOLUTIONS corporate mark never appears
+         in product chrome (Clarity §6b). Solid backplate, never recoloured. -->
+    <span class="brand-mark"><img src="vendor/s2-mark.png" alt="Shyft Solutions" width="28" height="28"></span>
+    <div class="ov-chrome-title">
+      <span class="ov-chrome-name">Bhar</span>
+      <span class="ov-chrome-sub">Site-tuned model blend</span>
+    </div>
+    <div class="ov-chrome-aside">
+      <!-- href is rewritten by BharTheme.linkify() to carry ?api= across. -->
+      <a class="chrome-link" data-page-link="index.html" href="index.html">Open the live page →</a>
+      <div id="theme-toggle"></div>
+    </div>
+  </div>
+</header>
+
+<div class="ov-subhead">
+  <div class="ov-subhead-inner">
+    <span class="ov-subhead-label">Lead time</span>
+    <div class="segmented" id="overview-lead-toggle" role="group" aria-label="Forecast lead time"></div>
+    <span class="ov-subhead-note">How far ahead the forecast was made. Sections 5 and 6 show
+      all three regardless.</span>
+  </div>
+</div>
+
+<main class="ov-main">
+
+<!-- ══ 1 ══════════════════════════════════════════════════════════════ -->
+<section id="s1-what" class="ov-section">
+  <p class="ov-eyebrow">What this is</p>
+  <h1 class="ov-hero">Which forecast model should this airport believe?</h1>
+
+  <p class="ov-lede"><b>Four government weather models disagree about the temperature at one
+    airport. We graded all four against that airport's own thermometer — and a mix of them
+    beat every single one.</b></p>
+
+  <p>The maths is old. What is new is fitting it to one site's own sensor, at one
+    lead time — how far ahead the forecast was made.</p>
+
+  <div class="callout callout-wide">
+    <p class="callout-title">This is a backtest, not a forecast.</p>
+    <p>Nothing here predicts anything. Every number is what these models <em>already said</em>,
+      scored against what the station <em>already measured</em>, over
+      <span class="num" data-live="meta.window.days" data-fmt="int">—</span> days.</p>
+    <p class="callout-scope">One station:
+      <b data-live="meta.site.name" data-fmt="raw">—</b>
+      (<span data-live="meta.site.id" data-fmt="raw">—</span>) ·
+      one variable: <b data-live="meta.variable" data-fmt="raw">—</b> ·
+      one window: <span class="num" data-live="meta.window.start" data-fmt="datetime">—</span>
+      to <span class="num" data-live="meta.window.end" data-fmt="datetime">—</span> ·
+      lead times <b data-live="leadsLabel" data-fmt="raw">—</b> ·
+      models <b data-live="meta.models_included" data-fmt="list">—</b>.</p>
+  </div>
+
+  <p>Section 6 says how much of this is really ours. Read it before quoting section 5.</p>
+</section>
+
+<!-- ══ 2 ══════════════════════════════════════════════════════════════ -->
+<section id="s2-blend" class="ov-section">
+  <p class="ov-eyebrow">Section 2</p>
+  <h2 class="ov-h2">What a blend is, in plain words</h2>
+
+  <p class="ov-lede"><b>A blend is a recipe: each model gets a share of the answer, and the
+    shares add up to one.</b></p>
+
+  <p>Give one model more and the others get less. Shares move in tenths, so with
+    <span class="num" data-live="sel.nModels" data-fmt="int">—</span> models there are
+    <b class="num" data-live="sel.nBlends" data-fmt="int">—</b> recipes, and we score every
+    one. A model alone is just the recipe where it takes everything.</p>
+
+  <figure class="ov-figure" id="d1-figure">
+    <div class="diagram" id="d1"></div>
+    <figcaption class="ov-caption" id="d1-caption"></figcaption>
+  </figure>
+</section>
+
+<!-- ══ 3 ══════════════════════════════════════════════════════════════ -->
+<section id="s3-measured" class="ov-section">
+  <p class="ov-eyebrow">Section 3</p>
+  <h2 class="ov-h2">How we graded them</h2>
+
+  <p class="ov-lede"><b>We wrote the recipe using the first
+    <span class="num" data-live="meta.split.train_days" data-fmt="int">—</span> days, then
+    tested it on the last <span class="num" data-live="meta.split.test_days" data-fmt="int">—</span>
+    — days the recipe had never seen.</b></p>
+
+  <h3 class="ov-h3">Matching a forecast to a reading</h3>
+  <p>The airport reports at about <b>52 minutes past the hour</b>, so a forecast for
+    <b>18:00</b> has no reading at 18:00. An exact clock match matches <b>nothing</b> — and
+    nothing scores <em>perfectly</em>, because the average of no errors is zero. So we take
+    the nearest reading within <b>30 minutes</b>, and stop the run if too few match. Missing
+    readings are dropped, never invented.</p>
+
+  <figure class="ov-figure" id="d2-figure">
+    <div class="diagram" id="d2"></div>
+    <figcaption class="ov-caption" id="d2-caption"></figcaption>
+  </figure>
+
+  <h3 class="ov-h3">Fit on the first days, score on the last</h3>
+  <p>Doing both on the same
+    <span class="num" data-live="meta.window.days" data-fmt="int">—</span> days would
+    guarantee a win by arithmetic alone. The split is by date —
+    <b data-live="meta.split.method" data-fmt="raw">—</b>, not shuffled — so the recipe never
+    trains on the weather spell it is tested on.</p>
+
+  <figure class="ov-figure" id="d3-figure">
+    <div class="diagram" id="d3"></div>
+    <figcaption class="ov-caption" id="d3-caption"></figcaption>
+  </figure>
+</section>
+
+<!-- ══ 4 ══════════════════════════════════════════════════════════════ -->
+<section id="s4-read" class="ov-section">
+  <p class="ov-eyebrow">Section 4</p>
+  <h2 class="ov-h2">How to read a result</h2>
+
+  <p class="ov-lede"><b>Every headline number is measured on days the recipe had never seen —
+    and the model we compare it against was handed the answer key.</b></p>
+
+  <h3 class="ov-h3">The winner rule is deliberately unfair to the blend</h3>
+  <p>Our blend is chosen on the training days and reported on the unseen days. The single
+    model it is compared against is chosen with hindsight — the best one on the very days it
+    is scored on. The baseline cheats; ours does not.</p>
+
+  <div class="callout">
+    <p class="callout-title">Why the winner is not row #1</p>
+    <p>The leaderboard is sorted by unseen-day score; the winner was chosen on training days.
+      Here it (<b data-live="sel.winner.label" data-fmt="raw">—</b>) came
+      <b class="num" data-live="sel.winnerRank" data-fmt="int">—</b> of
+      <b class="num" data-live="sel.nBlends" data-fmt="int">—</b> on the unseen days.
+      <b>Never call it "the best blend."</b></p>
+  </div>
+
+  <h3 class="ov-h3">The chart is a two-model slice, not the whole search</h3>
+  <p>Four models means three dials and no single axis. The chart holds two at zero and slides
+    the share between the other two. Both ends are pure single models.</p>
+
+  <figure class="ov-figure" id="d4-figure">
+    <div class="diagram" id="d4"></div>
+    <figcaption class="ov-caption" id="d4-caption"></figcaption>
+  </figure>
+</section>
+
+<!-- ══ 5 ══════════════════════════════════════════════════════════════ -->
+<section id="s5-found" class="ov-section">
+  <p class="ov-eyebrow">Section 5</p>
+  <h2 class="ov-h2">What we found</h2>
+
+  <p class="ov-lede"><b>On this run a blend beat the best single model at every lead time —
+    and that single model had been picked with hindsight.</b></p>
+
+  <p>One tile per lead time. The recipe is written separately at each, so these are three
+    answers, not one answer three times.</p>
+
+  <div class="stats-grid">
+    <div class="stat-card" data-lead-slot="0">
+      <div class="stat-label">Lead <span class="num" data-live="byIndex.0.leadLabel" data-fmt="raw">—</span></div>
+      <div class="stat-value" data-live="byIndex.0.winner.mae_oos" data-fmt="degF">—</div>
+      <div class="stat-meta">error on unseen days for
+        <b data-live="byIndex.0.winner.label" data-fmt="raw">—</b></div>
+      <div class="stat-row">
+        <span>Best single model</span>
+        <span><b data-live="byIndex.0.bestSingle.model" data-fmt="raw">—</b>
+          <span class="num" data-live="byIndex.0.bestSingle.mae_oos" data-fmt="degF">—</span></span>
+      </div>
+      <div class="stat-row">
+        <span>Change vs that baseline</span>
+        <span class="num stat-delta" data-delta-slot="0"
+              data-live="byIndex.0.winner.improvement_pct" data-fmt="pct">—</span>
+      </div>
+      <div class="stat-row">
+        <span>Winner's rank on unseen days</span>
+        <span class="num"><span data-live="byIndex.0.winnerRank" data-fmt="int">—</span>
+          of <span data-live="byIndex.0.nBlends" data-fmt="int">—</span></span>
+      </div>
+    </div>
+
+    <div class="stat-card" data-lead-slot="1">
+      <div class="stat-label">Lead <span class="num" data-live="byIndex.1.leadLabel" data-fmt="raw">—</span></div>
+      <div class="stat-value" data-live="byIndex.1.winner.mae_oos" data-fmt="degF">—</div>
+      <div class="stat-meta">error on unseen days for
+        <b data-live="byIndex.1.winner.label" data-fmt="raw">—</b></div>
+      <div class="stat-row">
+        <span>Best single model</span>
+        <span><b data-live="byIndex.1.bestSingle.model" data-fmt="raw">—</b>
+          <span class="num" data-live="byIndex.1.bestSingle.mae_oos" data-fmt="degF">—</span></span>
+      </div>
+      <div class="stat-row">
+        <span>Change vs that baseline</span>
+        <span class="num stat-delta" data-delta-slot="1"
+              data-live="byIndex.1.winner.improvement_pct" data-fmt="pct">—</span>
+      </div>
+      <div class="stat-row">
+        <span>Winner's rank on unseen days</span>
+        <span class="num"><span data-live="byIndex.1.winnerRank" data-fmt="int">—</span>
+          of <span data-live="byIndex.1.nBlends" data-fmt="int">—</span></span>
+      </div>
+    </div>
+
+    <div class="stat-card" data-lead-slot="2">
+      <div class="stat-label">Lead <span class="num" data-live="byIndex.2.leadLabel" data-fmt="raw">—</span></div>
+      <div class="stat-value" data-live="byIndex.2.winner.mae_oos" data-fmt="degF">—</div>
+      <div class="stat-meta">error on unseen days for
+        <b data-live="byIndex.2.winner.label" data-fmt="raw">—</b></div>
+      <div class="stat-row">
+        <span>Best single model</span>
+        <span><b data-live="byIndex.2.bestSingle.model" data-fmt="raw">—</b>
+          <span class="num" data-live="byIndex.2.bestSingle.mae_oos" data-fmt="degF">—</span></span>
+      </div>
+      <div class="stat-row">
+        <span>Change vs that baseline</span>
+        <span class="num stat-delta" data-delta-slot="2"
+              data-live="byIndex.2.winner.improvement_pct" data-fmt="pct">—</span>
+      </div>
+      <div class="stat-row">
+        <span>Winner's rank on unseen days</span>
+        <span class="num"><span data-live="byIndex.2.winnerRank" data-fmt="int">—</span>
+          of <span data-live="byIndex.2.nBlends" data-fmt="int">—</span></span>
+      </div>
+    </div>
+  </div>
+
+  <p class="ov-note">The change column is signed: a negative entry would mean the recipe lost,
+    and the page would show it plainly.</p>
+</section>
+
+<!-- ══ 6 ══════════════════════════════════════════════════════════════
+     NEVER CUT. This is the pitch and the SPEC §10 posture, and it is the
+     most credible thing on the page for the meteorologists in the room.
+     Same visual weight as section 5 — same heading level, same card
+     treatment, same width. It is not a footnote and must not read as one. -->
+<section id="s6-gfs" class="ov-section">
+  <p class="ov-eyebrow">Section 6</p>
+  <h2 class="ov-h2">Most of the gain is from dropping GFS, not from the fitted weights</h2>
+
+  <p class="ov-lede"><b>Read this before quoting any number above: most of the gain comes from
+    not using GFS at this airport, not from our weights.</b></p>
+
+  <p>The hostile question is <em>"did you just discover that GFS is bad here?"</em>
+    <b>Largely, yes.</b> So we tested it. Take a blend with <b>no fitting at all</b> that just
+    drops GFS and averages the other three, scored by the same code as everything else.</p>
+
+  <figure class="ov-figure ov-figure-flush" id="d5-figure">
+    <div class="diagram" id="d5"></div>
+    <figcaption class="ov-caption" id="d5-caption"></figcaption>
+  </figure>
+
+  <div class="callout callout-verdict">
+    <p class="callout-title">The verdict, assembled from the data at load time</p>
+    <!-- Generated by overview.js from a live comparison of the un-fitted blend
+         against the fitted winner at every lead. Never written as prose: a
+         re-run that reverses the finding must be able to say so without an
+         HTML edit. Stays empty rather than guessing if the lookup misses. -->
+    <p id="gfs-verdict" class="callout-verdict-line"></p>
+    <p id="gfs-verdict-detail"></p>
+  </div>
+
+  <p>So section 5's numbers are <b>not</b> the reward for getting the tenths right. Dropping a
+    bad model and averaging the rest did most of the work — and that needs <b>no per-site
+    service to sell</b>. The claim that survives: <em>does per-site reweighting add anything on
+    top of just dropping the worst model?</em> On this run,
+    <b id="gfs-surviving-claim">—</b>.</p>
+
+  <p>The numbers are not wrong. But anyone leaving this page saying "site-tuned blending gains
+    double digits" has taken away more than the experiment showed.</p>
+
+  <h3 class="ov-h3">Why GFS is bad here, and why it is not a bug</h3>
+  <p>GFS runs warm here in the afternoon and cold overnight: it exaggerates the daily swing.
+    Not a decoding fault — its values are sane and its range matches the observations. It is a
+    coarse grid cell 13 km away, behaving like one.</p>
+
+  <div class="callout callout-flat">
+    <p><b>GFS was in the study throughout and earned a weight of zero.</b> Not excluded, not
+      dropped for missing data, not filtered out — earning zero is a <em>result</em>. The
+      document records
+      <span class="mono-value" data-live="meta.models_excluded" data-fmt="excluded">—</span>.</p>
+  </div>
+
+  <h3 class="ov-h3">What this is not</h3>
+  <ul class="ov-limits">
+    <li><b>The split is not optional.</b> Written on the first
+      <span class="num" data-live="meta.split.train_days" data-fmt="int">—</span> days, scored
+      on the last <span class="num" data-live="meta.split.test_days" data-fmt="int">—</span>.
+      Both on the same days is a guaranteed win.</li>
+    <li><b>These samples are not independent.</b> Four runs a day gives
+      <span class="num" data-live="sel.nSamples.total" data-fmt="int">—</span> pairs, but
+      same-day pairs share the same weather. The honest sample size is nearer
+      <span class="num" data-live="meta.window.days" data-fmt="int">—</span> days. Judge
+      confidence against that.</li>
+    <li><b>Nearest grid cell, and an unmeasured height gap.</b> No correction for distance or
+      elevation, and four models means four grids. We never fetched those terrain heights, so
+      no gap is stated. A named unknown beats an invented number.</li>
+    <li><b>A re-run will not reproduce these numbers.</b> The window follows the clock, so a
+      later run scores a different month.</li>
+  </ul>
+</section>
+
+<!-- ══ 7 ══════════════════════════════════════════════════════════════ -->
+<section id="s7-api" class="ov-section">
+  <p class="ov-eyebrow">Section 7</p>
+  <h2 class="ov-h2">Where this goes</h2>
+
+  <p class="ov-lede"><b>The product is the recipe itself — a handful of weights per site, per
+    lead time — and we can produce one for any location with a sensor.</b></p>
+
+  <p>Not the chart, not the leaderboard. A customer with a sensor wants one answer: at this
+    site, this far ahead, how much should I listen to each model? A few numbers, different
+    everywhere, and they go stale — which makes it a service, not a report.</p>
+
+  <p>The integration already exists: one endpoint, and that endpoint is the contract.</p>
+
+  <pre class="ov-code"><code>GET /api/results
+
+{
+  "meta":       { site, variable, units, window, init_runs,
+                  source, generated_at, is_synthetic,
+                  models_included, models_excluded, split },
+  "lead_times": [ ... ],
+  "results": {
+    "&lt;lead&gt;": {
+      "n_samples":         { train, test },
+      "join_diagnostics":  { matched_pct, mean_abs_offset_min },
+      "models":            [ { model, mae, rmse, bias, coverage_pct } ],
+      "blends":            [ { rank, weights, label, is_pure,
+                               mae_in_sample, mae_out_of_sample,
+                               rmse_out_of_sample, bias_out_of_sample } ],
+      "best_single_model": { model, mae_out_of_sample },
+      "winner":            { label, mae_out_of_sample,
+                             improvement_pct_vs_best_single }
+    }
+  }
+}</code></pre>
+
+  <p>The shape is re-checked on every request. The object that matters is
+    <span class="mono-value">winner.weights</span>.</p>
+
+  <p>Before selling it we need more sites, a longer window, and the gain measured against
+    section 6's drop-the-worst-model baseline — a smaller number than section 5's.</p>
+
+  <p class="ov-cta-row">
+    <!-- href is rewritten by BharTheme.linkify() to carry ?api= across. -->
+    <a class="ov-cta" data-page-link="index.html" href="index.html">Open the live page →</a>
+    <span class="ov-cta-note">Leaderboard, sliders and the honesty panel — same document as
+      this page.</span>
+  </p>
+
+  <p class="ov-provenance">Source
+    <span class="mono-value" data-live="meta.source" data-fmt="raw">—</span> ·
+    generated <span class="mono-value" data-live="meta.generated_at" data-fmt="raw">—</span> ·
+    <span class="num" data-live="sel.join.matched_pct" data-fmt="pctPlain">—</span>
+    of forecast rows matched a reading at the selected lead time.</p>
+</section>
+
+</main>
+
+<script defer src="theme.js"></script>
+<script defer src="models.js"></script>
+<script defer src="format.js"></script>
+<!-- chart.js is loaded for slicePoints() ONLY. BharChart.render bakes resolved
+     hexes into the SVG and must never be called from this page — the diagrams
+     here use var(--model-*) so they repaint on a theme change for free. -->
+<script defer src="chart.js"></script>
+<script defer src="overview.js"></script>
+</body>
+</html>
