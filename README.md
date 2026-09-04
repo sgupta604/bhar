@@ -79,6 +79,9 @@ labelled as fixture renders on the page itself; `demo-shell-24h-negative.png` in
 particular shows the fixture's fabricated negative-improvement case, which is a UI state
 check and **not** a result of this study.
 
+The same directory also holds `real-6h.png`, `real-24h.png`, and `real-full.png` —
+additional real-backtest captures at each lead time, taken alongside `t5-real-results.png`.
+
 ---
 
 ## 3. What you are looking at
