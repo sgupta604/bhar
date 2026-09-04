@@ -43,6 +43,12 @@ need it. Everything settled there is written down here. **Read in this order:**
 8. **`.claude/pipeline/WORKFLOW.md`** and `CLAUDE.md` — the pipeline and the orchestrator rules.
    `CLAUDE.md`'s Commands block is where test-agent reads its commands.
 
+**F9 (`forecast-scorecard`) was added after F1-F8 were settled and is purely additive.** It depends
+on F3 and F4, changes nothing about any other ticket, and records what the page predicted each cycle
+then grades it as observations arrive — the live, forward-validated track record, and the instrument
+that detects the August-fitted weights failing in December (§12, §13). If the clock is tight it can
+land after F8 without disturbing anything.
+
 **Before the first ticket**, confirm the environment still works — the venv is provisioned and must
 not be rebuilt (SPEC §17):
 
@@ -135,8 +141,13 @@ The following still apply and are not negotiable (spike F2, F9, F10):
   form is a substring of `APTMP:2 m above ground` — apparent temperature, message 1 in NBM — and it
   was hit for real during validation.
 - **Reject any index line containing `ens std dev`.**
-- **Assert the decoded shortName is `t2m`, never `aptmp` and never `2t`.** cfgrib reports `t2m`;
-  code written against `2t` silently finds nothing.
+- **Assert the decoded *data variable* is `t2m` and `GRIB_cfVarName` is `t2m`, and reject `aptmp`
+  explicitly.** *(Corrected 2026-09-04: **`GRIB_shortName` is `"2t"` on valid data** and must NOT be
+  compared to `"t2m"` — doing so fails on good data. This is what `fetch/grib.py` already does, and
+  `tests/test_grib.py` has a regression test forbidding the `GRIB_shortName == "t2m"` form. Do not
+  "fix" the working code to match an older wording of this rule; that error cost a hard failure on
+  the first run of T2. `docs/SPEC.md` and the spike carry the same wrong literal and are off-limits
+  to edit — this file wins on it.)*
 - **NBM CONUS is the `.co` key.** `ak`/`hi`/`pr`/`gu` exist and are wrong for KOMA.
 - **UTC everywhere.** Kelvin only inside the decoder; degrees F at every boundary.
 
@@ -544,7 +555,7 @@ block on NOAA.
 
 ## 12. Ticket backlog
 
-Eight tickets, each through the full pipeline `/research → /plan → /implement → /test → /finalize`.
+Nine tickets, each through the full pipeline `/research → /plan → /implement → /test → /finalize`.
 `/finalize` = commit + `SUMMARY.md` + **push to `origin`** (a remote exists now).
 Branch: `feat/forecast-page` off `develop`.
 
@@ -599,7 +610,9 @@ Reuses `fetch.grib.fetch_point` and `fetch.idx` unchanged.
   test with a fetch stub that raises).
 - **`.idx` parsed every time; no message index hardcoded anywhere** (spike F2/F10) — NON-NEGOTIABLE.
 - **Unit test that the anchored needle rejects `APTMP:2 m above ground` and `ens std dev`**, and
-  that a decoded shortName other than `t2m` raises (spike F9) — NON-NEGOTIABLE.
+  that a decoded **data variable / `GRIB_cfVarName`** other than `t2m` raises, and that `aptmp` is
+  rejected explicitly (spike F9) — NON-NEGOTIABLE. *(Assert on the data variable and
+  `GRIB_cfVarName`, **never** on `GRIB_shortName`, which is `"2t"` on valid data — §3.)*
 - Cycle selection, the ≤3-cycle fallback and `is_stale`/`stale_reason` are unit-tested against a
   frozen clock, including: target available (no fallback), one model 404 (fall back one, reason
   recorded), three consecutive cycles unavailable (**serve nothing**, do not fabricate).
@@ -728,6 +741,117 @@ label; and that the forward page and the back-arrow use different lead grids and
 `CLAUDE.md` Commands block gains the refresh and forecast-serve commands — **test-agent reads its
 commands from there and cannot run what is not listed.**
 
+### F9 — `forecast-scorecard` · the live, forward-validated track record
+*"Here is what we said yesterday, here is what happened, and here is the running score."*
+
+The 30-day study is a **backtest**. F6's back-arrow replays days that were already in the archive
+when the weights were fitted. F9 is different in kind: from the day it lands, every cycle **records
+what was predicted before the outcome exists**, and grades itself as observations arrive. After a
+few weeks that is dramatically stronger evidence than any backtest, because **nobody can claim it
+was fitted** — the predictions were written down first, in an append-only ledger, and the grading
+is arithmetic.
+
+It also closes a limitation this document already concedes. §7.1 and §22.1 admit the weights were
+fitted on **30 days of August and nothing proves they survive December**. F9 is the instrument that
+detects exactly that: a model whose realized error at this site is drifting shows up in the record
+long before anyone would think to re-run the backtest, and the answer to "when should we refit?"
+becomes an observation instead of a guess.
+
+**Scope:** `forecast/scorecard.py` (record, grade, and the pure scorecard function), the append-only
+JSONL ledger `data/forecast_ledger.jsonl` (**committed**, see below), a `GET
+/api/forecast/scorecard` endpoint added to the **existing** `backend/forecast_api.py` router, and a
+scorecard region in `frontend/forecast.html` / `forecast.js` / `forecast.css`.
+
+**Non-goals:** refitting weights (F9 *detects* drift; it never acts on it); changing the blend, the
+weights, or `data/results.json`; rescoring the backtest or touching `score/`; a cron job, a daemon,
+a launchd plist or any background process; a second router or a second mount line in
+`backend/main.py`; any new probabilistic output (§6.2 applies here verbatim).
+
+**Hard boundaries:**
+- **Zero lines added to `backend/main.py`.** F9's endpoint lives on the `APIRouter` F4 already
+  mounted. If F4 has not landed, F9 is blocked — it does not mount its own router.
+- **The 16:00 demo path is untouched:** `frontend/index.html`, `frontend/overview.html`, `app.js`,
+  `app.css`, `models.js`, `theme.js`, `tokens.css`, `backend/contract.py`, `score/`,
+  `data/results.json`. Verified by `git diff --stat`, not assumed (§3).
+- **No `.gitignore` edit** (that is F2's single permitted line). The ledger is **committed**, for
+  the same reason `data/forecast_history.json` is (decision 14): a track record that a fresh clone
+  cannot see is not a track record, and a gitignored one is one `git clean` away from being erased —
+  which is also the one way this ticket could be made to look better than it was.
+- The README section and the `CLAUDE.md` Commands-block entry for F9's commands are written by
+  **F8**, under F8's existing permission. F9 does not edit either file.
+
+**Depends on:** F3 (it records from the validated `forecast.json` payload) and F4 (its endpoint
+joins the existing router). It does **not** depend on F5, F6 or F7 — the ledger and the scorecard
+JSON are useful with no UI at all, and grading works against F3's fixture path.
+
+**Design, settled — write these as decisions, not options:**
+
+1. **Record all four models AND the blend, every cycle.** Not the blend alone. The marginal cost is
+   a few numbers per row; the payoff is seeing **which model is drifting at this site**, which is
+   the refit signal, and a standing per-model track record at one site is independently sellable.
+2. **Grading is LAZY, never scheduled.** Whenever the page or the endpoint loads, grade everything
+   now gradeable. A scheduled job on a laptop stops silently and you find out mid-demo; lazy grading
+   has nothing to die, self-heals after arbitrary downtime, and makes the page true whenever it is
+   opened. **A manual command forces a pass** for when you want it graded now.
+3. **When the blend LOSES, show it plainly, at the same visual weight as a win.** No de-emphasis, no
+   rolling average smoothing a bad week away, no restarting the record. This is the entire
+   credibility argument: a scorecard that only looks good when it is winning is marketing, and the
+   room will assume it is. Losing streaks are recorded and shown explicitly, because that is the
+   signal that answers "when should we refit?".
+
+**Acceptance floor:**
+- **Every cycle recorded writes one prediction row per lead for each of the four models *and* the
+  blend** — a test asserts the row count equals `(len(models_included) + 1) x len(steps)` for a
+  recorded payload, so the blend-only shortcut fails the suite.
+- **NON-NEGOTIABLE: the ledger is append-only and a past record is never overwritten or re-graded.**
+  A test proves that re-running record on an already-recorded `init_time` appends nothing and
+  mutates nothing, that grading an already-graded row appends nothing and leaves the first grade
+  byte-identical, and that no code path opens the ledger in a truncating mode. Following
+  `fetch/backfill.py`'s proven precedent: **one JSON object per line, every key present every time,
+  latest-wins on read, a missing file is an empty ledger rather than an error.**
+- **NON-NEGOTIABLE: the scorecard is a pure function of the ledger.** Same ledger in, same JSON out,
+  computed **offline with no network and no clock dependency beyond an injected `now`**, tested
+  against a committed fixture ledger. Nothing is carried in memory between calls; the ledger on disk
+  is the only state (`.claude/features/data-backfill/SUMMARY.md`).
+- **NON-NEGOTIABLE: observations come from IEM ASOS `OMA` via the existing path, joined with the
+  ±30-minute nearest-observation rule, and `obs_offset_min` is recorded on every graded row**
+  (SPEC §4, spike F5). **An exact-timestamp join matches zero rows and scores perfectly, which is
+  fake** — a test asserts a non-zero match count, and a grading pass that matches nothing raises
+  rather than reporting a clean sheet. **Observations are never interpolated.**
+- **A day, lead or model with a missing forecast or a missing observation is recorded as a gap with
+  a stated reason — never imputed, never interpolated, never renormalized around.** Gaps appear in
+  the scorecard as gaps and are excluded from every mean, and the denominator each statistic used is
+  stated beside it.
+- **Lazy grading, proven twice:** a test that loading the endpoint grades every row that became
+  gradeable since the last load; and a test with an observation-fetch stub that raises, proving the
+  endpoint still returns the scorecard built from the rows already graded, marks the rest `pending`,
+  and **never 503s and never blocks on the network** — the pass runs under a hard wall-clock
+  deadline and a timeout is an ungraded row, not an error page. `/api/forecast`,
+  `/api/forecast/history`, `/api/forecast/skill` and `/api/results` gain **no** network dependency;
+  a test asserts their behaviour is unchanged.
+- **A manual command forces a grading pass** (`uv run python -m forecast.scorecard --grade`, with
+  `--record` for the recording pass) and prints what it graded, what it skipped, and why. It is the
+  same code path the endpoint uses, not a parallel implementation.
+- **NON-NEGOTIABLE: losses render at the same visual weight as wins.** The acceptance check is run
+  against a **losing fixture ledger** as well as a winning one: the losing case uses the same type
+  scale and the same colour role, no muted or de-emphasised token, no smoothing, and the page shows
+  **the current and longest streaks in which the blend was beaten by the best single model**. A
+  scorecard that has only ever been checked while winning does not pass this ticket.
+- **Per-model realized MAE over the live record is reported next to the blend's**, so the drifting
+  model at this site is visible; the panel states, in the customer's language, that the weights were
+  fitted on August days (§7.1) and that a sustained divergence here is the refit signal — while
+  **naming no refit cadence**, which is still open (§22.1).
+- Every statement is **past tense, realized error only, with its window and lead named** (§6.1).
+  **No `±`, no band, no probability, and a grep for the §6.2 banned strings in the new files returns
+  nothing** — a live track record is the easiest place in the project to accidentally start
+  promising something.
+- `data/forecast_ledger.jsonl` is committed and a **fresh clone renders the scorecard** with no
+  parquet files and no network. An empty or too-short record renders an honest "not enough days yet,
+  N recorded" state — never a blank-but-styled panel and never an extrapolated score.
+- The regression gate of §3 passes: `uv run pytest -q` exits 0, `uv run ruff check .` is clean,
+  `git diff --stat` shows no off-limits path touched, and the existing demo page still loads and
+  renders its leaderboard.
+
 ---
 
 ## 13. Dependency graph
@@ -735,8 +859,9 @@ commands from there and cannot run what is not listed.**
 ```
 F1 (design) ──────────────┐
                           ├──> F5 (page UI) ──┬──> F6 (back-arrow) ──┐
-F2 (live fetch) ─> F3 (payload) ─> F4 (API) ──┴──> F7 (skill panel) ─┼──> F8 (docs)
-                          │                                          │
+F2 (live fetch) ─> F3 (payload) ─> F4 (API) ──┴──> F7 (skill panel) ─┤
+                          │            │                             ├──> F8 (docs)
+                          │            └──> F9 (scorecard) ──────────┘
                           └── F3's fixture unblocks F5 without F2 ───┘
 ```
 
@@ -745,7 +870,13 @@ F2 (live fetch) ─> F3 (payload) ─> F4 (API) ──┴──> F7 (skill panel
   and F5, F6 and F7 still build against synthetic data with the banner showing — the morning brings
   a working page plus one labelled blocker, exactly as T3 did for the backtest.
 - **F6 and F7 are parallel** after F5.
-- **F8 is last.**
+- **F9 depends on F3 and F4 only** — it records from the validated payload and joins the router F4
+  already mounted. It is **parallel to F5, F6 and F7** and needs none of them: the ledger and the
+  scorecard JSON are useful with no UI, and it grades against F3's fixture path. F9 is **purely
+  additive** — it changes the scope, acceptance floor or dependencies of no earlier ticket.
+- **F8 is last.** Its dependency line is unchanged — it already reads *everything*, and F9 is part
+  of everything once it has landed. **F9 does not gate F8:** F8 documents what exists when it runs,
+  and if F9 lands after F8 the README and Commands entries for it are a follow-up, not a rewrite.
 
 ---
 
@@ -808,6 +939,12 @@ Carried forward from SPEC §10 and adapted to a forward-looking page.
 - **Assert on join match counts.** An empty join scores perfectly and is fake.
 - **Historical skill is never rendered as a prediction about tomorrow** (§6). This one is the reason
   the page exists in the shape it does.
+- **The scorecard reports what happened, including the losses.** Smoothing the record, cherry-picking
+  a favourable window, hiding a bad stretch behind a rolling average, or restarting the record after
+  one are all **prohibited**. A losing week renders at the same visual weight as a winning one, and
+  losing streaks are stated explicitly — they are the refit signal, not an embarrassment. **A past
+  record is never overwritten or re-graded to look better: the ledger is append-only** (§12, F9). A
+  scorecard that only looks good when it is winning is marketing, and the room will assume it is.
 
 ---
 
