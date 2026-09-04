@@ -391,3 +391,100 @@ def test_decode_point_leaves_no_cfgrib_sidecar(FIXTURES: Path, model: str) -> No
         "cfgrib wrote a sidecar index into tests/fixtures/grib/ — decode_point must pass "
         f'backend_kwargs={{"indexpath": ""}}. New files: {sorted(after - before)}'
     )
+
+
+# --- ArchiveMissing (T4 Task 1.1, D3) ----------------------------------------------------
+#
+# A 404/403 from the NOAA archive is an EXPECTED result (SPEC §11 R2), not the SPEC §9
+# hard stop the original code reported. T4's backfill counts it into the coverage
+# denominator and carries on; every other non-200 status is still a hard stop.
+
+
+class _StubResponse:
+    """Minimal stand-in for `requests.Response` — status and body only, no socket."""
+
+    def __init__(self, status_code: int, text: str = "", content: bytes = b"") -> None:
+        self.status_code = status_code
+        self.text = text
+        self.content = content
+
+
+def _stub_get(responses: list, calls: list | None = None):
+    """Return a `_get` replacement that hands back `responses` in order."""
+
+    queue = list(responses)
+
+    def _fake_get(url: str, headers: dict | None = None):
+        if calls is not None:
+            calls.append((url, headers))
+        return queue.pop(0)
+
+    return _fake_get
+
+
+def test_archive_missing_subclasses_runtime_error() -> None:
+    """Additive by construction: every pre-existing `except RuntimeError` still catches it."""
+    assert issubclass(grib.ArchiveMissing, RuntimeError), (
+        "ArchiveMissing must subclass RuntimeError so T2's 81 tests and every existing "
+        "caller keep working — the D3 change is additive, not a contract break"
+    )
+
+
+@pytest.mark.parametrize("status", [404, 403])
+def test_idx_404_and_403_raise_archive_missing(
+    monkeypatch: pytest.MonkeyPatch, status: int
+) -> None:
+    """SPEC §11 R2: a missing `.idx` is an archive hole, not a hard stop."""
+    monkeypatch.setattr(grib, "_get", _stub_get([_StubResponse(status)]))
+    with pytest.raises(grib.ArchiveMissing) as excinfo:
+        grib.fetch_point("hrrr", INIT_2026_08_05_12Z, 6)
+    message = str(excinfo.value)
+    assert "§11 R2" in message, f"the 404/403 message must cite SPEC §11 R2; got {message!r}"
+    assert "§9" not in message, (
+        "a 404/403 must NOT be reported as a SPEC §9 hard stop — that is exactly the "
+        f"conflation T4 Task 1.1 exists to fix; got {message!r}"
+    )
+
+
+@pytest.mark.parametrize("status", [404, 403])
+def test_ranged_get_404_and_403_raise_archive_missing(
+    monkeypatch: pytest.MonkeyPatch, FIXTURES: Path, status: int
+) -> None:
+    """The object can be missing even when its `.idx` is present — same rule applies."""
+    idx_text = (FIXTURES / "idx" / "hrrr_20260805_12z_f006.idx").read_text()
+    monkeypatch.setattr(
+        grib, "_get", _stub_get([_StubResponse(200, text=idx_text), _StubResponse(status)])
+    )
+    with pytest.raises(grib.ArchiveMissing) as excinfo:
+        grib.fetch_point("hrrr", INIT_2026_08_05_12Z, 6)
+    assert "§11 R2" in str(excinfo.value)
+
+
+@pytest.mark.parametrize("status", [500, 503, 302])
+def test_other_idx_statuses_remain_a_hard_stop(
+    monkeypatch: pytest.MonkeyPatch, status: int
+) -> None:
+    """A 500 is NOT an archive hole. It must stay a plain RuntimeError citing SPEC §9."""
+    monkeypatch.setattr(grib, "_get", _stub_get([_StubResponse(status)]))
+    with pytest.raises(RuntimeError) as excinfo:
+        grib.fetch_point("hrrr", INIT_2026_08_05_12Z, 6)
+    assert not isinstance(excinfo.value, grib.ArchiveMissing), (
+        f"HTTP {status} was classified as a missing archive entry; only 404/403 may be. "
+        "Misclassifying a server error as 'missing' silently deflates the coverage "
+        "numerator and fakes a clean run (SPEC §10)."
+    )
+    assert "§9" in str(excinfo.value)
+
+
+@pytest.mark.parametrize("status", [500, 416])
+def test_other_ranged_get_statuses_remain_a_hard_stop(
+    monkeypatch: pytest.MonkeyPatch, FIXTURES: Path, status: int
+) -> None:
+    idx_text = (FIXTURES / "idx" / "hrrr_20260805_12z_f006.idx").read_text()
+    monkeypatch.setattr(
+        grib, "_get", _stub_get([_StubResponse(200, text=idx_text), _StubResponse(status)])
+    )
+    with pytest.raises(RuntimeError) as excinfo:
+        grib.fetch_point("hrrr", INIT_2026_08_05_12Z, 6)
+    assert not isinstance(excinfo.value, grib.ArchiveMissing)
+    assert "§9" in str(excinfo.value)

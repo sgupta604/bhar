@@ -195,6 +195,22 @@ def decode_point(grib_path: Path, lat: float = KOMA_LAT, lon: float = KOMA_LON) 
 # --- http --------------------------------------------------------------------------------
 
 
+class ArchiveMissing(RuntimeError):
+    """The requested key is absent from the NOAA archive (HTTP 404/403).
+
+    **SPEC §11 R2: an archive hole is an expected result, not a hard stop.** Runs go
+    missing from the public buckets — HRRR especially — and a backfill must *record*
+    the gap, count it into the coverage denominator, and carry on. It must never abort.
+
+    Subclasses `RuntimeError` deliberately: every pre-existing caller that catches
+    `RuntimeError` keeps working unchanged, so this addition is purely additive.
+
+    A 404/403 is **never retried** — a key that does not exist will not exist five
+    seconds later. Every *other* non-200 status still raises a plain `RuntimeError`
+    citing SPEC §9, because that genuinely is a hard stop.
+    """
+
+
 def _get(url: str, headers: dict | None = None) -> requests.Response:
     """One GET with at most ONE retry. No shared session — `fetch_point` is pure per-call."""
     last_exc: Exception | None = None
@@ -221,6 +237,11 @@ def fetch_point(model: str, init_time: datetime, lead_h: int) -> dict:
     grib_url, idx_url = build_urls(model, init_time, lead_h)
 
     idx_resp = _get(idx_url)
+    if idx_resp.status_code in (403, 404):
+        raise ArchiveMissing(
+            f"SPEC §11 R2: GET {idx_url} returned HTTP {idx_resp.status_code} — the run is "
+            "absent from the archive. An archive hole is an expected result, not a hard stop."
+        )
     if idx_resp.status_code != 200:
         raise RuntimeError(
             f"SPEC §9 hard stop: GET {idx_url} returned HTTP {idx_resp.status_code}. "
@@ -233,6 +254,12 @@ def fetch_point(model: str, init_time: datetime, lead_h: int) -> dict:
     header = range_header(start, end)
 
     resp = _get(grib_url, headers={"Range": header})
+    if resp.status_code in (403, 404):
+        raise ArchiveMissing(
+            f"SPEC §11 R2: ranged GET {grib_url} [{header}] returned HTTP "
+            f"{resp.status_code} — the object is absent from the archive. An archive hole "
+            "is an expected result, not a hard stop."
+        )
     if resp.status_code not in (206, 200):
         raise RuntimeError(
             f"SPEC §9 hard stop: ranged GET {grib_url} [{header}] returned HTTP "

@@ -1,0 +1,149 @@
+{
+  "generated_at": "2026-09-04T08:43:07Z",
+  "window": {
+    "start_init": "2026-08-04T06:00:00Z",
+    "end_init": "2026-09-03T00:00:00Z",
+    "n_inits": 120,
+    "leads_h": [
+      6,
+      12,
+      24
+    ],
+    "models": [
+      "hrrr",
+      "gfs",
+      "nam",
+      "nbm"
+    ],
+    "obs_start": "2026-08-04T11:00:00Z",
+    "obs_end": "2026-09-04T01:00:00Z"
+  },
+  "denominators": {
+    "per_model": 360,
+    "per_model_lead": 120
+  },
+  "threshold_pct": 90.0,
+  "models": {
+    "hrrr": {
+      "success": 360,
+      "missing": 0,
+      "failed_network": 0,
+      "failed_decode": 0,
+      "not_attempted": 0,
+      "total": 360,
+      "coverage_pct": 100.0,
+      "below_floor": false,
+      "by_lead": {
+        "6": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        },
+        "12": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        },
+        "24": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        }
+      }
+    },
+    "gfs": {
+      "success": 360,
+      "missing": 0,
+      "failed_network": 0,
+      "failed_decode": 0,
+      "not_attempted": 0,
+      "total": 360,
+      "coverage_pct": 100.0,
+      "below_floor": false,
+      "by_lead": {
+        "6": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        },
+        "12": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        },
+        "24": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        }
+      }
+    },
+    "nam": {
+      "success": 360,
+      "missing": 0,
+      "failed_network": 0,
+      "failed_decode": 0,
+      "not_attempted": 0,
+      "total": 360,
+      "coverage_pct": 100.0,
+      "below_floor": false,
+      "by_lead": {
+        "6": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        },
+        "12": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        },
+        "24": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        }
+      }
+    },
+    "nbm": {
+      "success": 360,
+      "missing": 0,
+      "failed_network": 0,
+      "failed_decode": 0,
+      "not_attempted": 0,
+      "total": 360,
+      "coverage_pct": 100.0,
+      "below_floor": false,
+      "by_lead": {
+        "6": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        },
+        "12": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        },
+        "24": {
+          "success": 120,
+          "total": 120,
+          "coverage_pct": 100.0
+        }
+      }
+    }
+  },
+  "obs": {
+    "rows": 932,
+    "distinct_hours": 744,
+    "start": "2026-08-04T00:52:00Z",
+    "end": "2026-09-03T23:52:00Z"
+  },
+  "run": {
+    "workers": 8,
+    "executor": "thread",
+    "elapsed_s": 114.893,
+    "deadline_s": 900,
+    "deadline_hit": false
+  }
+}

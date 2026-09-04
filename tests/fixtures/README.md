@@ -121,3 +121,65 @@ Nearest cell by plain euclidean degrees after normalizing longitude with `((lon 
   for it is **`2t`** and `GRIB_cfVarName` is `t2m`. Assert on the variable name `t2m` and on the
   absence of `aptmp` — asserting `GRIB_shortName == "t2m"` fails on valid data.
 - `F = (K - 273.15) * 9/5 + 32`. Kelvin never leaves the decoder.
+
+---
+
+# Captured fixture — provenance (T4, `data-backfill`)
+
+Captured **2026-09-04** by `fetch/capture_iem_fixture.py`
+(`uv run python -m fetch.capture_iem_fixture`), a self-contained live probe that imports nothing
+under test — not `fetch.obs`, `fetch.grib`, `fetch.idx`, `fetch.schema` nor `fetch.window`. It is
+the independent witness the observation loader is checked against; that same discipline is what
+surfaced T2's `2t` surprise. The file below was written by that run and passed the same
+`git check-ignore` trackability gate T2 uses.
+
+## `tests/fixtures/iem/` — Iowa Environmental Mesonet ASOS observations, saved verbatim
+
+The whole response body is saved (no filtering, no resampling, no reformatting), so the loader is
+exercised against exactly the bytes IEM served. Header line is `station,valid,tmpf`.
+
+| Field | Value |
+|---|---|
+| **Date range captured** | 2026-09-01 00:00 UTC .. 2026-09-03 23:55 UTC (3 days; request `day1=1`..`day2=4`) |
+| **Station** | `OMA` — OMAHA/EPPLEY |
+| **Source URL** | `https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py?station=OMA&data=tmpf&year1=2026&month1=9&day1=1&year2=2026&month2=9&day2=4&tz=Etc/UTC&format=onlycomma` |
+| **Parameters** | `data=tmpf&tz=Etc/UTC&format=onlycomma` |
+| **Row counts** | **912** total / **75** non-`M` / **72** distinct floored hours (all 912 rows also span 72 floored hours) |
+| **Captured** | 2026-09-04 by `fetch/capture_iem_fixture.py` |
+| **Expected value** | the loader drops every `M` row, preserves off-hour minutes exactly as served, and does **no** resampling — 912 rows in, **75** rows out, timestamps unchanged |
+
+`oma_sample.csv`, 21,295 B, 913 lines (1 header + 912 data rows), trailing newline present.
+
+## Why this fixture exists — it pins exactly two behaviours
+
+**1. `M`-row dropping.** IEM writes the literal string `M` for a missing `tmpf`. **837 of the 912
+rows are `M`** (the service emits a 5-minute grid; OMA only reports a temperature hourly), e.g.:
+
+```
+OMA,2026-09-01 00:00,M
+```
+
+Those rows must be **dropped**, never interpolated, never forward-filled (SPEC §4 — "never
+interpolate observations, drop missing"). A loader that coerces `M` to `NaN` and then fills it
+would turn 75 real observations into 912 fake ones.
+
+**2. True off-hour timestamps (spike F5).** ASOS routine observations land at **:52**, not on the
+hour. Of the 75 non-`M` rows: **72 at minute `:52`**, plus three SPECIs at `:46`, `:19` and `:07`.
+
+```
+OMA,2026-09-01 00:52,83.00
+OMA,2026-09-01 01:52,81.00
+```
+
+**Zero non-`M` rows fall on minute `:00`** — verified against this exact slice. So a join that
+assumes on-the-hour observation timestamps matches **ZERO rows**, and an empty join **scores
+perfectly** (MAE 0.0, RMSE 0.0). That is the failure spike F5 found, and it is silent: nothing
+errors, the numbers just come out flawless. Hence CLAUDE.md's rule — **assert on join match
+counts**. This fixture is the regression test for it: floor the observation timestamp to the hour
+to join (72 hours here), but never rewrite the timestamps themselves.
+
+The capture script hard-verifies both properties before it will write a summary — HTTP 200, at
+least one literal `M` row, at least one non-`:00` minute, and nothing gitignored — and exits
+non-zero otherwise. Those checks are **never** relaxed to make a capture pass (SPEC §10): if a
+future slice lacks `M` rows or lacks off-hour timestamps, that is a finding to report, not a
+threshold to move.
