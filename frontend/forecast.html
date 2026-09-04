@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Pre-hydration theme. MUST be the first child of <head> and MUST come before
+     every stylesheet link: a deferred script paints the light theme first and the
+     presenter sees a flash on the projector. Explicit toggle only — the theme is
+     read from localStorage and from nothing else. Default: light.
+     The key literal is byte-identical to the one the portal's shared theme
+     script uses; this page deliberately does not load that script — see the
+     note above the stylesheet block. -->
+<script>
+(function () {
+  var t = 'light';
+  try { if (localStorage.getItem('internal-portal:theme') === 'dark') t = 'dark'; } catch (e) {}
+  document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bhar — Forecast</title>
+<link rel="icon" href="vendor/s2-mark.png">
+<!-- Load order is cascade-critical and is exactly this four-item sequence:
+     vendored tokens -> vendored fonts -> local tokens -> this page's layout.
+     Each file consumes what the one before it defines; reordering does not error,
+     it silently resolves custom properties to nothing.
+
+     The demo page's stylesheet is NOT linked, on purpose. It is off the
+     permitted-link list and it belongs to the demo path; forecast.css re-authors
+     the component classes this page needs (.card, .tbl, .segmented, .badge-pill,
+     .stat-*, the page shell, .empty-state, .brand-mark, .is-hidden) from the
+     token doc instead.
+
+     The portal's shared theme script is NOT loaded either, and that is an adopted
+     decision rather than an oversight: its link-rewriting job is dead here (this
+     page ships no cross-page nav link) and its onChange hook exists to repaint
+     baked-in model hexes, which forecast.js sidesteps by keeping model colours as
+     var(--model-*) references. forecast.js owns the two-button toggle below and
+     writes the same storage key. -->
+<link rel="stylesheet" href="vendor/clarity-tokens.css">
+<link rel="stylesheet" href="vendor/fonts.css">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="forecast.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     THE ARCHITECTURE RULE FOR THIS WHOLE FILE.
+
+     The markup is always present. Visibility is a CSS rule keyed on an
+     attribute on <html>. Never a JS display toggle, anywhere, ever.
+
+     forecast.js has exactly one job per state: setAttribute when the
+     condition holds, and leave the attribute ABSENT when it does not. It
+     never writes the string "false" into a state attribute — an absent
+     attribute is the off state, and [data-stale="true"] does not match
+     data-stale="false".
+
+     Consequence, and the way to test it: typing data-synthetic="true" onto
+     <html> in devtools raises the banner below with zero JS loaded. The same
+     holds for data-stale="true" and the stale pill in the headline card.
+
+     Nothing in this file carries a payload value. No model name, no site
+     name, no cell count, no temperature. Every one of those is bound by
+     forecast.js from the payload, so a site change or a refit cannot leave a
+     stale literal behind in the markup.
+     ══════════════════════════════════════════════════════════════════════ -->
+
+<!-- Banner markup is unconditional. Visibility is CSS, gated on
+     html[data-synthetic="true"], which JS sets from the meta.is_synthetic
+     BOOLEAN alone — never from a string comparison. The CSS for this block is
+     already shipped in the linked tokens.css; forecast.css must not restate it
+     and must give it no dark variant. No close affordance — no button, no
+     dismiss icon, ever. -->
+<div class="synthetic-banner" id="synthetic-banner"></div>
+
+<div class="shell" id="shell">
+
+  <header class="page-header" id="page-header">
+    <!-- S2 monogram only. The full corporate mark never appears in product
+         chrome. Solid backplate, never recoloured. -->
+    <span class="brand-mark"><img src="vendor/s2-mark.png" alt="Shyft Solutions" width="28" height="28"></span>
+
+    <div class="page-header-main">
+      <!-- Static text is the bare word only. forecast.js rewrites this to
+           "Forecast — <site name> (<site id>)" from meta.site, so a site change
+           cannot leave a wrong name on the page. -->
+      <h1 class="page-title" id="header-title">Forecast</h1>
+      <!-- Site line: meta.site.id + " · " + meta.site.name, composed, never typed. -->
+      <p class="page-sub page-sub-site" id="header-site"></p>
+      <!-- Scope line: the variable, the units, and the real grid from
+           meta.horizon_h / meta.step_h. Never a hardcoded step count. -->
+      <p class="page-sub page-sub-scope" id="header-scope"></p>
+    </div>
+
+    <div class="page-header-actions">
+      <!-- The sunken-track / raised-pill segmented idiom. Active state is
+           expressed as aria-pressed, which forecast.js syncs from the attribute
+           the pre-hydration script already put on <html>. Two buttons, no third
+           "system" option: the theme is an explicit choice only. -->
+      <div class="segmented" id="theme-toggle" role="group" aria-label="Theme">
+        <button type="button" id="theme-light" data-theme-value="light" aria-pressed="true">Light</button>
+        <button type="button" id="theme-dark" data-theme-value="dark" aria-pressed="false">Dark</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Headline number + the permanent run label ────────────────────────
+       One blend value, in degF, for the nearest forward step — the smallest
+       lead_h present. Not an average, not a range, not a next-24-h summary.
+
+       The value starts EMPTY rather than holding a placeholder glyph: a 503
+       must never leave a page that looks rendered with a dash where the
+       temperature goes. Either forecast.js fills this card, or it hides the
+       shell and renders the empty-state card into #error-slot. -->
+  <section class="stat-card" id="headline-card">
+    <div class="stat-label" id="headline-label"></div>
+    <div class="stat-value" id="headline-value"></div>
+
+    <!-- PERMANENT CHROME — read this before editing.
+         The run label is visible in all four states: fresh, stale, synthetic,
+         and beside the empty state wherever a cycle is known. It is NEVER a
+         warning badge. Under staleness it changes tone (the html[data-stale]
+         rule recolours .cycle-run-label); it never appears or disappears.
+         A label shown only when something is wrong trains the viewer to ignore
+         it, and the one case where it must be read is the case where it was
+         never shown before.
+         It stays empty only when no cycle is knowable at all — the page never
+         renders a guessed or dashed-out run label. -->
+    <div class="stat-meta cycle-run-label" id="cycle-run-label"></div>
+
+    <!-- Stale signals. Unconditional markup; html[data-stale="true"] is what
+         reveals them. Warn tone, never danger — a stale cycle is a real
+         forecast from an older run, not fabricated data, and the two must not
+         look alike. Equally: no green "fresh" badge for the ordinary case.
+         The pill's text lives in its own span so that writing the copy cannot
+         wipe the dot beside it. -->
+    <span class="badge-pill cycle-stale" id="cycle-stale-pill">
+      <span class="dot-mini"></span><span class="cycle-stale-text" id="cycle-stale-text"></span>
+    </span>
+    <!-- meta.cycle.stale_reason, verbatim. Server-authored text, so it is
+         typeset as machine output — never paraphrased, never truncated, never
+         wrapped in friendlier words. -->
+    <div class="cycle-stale-reason" id="cycle-stale-reason"></div>
+  </section>
+
+  <div class="forecast-grid" id="forecast-grid">
+
+    <!-- ── The forward strip ─────────────────────────────────────────────
+         One cell per forward step, left to right, oldest lead first. The cell
+         count is DATA (horizon_h / step_h), never a constant, and every step on
+         that grid is either a forecast cell or a gap cell — the strip never has
+         a hole in it.
+
+         Rows, band brackets, the fitted-range boundary and the cells themselves
+         are built by forecast.js because their shape is payload-derived. What is
+         static here is the container, the note and the detail panel, so that
+         forecast.css has stable hooks and the panel is never absent.
+
+         Every cell is a real <button>: the detail is a persistent panel below
+         the strip, not a hover tooltip. A native button is keyboard reachable by
+         construction, and a persistent panel is present in a screenshot. -->
+    <div class="forecast-col-main">
+      <section class="card strip-card" id="strip-card">
+        <div class="card-header">
+          <h2 class="card-title">Forward forecast</h2>
+          <span class="card-sub" id="strip-sub"></span>
+        </div>
+        <div class="card-body">
+          <div class="forecast-strip" id="forecast-strip" aria-label="Forward forecast"></div>
+
+          <!-- Truncated-horizon note. Unconditional markup, filled only when the
+               horizon comes up short; it stays empty otherwise and forecast.css
+               hides it with :empty rather than any JS display write. A silently
+               shorter strip is a lie by omission — it lets a viewer conclude that
+               the archive is all NOAA publishes, when it is our step grid that
+               ended. Derived from the payload, never typed. -->
+          <p class="strip-note" id="strip-note"></p>
+
+          <!-- The detail panel for the selected cell. Updated on focusin, pinned
+               on Enter/Space. Never empty on first paint — forecast.js selects
+               the nearest step immediately. Hover raises a cell as affordance
+               only and must not strobe this panel. -->
+          <div class="strip-detail" id="strip-detail" aria-live="polite">
+            <p class="strip-detail-title" id="strip-detail-title"></p>
+            <div class="strip-detail-body" id="strip-detail-body"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ── Trust panel ───────────────────────────────────────────────────
+         Shell only. Every number in this card belongs to a later ticket; this
+         file authors no MAE, no improvement figure and no model name, because
+         all three are payload fields and a literal here would survive a refit.
+
+         The panel answers exactly one question — how did this blend do at this
+         site, at this lead, over the scored window — in the past tense, and
+         stops there. It is history. It never becomes a claim about tomorrow's
+         number, and nothing in it is drawn as a band, a ribbon, a shaded
+         envelope or a whisker around a forecast value. -->
+    <aside class="forecast-col-side">
+      <section class="card skill-panel" id="skill-panel">
+        <div class="card-header">
+          <h2 class="card-title">How this blend has performed here</h2>
+          <p class="card-sub" id="skill-window"></p>
+        </div>
+        <div class="card-body">
+          <!-- Three .skill-lead blocks, 6 h then 12 h then 24 h, in that fixed
+               order. The order is never sorted by any metric — sorting by MAE
+               would let the page rearrange itself into a flattering order. -->
+          <div class="skill-leads" id="skill-leads"></div>
+
+          <!-- Leads beyond the fitted range. This sentence is verbatim and the
+               block contains nothing else: no MAE, no improvement figure, no
+               sample size, no interpolation, no "roughly". The only digits
+               inside it are the two in the sentence itself. Half the forward
+               strip is in this region, which is why it gets a block of its own
+               rather than a footnote.
+               Warn tone, never danger and never success: extrapolation past the
+               fitted range is an honest limit, not a failure.
+               Every extrapolated strip cell points aria-describedby at this id,
+               so the id must exist, must be unique, and must not be renamed. -->
+          <div class="skill-extrapolated" id="skill-beyond-fitted">No skill measurement exists beyond a 24-hour lead. These hours use the 24-hour weights and are unverified.</div>
+
+          <!-- skill.basis, skill.note and the sample-size reason, in one
+               sentence. Always visible, never collapsed behind a disclosure. -->
+          <p class="skill-basis" id="skill-basis"></p>
+
+          <!-- Weights staleness. The fitted window, the split, when it was
+               fitted, its age, the fitted leads and the source path — plus the
+               customer-language sentence about a summer fit having no claim on
+               a winter regime, which is present regardless of age. Past the age
+               threshold this block gains a warn-toned note. There is no green
+               "fresh" badge below the threshold: freshness is not an
+               achievement, and green here would read as an endorsement. -->
+          <div class="skill-weights-age" id="skill-weights-age"></div>
+        </div>
+      </section>
+    </aside>
+
+  </div>
+
+</div>
+
+<!-- The 503 card is rendered here, outside the shell, by forecast.js:
+     icon -> title -> one human sentence -> the server's reason verbatim in mono.
+     Never blank-but-styled: either the payload rendered, or this card is on
+     screen naming what went wrong. The next action is a command, not a button —
+     there is no refetch endpoint by design. Never apologize. -->
+<div id="error-slot"></div>
+
+<script src="forecast.js"></script>
+</body>
+</html>

@@ -1,14 +1,14 @@
 # Pipeline Status
 
-**Updated:** 2026-09-04 20:10 local — F4 finalized
+**Updated:** 2026-09-04 22:40 local — F5 finalized
 
 ## Active
 
 | Field | Value |
 |-------|-------|
 | Feature | `forecast-page` (FORECAST-SPEC §12, tickets F1–F9) |
-| Phase | F4 done — ready for F5 |
-| Next | `/research forecast-page` (F5) |
+| Phase | F5 done — ready for F6 |
+| Next | `/research forecast-page` (F6) |
 | Branch | `feat/forecast-page` (off `develop`) |
 | Worktree | **`/Users/sanjaygupta/Projects/Bhar-forecast`** — NOT the main checkout |
 
@@ -56,7 +56,7 @@ acceptance floors and the dependency graph are unchanged.
 | F2 | `forecast-live-fetch` | — | GREEN — finalized 2026-09-04, commit `96d0d55`, no PR (FORECAST-SPEC §12) |
 | F3 | `forecast-payload` | F2 | GREEN — finalized 2026-09-04, commit `dc97165`, no PR (FORECAST-SPEC §12) |
 | F4 | `forecast-api` | F3 | GREEN — finalized 2026-09-04, commit `56967fd`, no PR (FORECAST-SPEC §12) |
-| F5 | `forecast-page` | F1, F3 | TODO |
+| F5 | `forecast-page` | F1, F3 | GREEN — finalized 2026-09-04, commit recorded below, no PR (FORECAST-SPEC §12) |
 | F6 | `forecast-history` | F4, F5 | TODO |
 | F7 | `forecast-skill-panel` | F4, F5 | TODO |
 | F8 | `forecast-docs` | all | TODO |

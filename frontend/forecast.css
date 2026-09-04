@@ -1,0 +1,1092 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   forecast.css — the forecast page's layout, its re-authored Clarity
+   components, the forward strip (Clarity gap #3) and the stale treatment.
+
+   LOAD ORDER is cascade-critical and is exactly this four-item sequence
+   (design target §7); this file is #4 and consumes what the three before it
+   define:
+     1. vendor/clarity-tokens.css   raw scales + the light semantic layer
+     2. vendor/fonts.css            the three self-hosted @font-face rules
+     3. tokens.css                  Bhar-local: the model->colour map, the
+                                    synthetic-banner block, the range-slider
+                                    and chart/axis gap blocks, .num/.mono-value
+     4. forecast.css                this file
+
+   WHAT THIS FILE DELIBERATELY DOES NOT CONTAIN, and why (design target §0.2,
+   §7 — restating any of them is drift):
+     - the model->colour map. The four names are consumed as var(--model-*)
+       from the linked tokens.css and are never redeclared here. A second
+       declaration is exactly how the demo page and this page drift apart.
+     - the dark semantic layer and the dark 500->300 series step. Both already
+       ship, verbatim, in the linked tokens.css. Authoring either again would
+       be a third declaration. Nothing here is written for dark; dark arrives
+       for free by linking tokens.css.
+     - the synthetic-banner rules (tokens.css) — this page's one state block
+       that comes for free.
+     - the range-slider block and the chart/axis block (tokens.css).
+     - .num / .mono-value (tokens.css) — every mono tabular number on this page
+       arrives through that linked class.
+     - an at-rule import of anything, and any link to the demo page's
+       stylesheet. That file is off the permitted-link list; the component
+       classes below are RE-AUTHORED from the Clarity token doc instead,
+       which keeps the demo path byte-identical.
+
+   Sizes are per-component literals throughout: Clarity tokenizes families,
+   colour, spacing, radii, shadows and density, but publishes no font-size
+   tokens and no timeline geometry. Colour / space / radius / shadow / family
+   are semantic tokens only.
+
+   Nothing on this page attaches a band, a ribbon, a shaded envelope or a
+   whisker to a forecast value, and no plus-or-minus figure is ever attached
+   to one. Model spread is drawn as four discrete member marks on their own
+   detached axis (design target §1.4); the blend value is never plotted on
+   that axis.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* House pattern. forecast.js hides the shell behind the 503 card with this
+   and with nothing else — it is the one sanctioned display write, and it is
+   a class, not an inline style. */
+.is-hidden { display: none !important; }
+
+
+/* ── App shell and page header — RE-AUTHORED from token doc §5.9 ────────────
+   The demo page's stylesheet is not linkable, so these are restated here
+   rather than imported.
+   The shell column is sized so the forward strip gets its budgeted width:
+   1440 - 2x --s-8 page padding (64) - 380px trust panel - --s-6 column gap
+   (24) = 972px for the strip column, which is what makes eight 108px cells
+   plus their gaps fit inside the strip card and lets the strip WRAP rather
+   than scroll at 1440x900 (design target §1.2). */
+
+.shell {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--s-4) var(--s-8) var(--s-10);
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-4);
+  margin-bottom: var(--s-3);
+  flex-wrap: wrap;
+}
+.page-header-main { flex: 1 1 auto; min-width: 320px; }
+.page-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  color: var(--text);
+  margin: 0 0 var(--s-2);
+}
+.page-sub {
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin: 0;
+}
+.page-sub + .page-sub { margin-top: var(--s-1); }
+/* Both sub-lines are composed from the payload by forecast.js — the site line
+   from meta.site, the scope line from meta.horizon_h / meta.step_h. Neither
+   is ever typed into the markup, so neither needs a size of its own here. */
+.page-sub-site,
+.page-sub-scope { min-height: 1em; }
+
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-left: auto;
+}
+
+/* S2 monogram, token doc §6b. Product chrome takes the monogram only, never
+   the corporate lockup. Solid backplate, uniform scaling, no recolour, no
+   filter — the mark is two-tone charcoal + blue and charcoal on a dark
+   surface is effectively invisible, so the backplate is the compliant route
+   and is byte-identical in both appearances. */
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  padding: 6px;                     /* clearspace ~= the height of the S stem */
+  border-radius: var(--r-md);
+  background: #ffffff;
+}
+.brand-mark img {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+
+
+/* ── Segmented control — RE-AUTHORED from token doc §5.3 ────────────────────
+   Active segment = a raised pill on a sunken track. The token doc expresses
+   the active state as .active; this page expresses it as aria-pressed, which
+   is the accessible form and is what forecast.js syncs. Both selectors carry
+   the same declarations so the idiom is preserved either way. */
+
+.segmented {
+  display: inline-flex;
+  padding: 2px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+.segmented button {
+  height: 28px;
+  padding: 0 12px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.segmented button.active,
+.segmented button[aria-pressed="true"] {
+  background: var(--bg-elev);
+  color: var(--text);
+  box-shadow: var(--shadow-1);
+}
+/* 3px ring at the accent hue / 22% opacity — token doc §5.8, never thicker. */
+.segmented button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+
+/* ── Cards — RE-AUTHORED from token doc §5.5 ────────────────────────────────
+   Content card: header rule, 20px body padding, --r-xl, shadow-1. */
+
+.card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-1);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.card-title {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.card-sub {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+.card-body { padding: 20px; }
+.card-actions { display: flex; gap: 8px; margin-left: auto; }
+
+
+/* ── Tables — RE-AUTHORED from token doc §5.1 ───────────────────────────────
+   Header 11.5px all-caps sticky; rows at --row-h; numbers right-aligned in
+   mono. Row hover is --bg-subtle; no zebra striping. */
+
+.tbl { border-collapse: separate; border-spacing: 0; width: 100%; }
+.tbl thead th {
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-subtle);
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+}
+.tbl tbody td {
+  height: var(--row-h);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  padding: 0 16px;
+  font-size: 13px;
+}
+.tbl tbody tr:last-child td { border-bottom: none; }
+.tbl tbody tr:hover td      { background: var(--bg-subtle); }
+.tbl .num { font-variant-numeric: tabular-nums; font-family: var(--font-mono); font-size: 12.5px; }
+.tbl .col-right  { text-align: right; }
+.tbl .col-center { text-align: center; }
+.tbl .row-actions { display: flex; justify-content: flex-end; gap: 4px; }
+
+
+/* ── Badges — RE-AUTHORED from token doc §5.7 ───────────────────────────────
+   A pill carries ONE piece of state, never two. The tone variants follow the
+   published recipe: tint background + 700 text + the 500 hex at 20% alpha as
+   the border. The one tone this page uses is --warn, and it is declared in
+   the stale block at the foot of this file. */
+
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 9px;
+  border-radius: var(--r-full);
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+.badge-pill .dot-mini {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: .85;
+}
+
+
+/* ── Stat tile — RE-AUTHORED from token doc §5.6 ────────────────────────────
+   "The hero number reads in Sora; supporting numbers stay in mono."
+
+   .stat-value is the ONE Sora numeric on this page. Every other numeric
+   temperature, lead figure and error value is --font-mono with explicit
+   tabular figures — on the strip via §2's own rules, everywhere else via the
+   .num class that the linked tokens.css ships. */
+
+.stat-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-1);
+  padding: 18px 20px;
+}
+.stat-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -.025em;
+  font-variant-numeric: tabular-nums;
+  margin-top: 6px;
+  color: var(--text);
+}
+.stat-value.muted { color: var(--text-muted); }
+.stat-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  color: var(--text-subtle);
+}
+
+
+/* ── Empty state — RE-AUTHORED from token doc §5.10 ─────────────────────────
+   §5.10 is prose, not CSS: "Center content, hint the next action, never
+   apologize. Icon -> title -> one sentence -> action." Title 15px/600, sub
+   13px. The shape below is design target §1.9's table.
+
+   The server's 503 reason is the .empty-detail line: it is shown VERBATIM, in
+   mono, at --text-subtle, visually distinct from the human sentence above it.
+   The mono face is what marks it as machine output, so a viewer can paste it
+   into a bug report and a developer can grep for it. It is never rewritten,
+   never shortened, never prefixed with "Error:" and never merged upward.
+
+   The next action here is a command, not a button: there is no refetch route
+   by design, and a button that cannot fetch is worse than no button. */
+
+.empty-state {
+  max-width: 620px;
+  margin: var(--s-16) auto;
+  text-align: center;
+  padding: var(--s-12) var(--s-8);
+}
+.empty-icon {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: var(--s-4);
+}
+.empty-title {
+  margin: 0 0 var(--s-2);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+.empty-body {
+  margin: 0 0 var(--s-4);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.empty-detail {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-subtle);
+  word-break: break-word;
+}
+
+
+/* ── Headline card and the permanent run label ──────────────────────────────
+   The run label is a .stat-meta INSIDE the headline stat card, structurally
+   adjacent to the number. That placement is not decoration: it makes the
+   label share the number's position in the layout, which puts it above the
+   fold at 1440x900 for free and keeps the two from ever drifting apart.
+
+   Vertical budget to the run-label baseline, worst case (banner present):
+     synthetic banner   ~33px
+     shell top padding   16px  (--s-4)
+     .page-header        ~86px (title + two sub lines + --s-3 margin)
+     card top padding -> .stat-value baseline   ~60px
+     .stat-value -> .stat-meta                  ~46px
+     ------------------------------------------------
+     run-label baseline  ~241px, against a 900px viewport.
+
+   Re-check this at 1440x900 after any header change. The check is exactly
+   "load at 1440x900, the run label is visible before any scroll". */
+
+#headline-card { margin-bottom: var(--s-4); }
+
+.cycle-run-label {
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  color: var(--text-subtle);
+}
+
+
+/* ── Page layout — the two-column grid ──────────────────────────────────────
+   At 1440x900: strip column 972px + --s-6 gap (24px) + 380px trust panel.
+   The strip column is what §2's eight-column wrap is budgeted against. */
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: var(--s-6);
+  align-items: start;
+}
+.forecast-col-main { min-width: 0; }
+.forecast-col-side { min-width: 0; }
+
+/* Below the target viewport the two columns stack. The strip keeps its own
+   wrap behaviour; the trust panel simply follows it down the page. */
+@media (max-width: 1180px) {
+  .forecast-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* No overflow clip on the strip card: a cell's 3px focus ring is drawn
+   outside its border, and clipping it at the card edge would make the first
+   and last cell of a row look unfocusable. The below-the-floor fallback puts
+   its scroller on .strip-row instead, inside the card. */
+.strip-card { min-width: 0; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SECTION 2 — Clarity gap #3: the forecast strip.
+   Pasted verbatim from .claude/features/forecast-page/design-target.md §2.
+   That block is specification text, not a sketch: 44 selector blocks in
+   source order, unedited. Do not "improve" a value here in passing.
+
+   Read alongside it, because the CSS cannot enforce them:
+     - A gap is never interpolated across, never back-filled, and never
+       renormalized over the remaining models. A three-model renormalization
+       is a different blend than the one that was fitted, and every skill
+       number on this page was measured on a four-model vector.
+     - The member marks are facts about the four models, on their own axis,
+       below the value and visually detached from it. blend_f is NEVER
+       plotted on that axis: the moment it is, the marks become a range
+       around it, which is the geometry this page bans by another route.
+     - Dashed borders and the diagonal hatch mean ABSENT, page-wide, and are
+       used for nothing else — so a gap can never be mistaken for an
+       extrapolated cell, which is filled, solid-bordered and elevated.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Forecast strip — Clarity gap #3 (Clarity has no timeline, strip or
+   per-step-cell component of any kind) ──────────────────────────────────────
+   Destination: frontend/forecast.css, written by F5.
+
+   Sizes are per-component literals: Clarity tokenizes families, colour,
+   spacing, radii and shadows, but no font sizes and no timeline geometry.
+   Colour/space/radius/shadow/family below are semantic tokens only.
+   The model colour map comes from the linked tokens.css and is never
+   redeclared here.
+
+   Set from JS by F5, per instance (T3's --slider-fill precedent):
+     --strip-cols      integer, column count per row (see the design doc §1.2)
+     --band-span       integer, cells a band bracket spans
+     --mark-pos        0-1, a member mark's position on the shared spread axis
+     --mark-color      that member's var(--model-*)
+     --spread-domain   informational; the axis domain in degF, for the label */
+
+.forecast-strip {
+  --strip-cell-min: 108px;
+  --strip-cols: 8;
+  --strip-gap: var(--s-2);          /* 8px */
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);                  /* 12px between visual rows */
+  margin: 0;
+  padding: 0;
+}
+
+/* One visual row: a band-bracket track above a cell track, sharing columns. */
+.strip-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.strip-bands,
+.strip-cells {
+  display: grid;
+  grid-template-columns:
+    repeat(var(--strip-cols), minmax(var(--strip-cell-min), 1fr));
+  gap: var(--strip-gap);
+}
+
+/* Fallback only, below the 4-column floor. Never reached at 1440x900.
+   The per-cell extrapolated treatment is what keeps the fitted-range
+   boundary legible at every scroll position here. */
+.forecast-strip[data-overflow="scroll"] .strip-row { overflow-x: auto; }
+.forecast-strip[data-overflow="scroll"] .strip-bands,
+.forecast-strip[data-overflow="scroll"] .strip-cells {
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--strip-cell-min);
+  width: max-content;
+}
+
+/* ── Band bracket ── one per run of equal weights_fitted_at_lead_h, per row. */
+.strip-band {
+  grid-column: span var(--band-span, 1);
+  border-top: 1px solid var(--border-strong);
+  padding-top: var(--s-1);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Cell ── a real <button type="button">: tab order and Enter/Space for free. */
+.strip-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  min-width: var(--strip-cell-min);
+  min-height: 104px;
+  padding: var(--s-3) var(--s-2);   /* 12px 8px */
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1);
+  font-family: var(--font-ui);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.12s, border-color 0.12s;
+}
+
+.strip-cell:hover {
+  box-shadow: var(--shadow-2);
+  border-color: var(--border-strong);
+}
+
+/* 3px ring at the accent hue / 22% opacity — token doc §5.8, never thicker. */
+.strip-cell:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+/* Pinned selection: border + ring ONLY. It must never repaint the surface,
+   because the surface is carrying the weight band and the unverified state. */
+.strip-cell[aria-pressed="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+/* The nearest forward step — the same step the headline shows (§1.1). */
+.strip-cell[data-current="true"] { border-color: var(--accent); }
+
+/* ── Weight bands ── neutral ordinal ladder: further from the fitted lead,
+   more recessed. Never a --model-* colour; those belong to the member marks. */
+.strip-cell[data-band="6"]  { background: var(--bg-elev); }
+.strip-cell[data-band="12"] { background: var(--bg-subtle); }
+.strip-cell[data-band="24"] { background: var(--bg-sunken); }
+
+/* ── Extrapolated ── declared AFTER the bands so it wins the cascade: an
+   unverified cell reads as unverified first, 24h-banded second.
+   --warn, never --danger: --danger is spent on synthetic and on a
+   non-positive improvement, and on nothing else. */
+.strip-cell[data-extrapolated="true"] {
+  background: var(--warn-soft);
+  border-color: var(--warn);
+}
+
+.strip-flag {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  border: 1px solid var(--warn);
+  border-radius: var(--r-sm);
+  background: var(--bg-elev);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.strip-flag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--warn);
+}
+
+/* ── The fitted-range boundary ── form 1: the break falls on a row edge.
+   A rule plus a label, drawn only when any cell is extrapolated. */
+.strip-boundary {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin: var(--s-1) 0;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.strip-boundary::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 2px;
+  border-radius: var(--r-full);
+  background: var(--warn);
+}
+
+/* Form 2: the break falls mid-row. Same weight, same colour, turned 90deg. */
+.strip-cell[data-boundary-start="true"] {
+  border-left: 2px solid var(--warn);
+  padding-left: calc(var(--s-2) - 1px);
+}
+.strip-band[data-boundary-start="true"] {
+  border-left: 2px solid var(--warn);
+  padding-left: var(--s-2);
+  color: var(--text);
+}
+
+/* ── Cell face ── lead_h, valid_time, blend_f. Every numeric temperature and
+   every lead figure is mono + tabular (design doc §6). */
+.strip-lead {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  color: var(--text-muted);
+}
+
+.strip-time {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-subtle);
+}
+
+.strip-value {
+  margin-top: auto;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  color: var(--text);
+}
+.strip-value .strip-unit {
+  margin-left: 2px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* ── Member marks ── four discrete marks on a shared spread axis (§1.4).
+   Its own row, with its own axis, detached from .strip-value. blend_f is
+   NEVER plotted here: the moment it is, the marks become a range around it. */
+.strip-members {
+  position: relative;
+  height: 14px;
+  margin-top: var(--s-1);
+  border-top: 1px solid var(--border);
+}
+.strip-mark {
+  position: absolute;
+  top: 4px;
+  left: calc(var(--mark-pos, 0) * 100%);
+  margin-left: -3.5px;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-full);
+  background: var(--mark-color, var(--text-subtle));
+}
+
+/* A member whose fitted weight is exactly 0.0 — GFS at every lead today.
+   Shown, de-emphasised, NEVER dropped. Driven by the data, never by name. */
+.strip-mark[data-zero-weight="true"] {
+  background: var(--bg-elev);
+  border: 1.5px solid var(--mark-color, var(--text-subtle));
+  opacity: 0.55;
+}
+
+/* ── Gap cell ── absence. Unfilled and hatched, dashed, no elevation, no tone
+   colour. Dashed borders and this hatch mean "absent" page-wide and are used
+   for nothing else, so a gap can never be mistaken for an extrapolated cell. */
+.strip-cell.is-gap {
+  background:
+    repeating-linear-gradient(135deg,
+      var(--border) 0 1px, transparent 1px 7px),
+    var(--bg);
+  border: 1px dashed var(--border-strong);
+  box-shadow: none;
+}
+.strip-cell.is-gap:hover { box-shadow: none; }
+.strip-cell.is-gap .strip-value {
+  color: var(--text-subtle);
+  font-weight: 500;
+}
+
+.strip-missing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.strip-missing-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 5px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--bg-elev);
+}
+.strip-missing-chip::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  background: var(--mark-color, var(--text-subtle));
+}
+
+/* gaps[].reason, verbatim from the payload. Never paraphrased. */
+.strip-reason {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+/* ── Truncated-horizon note ── shown whenever meta.horizon_h < 48 (§1.2). */
+.strip-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+  padding: var(--s-3);
+  background: var(--warn-soft);
+  border: 1px solid var(--warn);
+  border-radius: var(--r-md);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+/* ── Detail panel ── adjacent and persistent, not a tooltip: keyboard
+   reachable by construction, and present in a screenshot. */
+.strip-detail {
+  margin-top: var(--s-4);
+  padding: var(--s-5);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-1);
+}
+.strip-detail-title {
+  margin: 0 0 var(--s-3);
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.strip-detail-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-1) 0;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--text);
+}
+.strip-detail-row::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--mark-color, var(--text-subtle));
+}
+.strip-detail-row .strip-detail-num {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--text);
+}
+/* weights[model] === 0.0 — shown at 0.0, de-emphasised, never omitted. */
+.strip-detail-row[data-zero-weight="true"],
+.strip-detail-row[data-zero-weight="true"] .strip-detail-num {
+  color: var(--text-subtle);
+}
+.strip-detail-note {
+  margin: var(--s-3) 0 0;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+/* The §7 sentence on an extrapolated cell. No number appears beside it. */
+.strip-detail-note[data-tone="warn"] {
+  padding-left: var(--s-3);
+  border-left: 2px solid var(--warn);
+  color: var(--text);
+}
+
+
+/* ── Strip: DOM adaptations ─────────────────────────────────────────────────
+   Three small rules the frozen markup needs, kept OUTSIDE the block above so
+   that block stays a verbatim copy of the design target. */
+
+/* .strip-note is unconditional markup that starts empty and is filled only
+   when meta.horizon_h comes up short. :empty hides it, so forecast.js never
+   needs a display write and the note can never be half-present. */
+.strip-note:empty { display: none; }
+/* The note and the detail title are <p> elements; drop the UA bottom margin
+   the block above has no reason to mention. */
+.strip-note { margin-bottom: 0; }
+
+.strip-detail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+
+/* ── Trust panel — design target §1.5 ───────────────────────────────────────
+   Built on the .card idiom re-authored above. It answers exactly one question
+   — how did this blend do at this site, at this lead, over the scored window
+   — in the past tense, and stops there. Nothing in it is drawn as a band, a
+   ribbon, a shaded envelope or a whisker around a forecast value, and no
+   plus-or-minus figure is ever attached to one. Past MAE is a number in a
+   cell and a clause in a past-tense sentence; it never becomes geometry.
+
+   Sizes are per-component literals on Clarity's own steps (11.5 / 12 / 12.5 /
+   13 / 14px). Colour, spacing, radius and shadow are tokens. */
+
+.skill-panel { min-width: 0; }
+.skill-panel .card-body { padding: var(--s-5); }
+
+/* Three blocks — 6h, 12h, 24h — stacked in that fixed order. The order is
+   never sorted by any metric: sorting by MAE would let the page rearrange
+   itself into a flattering order. */
+.skill-leads { display: flex; flex-direction: column; }
+.skill-lead {
+  padding: var(--s-5) 0;
+  border-bottom: 1px solid var(--border);
+}
+.skill-leads .skill-lead:first-child { padding-top: 0; }
+.skill-leads .skill-lead:last-child  { padding-bottom: 0; border-bottom: none; }
+
+.skill-lead-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+/* Pushed right. Its tone and copy come from the shared improvement-state
+   table and are not re-derived here; a non-positive improvement is never
+   drawn in the success tone. */
+.skill-improve {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* The load-bearing element of the panel. The numeric row below it is a
+   restatement for scanning, not a substitute for the sentence. */
+.skill-copy {
+  margin: var(--s-3) 0 0;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  max-width: 68ch;
+}
+
+/* Five cells, labels above values. Their DOM positions are fixed and are
+   never reordered by magnitude — whichever number is smaller, the reader can
+   still see at a glance which is which. */
+.skill-nums {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-3) var(--s-4);
+  margin-top: var(--s-4);
+}
+.skill-num-label {
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-subtle);
+}
+.skill-num-value {
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+/* The out-of-sample cell is always first and always the larger type; the
+   in-sample cell is always second and always carries its label. */
+.skill-nums .skill-num-oos { grid-column: 1 / -1; }
+.skill-nums .skill-num-oos .skill-num-value {
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* The fitted weight vector actually used at that lead, four chips in the
+   canonical order HRRR, GFS, NAM, NBM. The dot colour arrives per chip as
+   --mark-color, set from var(--model-*) by the script — the map is consumed,
+   never redeclared. A model whose fitted weight is exactly 0.0 renders at
+   0.0, de-emphasised, and is never dropped: the backtest looked at it and
+   gave it nothing, and that is a finding the page shows. */
+.skill-weights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-3);
+  margin-top: var(--s-4);
+}
+.skill-weight-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text);
+}
+.skill-weight-chip::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--mark-color, var(--text-subtle));
+}
+.skill-weight-chip .skill-weight-num {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+.skill-weight-chip[data-zero-weight="true"],
+.skill-weight-chip[data-zero-weight="true"] .skill-weight-num {
+  color: var(--text-subtle);
+}
+.skill-weight-chip[data-zero-weight="true"]::before {
+  background: var(--bg-elev);
+  border: 1.5px solid var(--mark-color, var(--text-subtle));
+  opacity: .55;
+}
+
+/* Leads beyond the fitted range. --warn, never --danger and never --success:
+   extrapolation past the fitted range is an honest limit, not a failure, and
+   --danger's pink is spent on the synthetic banner and on a non-positive
+   improvement, and on nothing else. Every extrapolated strip cell points
+   aria-describedby at this block, so it must stay reachable and unrenamed. */
+.skill-extrapolated {
+  margin-top: var(--s-5);
+  padding: var(--s-3) var(--s-4);
+  border-left: 3px solid var(--warn);
+  background: var(--warn-soft);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+/* The flash raised when a strip cell scrolls this block into view. Colour
+   only; it never moves the block or changes its size. */
+.skill-extrapolated[data-flash="true"] {
+  box-shadow: 0 0 0 2px var(--warn);
+}
+
+/* skill.basis, skill.note and the sample-size reason in one sentence. Always
+   visible, never collapsed behind a disclosure. */
+.skill-basis {
+  margin: var(--s-4) 0 0;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Weights staleness. Plain muted metadata below the age threshold: there is
+   no green "fresh" badge and no success tone anywhere in this panel.
+   Freshness is not an achievement, and green here would read as an
+   endorsement of numbers whose shelf life nobody has measured. */
+.skill-weights-age {
+  margin-top: var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.skill-weights-age .num,
+.skill-weights-age .mono-value { text-align: left; }
+.skill-weights-age .skill-weights-path {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-subtle);
+  word-break: break-word;
+}
+/* Past the age threshold the block gains a note in the same warn treatment
+   as .skill-extrapolated. Same tone budget: warn, never danger. */
+.skill-weights-age .skill-weights-note {
+  display: block;
+  margin-top: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border-left: 3px solid var(--warn);
+  background: var(--warn-soft);
+  color: var(--text);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SECTION 3 — the stale treatment.
+   Pasted verbatim from .claude/features/forecast-page/design-target.md §3.
+
+   Same shape as the synthetic block already shipped in the linked tokens.css
+   — unconditional markup, an attribute on <html> gates visibility, no dismiss
+   affordance — and deliberately NOT the same colour.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Stale-cycle signals — keyed ONLY off <html data-stale="true"> ──
+   Same shape as the synthetic block in frontend/tokens.css:19-47 (unconditional
+   markup, attribute gates visibility, no dismiss affordance) — deliberately NOT
+   the same colour. Stale is --warn. --danger belongs to synthetic data and to a
+   non-positive improvement, and to nothing else.
+   Absent attribute => every rule below is inert. There is no "false" value. */
+
+.cycle-stale        { display: none }
+.cycle-stale-reason { display: none }
+
+html[data-stale="true"] .cycle-stale        { display: inline-flex }
+html[data-stale="true"] .cycle-stale-reason { display: block }
+
+/* The pill — Clarity .badge-pill idiom (token doc §5.7) in the --warn tone. */
+.badge-pill.cycle-stale {
+  align-items: center;
+  gap: var(--s-1);                  /* 4px */
+  padding: 2px 9px;
+  border-radius: var(--r-full);     /* 999px */
+  background: var(--warn-soft);     /* --orange-tint */
+  color: var(--orange-700);
+  border: 1px solid #ff922b33;      /* --orange-500 at 20% alpha, per token doc §5.7 */
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.badge-pill.cycle-stale .dot-mini {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: .85;
+}
+
+/* meta.cycle.stale_reason, verbatim. Server text, so it is typeset as machine
+   output — same idiom as .empty-detail in §1.9. */
+.cycle-stale-reason {
+  margin-top: var(--s-1);           /* 4px */
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-muted);
+  word-break: break-word;
+}
+
+/* The run label is permanent chrome (§1.1). Under staleness it changes tone —
+   it never appears, never hides, never becomes a badge. */
+html[data-stale="true"] .cycle-run-label { color: var(--orange-700) }
+
+
+/* ── Stale: DOM adaptations ─────────────────────────────────────────────────
+   Kept outside the verbatim block above. The pill's copy lives in its own
+   span so that writing the text cannot wipe the dot beside it. */
+
+.cycle-stale-text { font: inherit; color: inherit; }
+
+/* The pill and the reason line sit under the run label inside the headline
+   stat card. Spacing only — the rules above own everything visible. */
+#headline-card .cycle-stale { margin-top: var(--s-2); }
