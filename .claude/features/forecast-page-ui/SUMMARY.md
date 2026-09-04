@@ -49,9 +49,10 @@ change is zero; it does not appear in the final diff.
 
 ## Known Issue — suite is not fully green, and the cause is not F5's content
 
-Discovered during finalize's own re-verification, **after** the commit, by re-running the full
-suite against the actual committed tree instead of trusting `test-pass.md`'s pre-commit number.
-Two distinct problems, handled two different ways:
+Discovered during finalize's own re-verification, **after** the feature commit (`72f0630`), by
+re-running the full suite against the actual committed tree instead of trusting `test-pass.md`'s
+pre-commit number. Fixed what was in scope in a follow-up commit (`3c83179`). Two distinct
+problems, handled two different ways:
 
 1. **Fixed here (in-scope):** two of F5's own new guard tests
    (`test_diff_gate_no_tracked_demo_path_file_was_modified`,
