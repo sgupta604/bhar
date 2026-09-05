@@ -469,9 +469,19 @@ if attrs["GRIB_shortName"] == "t2m":
 # T30 — diff gate
 # ------------------------------------------------------------------------------------------
 
-#: The branch point, used only as a fallback when `develop` is not present in this checkout.
-#: Normally derived: `git merge-base HEAD develop`.
-BRANCH_POINT_FALLBACK = "37ca272"
+#: F2's branch point: the last commit at which `.gitignore` does NOT yet carry F2's two lines.
+#: **Deliberately a pinned sha, never `git merge-base HEAD develop`.** The claim this section
+#: makes — "F2 added exactly two lines" — is a fact about F2's own commit (96d0d55), not about
+#: this branch's relationship to `develop`. Once the branch is merged into `develop` the
+#: merge-base becomes HEAD itself, every diff against it is empty, and the gate reports zero
+#: additions for a `.gitignore` that never changed while `fetch/` goes unscanned entirely. A
+#: guard anchored to a moving ref stops meaning what it says.
+#:
+#: `tests/test_forecast_api_guards.py` pins `740dfb0` for the same reason, but that sha is
+#: **F4's** branch point and sits *after* F2 — at `740dfb0` both lines are already present, so
+#: it cannot serve as F2's base. `37ca272` is the newest commit at which they are absent, and
+#: `fetch/` is byte-identical from there to HEAD, so both gates below are rooted correctly.
+F2_BRANCH_POINT = "37ca272"
 
 #: The two lines F2 is allowed to add to `.gitignore`, and the only two.
 EXPECTED_GITIGNORE_ADDITIONS = ["data/live/", "data/forecast.json"]
@@ -494,15 +504,24 @@ def git_repo() -> None:
 
 
 def branch_point() -> str:
-    """`git merge-base HEAD develop`, falling back to the recorded branch point."""
-    merge_base = git("merge-base", "HEAD", "develop")
-    if merge_base.returncode == 0 and merge_base.stdout.strip():
-        return merge_base.stdout.strip()
-
-    resolved = git("rev-parse", "--verify", f"{BRANCH_POINT_FALLBACK}^{{commit}}")
-    if resolved.returncode != 0:
-        pytest.skip("neither `develop` nor the recorded branch point is present in this checkout")
+    """F2's recorded branch point, resolved to a full sha — or a clean skip if absent."""
+    resolved = git("rev-parse", "--verify", f"{F2_BRANCH_POINT}^{{commit}}")
+    if resolved.returncode != 0 or not resolved.stdout.strip():
+        pytest.skip(f"branch point {F2_BRANCH_POINT} is not present in this checkout")
     return resolved.stdout.strip()
+
+
+def gitignore_delta(
+    base_lines: list[str], current_lines: list[str]
+) -> tuple[list[str], list[str]]:
+    """`(added, removed)` between two `.gitignore` line lists, each in file order.
+
+    Pulled out of the test below so a companion can prove the comparison actually bites
+    without writing to the real `.gitignore`.
+    """
+    added = [line for line in current_lines if line not in base_lines]
+    removed = [line for line in base_lines if line not in current_lines]
+    return added, removed
 
 
 @pytest.mark.usefixtures("git_repo")
@@ -549,10 +568,57 @@ def test_t30_gitignore_gained_exactly_the_two_expected_lines() -> None:
     base_lines = before.stdout.splitlines()
     current_lines = (REPO / ".gitignore").read_text(encoding="utf-8").splitlines()
 
-    added = [line for line in current_lines if line not in base_lines]
-    removed = [line for line in base_lines if line not in current_lines]
+    for expected in EXPECTED_GITIGNORE_ADDITIONS:
+        assert expected not in base_lines, (
+            f"the pinned base {F2_BRANCH_POINT} already carries {expected!r}, so it post-dates "
+            f"F2 and this gate can no longer see F2's addition — repin it to a commit before "
+            f"F2 (96d0d55) rather than relaxing the assertion below"
+        )
+
+    added, removed = gitignore_delta(base_lines, current_lines)
 
     assert added == EXPECTED_GITIGNORE_ADDITIONS, (
         f".gitignore must gain exactly {EXPECTED_GITIGNORE_ADDITIONS}, but gained {added}"
     )
     assert removed == [], f".gitignore lost line(s) {removed}; F2 removes none"
+
+
+def test_t30_the_gitignore_gate_fires_on_a_bad_sample() -> None:
+    """A guard that cannot fail is worse than none — prove this one bites in both directions.
+
+    Runs entirely on synthetic line lists, so it exercises the same comparison the live test
+    uses without writing a byte to the real `.gitignore`.
+    """
+    base = ["data/raw/", "data/*.parquet", "*.grib2"]
+    good = base + EXPECTED_GITIGNORE_ADDITIONS
+
+    # The clean case, or every red case below would be meaningless.
+    assert gitignore_delta(base, good) == (EXPECTED_GITIGNORE_ADDITIONS, [])
+
+    # A THIRD line added — the gate must not shrug it off.
+    added, removed = gitignore_delta(base, good + ["data/scratch/"])
+    assert added != EXPECTED_GITIGNORE_ADDITIONS
+    assert added == [*EXPECTED_GITIGNORE_ADDITIONS, "data/scratch/"]
+    assert removed == []
+
+    # One of the two expected lines MISSING, each in turn.
+    for dropped in EXPECTED_GITIGNORE_ADDITIONS:
+        partial = [line for line in good if line != dropped]
+        added, removed = gitignore_delta(base, partial)
+        assert added != EXPECTED_GITIGNORE_ADDITIONS, (
+            f"dropping {dropped!r} must be caught, but `added` still matched"
+        )
+
+    # Both expected lines missing: the F2 change reverted wholesale.
+    assert gitignore_delta(base, base) == ([], [])
+
+    # A pre-existing line deleted — caught by the `removed` half, which is the reason it
+    # exists at all: `added` alone stays correct here.
+    added, removed = gitignore_delta(base, ["data/raw/", "*.grib2", *EXPECTED_GITIGNORE_ADDITIONS])
+    assert added == EXPECTED_GITIGNORE_ADDITIONS
+    assert removed == ["data/*.parquet"]
+
+    # And the empty-diff shape that a merge-base pinned to HEAD used to produce: zero
+    # additions is a FAILURE, not a pass.
+    assert gitignore_delta(good, good) == ([], [])
+    assert [] != EXPECTED_GITIGNORE_ADDITIONS

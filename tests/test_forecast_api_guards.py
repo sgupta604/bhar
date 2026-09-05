@@ -522,6 +522,33 @@ OFF_LIMITS = (
     "data/results.json",
 )
 
+#: F4's own feature commit. The F4-scoped gate below diffs `F4_BRANCH_POINT..F4_FEATURE_COMMIT`
+#: — a **closed, finished commit range**. That is the entire point of the split: "F4 touched
+#: none of `OFF_LIMITS`" is a fact about two fixed commits, so no later ticket's legitimate
+#: work can ever invalidate it. Scanned branch-wide, that same list failed F6/F7 for F2's and
+#: F5's correct commits, and made repairing `tests/test_live_guards.py` literally impossible.
+F4_FEATURE_COMMIT = "56967fd"
+
+#: The paths FORECAST-SPEC 3 puts off-limits to **every** ticket, scanned from the branch
+#: point all the way to the working tree.
+#:
+#: **Test files are deliberately absent.** `tests/test_live_guards.py` belongs on F4's list
+#: above — "F4 must not edit another ticket's guard" is a statement about F4's intent — but it
+#: cannot be a branch-wide ban, because that makes *repairing* a broken guard impossible. Three
+#: guards on this branch have already needed repair after a reference moved (F4's own
+#: `frontend/` blanket prefix, F3's CLI-surface pin, F2's `.gitignore` merge-base). A rule that
+#: forbids fixing them would simply guarantee the branch stays red. What enforces the intent is
+#: the standing discipline: any change to a guard must re-prove that the guard still bites.
+BRANCH_WIDE_OFF_LIMITS = (
+    "fetch/",
+    "score/",
+    "backend/contract.py",
+    "docs/",
+    "data/results.json",
+    "run.sh",
+    "demo.sh",
+)
+
 #: The pre-existing demo-path frontend files. These may not be MODIFIED, RENAMED or DELETED;
 #: files ADDED under `frontend/` are legitimate new forecast-page work. Pinned as literals
 #: rather than globbed from the working tree: a glob would quietly shrink to nothing if the
@@ -560,12 +587,22 @@ def git_repo() -> None:
         pytest.skip(f"{REPO} is not a git working tree")
 
 
+def resolve_commit(ref: str) -> str:
+    """`ref` as a full sha — or a clean skip when it is not present in this checkout."""
+    resolved = git("rev-parse", "--verify", f"{ref}^{{commit}}")
+    if resolved.returncode != 0 or not resolved.stdout.strip():
+        pytest.skip(f"commit {ref} is not present in this checkout")
+    return resolved.stdout.strip()
+
+
 def branch_point() -> str:
     """F4's recorded branch point, resolved to a full sha — or a clean skip if absent."""
-    resolved = git("rev-parse", "--verify", f"{F4_BRANCH_POINT}^{{commit}}")
-    if resolved.returncode != 0 or not resolved.stdout.strip():
-        pytest.skip(f"branch point {F4_BRANCH_POINT} is not present in this checkout")
-    return resolved.stdout.strip()
+    return resolve_commit(F4_BRANCH_POINT)
+
+
+def f4_feature_commit() -> str:
+    """F4's feature commit, closing the range the F4-scoped gate scans."""
+    return resolve_commit(F4_FEATURE_COMMIT)
 
 
 def parse_numstat(output: str) -> dict[str, tuple[int, int]]:
@@ -579,14 +616,24 @@ def parse_numstat(output: str) -> dict[str, tuple[int, int]]:
     return parsed
 
 
-def off_limits_hits(paths: list[str]) -> list[str]:
-    """The subset of `paths` that F4 is forbidden to touch."""
+def hits_against(paths: list[str], rules: tuple[str, ...]) -> list[str]:
+    """The subset of `paths` matched by `rules`; a trailing `/` means "anything under here"."""
     return sorted(
         path
         for path in paths
-        for rule in OFF_LIMITS
+        for rule in rules
         if (path.startswith(rule) if rule.endswith("/") else path == rule)
     )
+
+
+def off_limits_hits(paths: list[str]) -> list[str]:
+    """The subset of `paths` that F4's own commits were forbidden to touch."""
+    return hits_against(paths, OFF_LIMITS)
+
+
+def branch_wide_hits(paths: list[str]) -> list[str]:
+    """The subset of `paths` that FORECAST-SPEC 3 puts off-limits to every ticket."""
+    return hits_against(paths, BRANCH_WIDE_OFF_LIMITS)
 
 
 def parse_name_status(output: str) -> list[tuple[str, tuple[str, ...]]]:
@@ -734,18 +781,57 @@ def test_test10_main_py_gained_exactly_two_lines() -> None:
 
 
 @pytest.mark.usefixtures("git_repo")
-def test_test10_diff_names_no_off_limits_path() -> None:
-    """Nothing on F4's off-limits list appears in the diff since the branch point, and no
-    pre-existing demo-path frontend file is modified, renamed or deleted.
+def test_test10_f4s_own_commits_touched_no_off_limits_path() -> None:
+    """F4's OWN commit range touched nothing on `OFF_LIMITS` — the original claim, preserved.
 
-    The frontend half is a **status** rule, not a path rule: FORECAST-SPEC 3 protects the
-    files the demo already ships and explicitly permits new `frontend/forecast.*` ones. An
-    earlier version of this gate listed `frontend/` as a blanket off-limits prefix and so
-    failed on F5's authorized new files — the wrong rule, correctly enforced.
+    Scoped to the CLOSED range `F4_BRANCH_POINT..F4_FEATURE_COMMIT`, and deliberately not a
+    branch-wide scan. The full list includes `.gitignore` and `tests/test_live_guards.py`,
+    which F2 and F5 legitimately changed and which a later ticket may legitimately repair.
+    Rooted at two fixed commits, this assertion says exactly what it means and stays true
+    however far the branch moves on.
+    """
+    base = branch_point()
+    tip = f4_feature_commit()
+
+    result = git("diff", "--name-status", f"{base}..{tip}")
+    assert result.returncode == 0, result.stderr
+
+    entries = parse_name_status(result.stdout)
+    changed = changed_paths(entries)
+
+    # A range that resolved to nothing would pass this gate perfectly and prove nothing.
+    assert changed, (
+        f"the diff {base[:7]}..{tip[:7]} named no files at all — the range is wrong or the "
+        f"commits have moved, and every assertion below is vacuous"
+    )
+    assert "backend/forecast_api.py" in changed, (
+        f"F4's range must contain F4's own feature module; got {changed}"
+    )
+
+    hits = off_limits_hits(changed)
+    assert hits == [], (
+        f"F4's own commits {base[:7]}..{tip[:7]} touched {hits}.\n"
+        f"Full change set:\n" + "\n".join(changed)
+    )
+
+    mutated = frontend_mutations(entries)
+    assert mutated == [], (
+        f"F4's own commits modified, renamed or deleted the demo-path frontend files "
+        f"{mutated}.\nFull change set:\n{result.stdout}"
+    )
+
+
+@pytest.mark.usefixtures("git_repo")
+def test_test10_branch_wide_spec3_paths_are_untouched() -> None:
+    """The FORECAST-SPEC 3 paths NO ticket may touch, from the branch point to the WORKING TREE.
+
+    `<base>` with no `..HEAD`, so staged and uncommitted edits are in scope too. The rule list
+    is `BRANCH_WIDE_OFF_LIMITS` — permanently-frozen paths only, no test files: see the note on
+    that constant for why a branch-wide ban on guard files is the wrong rule.
 
     Tracked changes only, on purpose: `.venv` and `data/raw` are untracked **symlinks** in this
-    worktree and `.claude/features/forecast-api/` is untracked, so a `git status --porcelain`
-    scan would trip on all three. `git diff` sees none of them, which is correct.
+    worktree and `.claude/features/` is untracked, so a `git status --porcelain` scan would
+    trip on all three. `git diff` sees none of them, which is correct.
     """
     base = branch_point()
 
@@ -754,11 +840,11 @@ def test_test10_diff_names_no_off_limits_path() -> None:
 
     entries = parse_name_status(result.stdout)
     changed = changed_paths(entries)
-    hits = off_limits_hits(changed)
+    hits = branch_wide_hits(changed)
 
     assert hits == [], (
-        f"F4 must not touch {hits} — the diff since {base[:7]} names them.\n"
-        f"Full change set:\n" + "\n".join(changed)
+        f"FORECAST-SPEC 3 freezes {hits} for every ticket — the diff since {base[:7]} names "
+        f"them.\nFull change set:\n" + "\n".join(changed)
     )
 
     mutated = frontend_mutations(entries)
@@ -801,3 +887,62 @@ def test_test10_diff_names_no_off_limits_path() -> None:
             for path, (was, now) in sorted(drifted.items())
         )
     )
+
+
+def test_test10_both_scoped_matchers_fire_on_a_bad_sample() -> None:
+    """Neither gate above may be toothless, and they must differ in exactly one way.
+
+    Synthetic path lists, so the matchers are proved without touching the repository. The
+    live red-then-green proof for the branch-wide gate is a real edit under `score/`; this
+    covers the shapes a real diff cannot be made to produce on demand — in particular what
+    the F4-scoped gate WOULD have flagged had F4's range touched one of its paths.
+    """
+    # --- the F4-scoped matcher keeps the FULL original list, guard file included ---
+    assert off_limits_hits(["tests/test_live_guards.py"]) == ["tests/test_live_guards.py"]
+    assert off_limits_hits([".gitignore"]) == [".gitignore"]
+    assert off_limits_hits(["fetch/grib.py", "backend/main.py", "docs/SPEC.md"]) == [
+        "docs/SPEC.md",
+        "fetch/grib.py",
+    ]
+    # Every rule bites: had F4's range named one of these, the gate would have caught it.
+    for banned in OFF_LIMITS:
+        sample = f"{banned}some_file.py" if banned.endswith("/") else banned
+        assert off_limits_hits([sample]) == [sample], f"{banned!r} is not enforced"
+    # ...and it stays silent on F4's own authorized work.
+    assert off_limits_hits(["backend/main.py", "backend/forecast_api.py"]) == []
+
+    # --- the branch-wide matcher: same teeth on the frozen paths ---
+    for banned in BRANCH_WIDE_OFF_LIMITS:
+        sample = f"{banned}some_file.py" if banned.endswith("/") else banned
+        assert branch_wide_hits([sample]) == [sample], f"{banned!r} is not enforced branch-wide"
+    assert branch_wide_hits(["score/run.py", "docs/SPEC.md", "run.sh", "demo.sh"]) == [
+        "demo.sh",
+        "docs/SPEC.md",
+        "run.sh",
+        "score/run.py",
+    ]
+    assert branch_wide_hits(["data/results.json", "backend/contract.py"]) == [
+        "backend/contract.py",
+        "data/results.json",
+    ]
+
+    # --- the ONE intended difference: guard files and .gitignore are not branch-wide bans ---
+    assert branch_wide_hits(["tests/test_live_guards.py"]) == []
+    assert branch_wide_hits(["tests/test_forecast_api_guards.py"]) == []
+    assert branch_wide_hits([".gitignore"]) == []
+
+    # The difference must be exactly that and nothing more. Every branch-wide rule is also an
+    # F4 rule, so the narrower list can never be the more permissive one on a frozen path.
+    assert set(BRANCH_WIDE_OFF_LIMITS) <= set(OFF_LIMITS), (
+        "BRANCH_WIDE_OFF_LIMITS must be a subset of F4's list; a path frozen for everyone but "
+        "permitted to F4 would be incoherent"
+    )
+    assert set(OFF_LIMITS) - set(BRANCH_WIDE_OFF_LIMITS) == {
+        ".gitignore",
+        "tests/test_live_guards.py",
+    }, "the only F4-only entries are the two a later ticket may legitimately revisit"
+
+    # --- neither matcher may fire on the authorized new forecast-page work ---
+    for path in ("frontend/forecast.js", "frontend/forecast.html", "tests/test_forecast_api.py"):
+        assert off_limits_hits([path]) == []
+        assert branch_wide_hits([path]) == []
