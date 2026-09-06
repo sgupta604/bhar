@@ -324,6 +324,66 @@
     <div class="history-unavailable" id="history-unavailable"></div>
   </section>
 
+  <!-- ═════════════════════════════════════════════════════════════════════
+       SCORECARD CONTENT — F9
+
+       The ledger, scored. Nothing in this region is a forecast: every figure
+       here has already been settled by an observation, and the number of
+       graded rows behind it is printed beside it.
+
+       OUTSIDE THE F6 REGION ON PURPOSE, AND BOUNDED ON BOTH SIDES. F6's
+       extractor opens at its own banner and closes at the first </section>
+       after it, so this section sits after that close and carries its own
+       opening and closing markers rather than running to the end of the file.
+
+       EMPTY CONTAINERS ONLY. Not a model name, not a site name, not a lead
+       hour, not a count, not a temperature, not a unit. Every one of them is
+       bound by forecast.js from /api/forecast/scorecard, because a literal
+       here would outlive the refit that dropped whatever it named.
+
+       Same architecture rule as the rest of this file: the markup is present
+       unconditionally, forecast.js fills it, and the blocks that have nothing
+       to say collapse on :empty rather than by a script display write.
+       ═════════════════════════════════════════════════════════════════════ -->
+  <section class="scorecard-section" id="scorecard-section" aria-labelledby="scorecard-heading">
+    <h2 class="scorecard-heading" id="scorecard-heading">Here is the ledger. Here is how it scored.</h2>
+
+    <!-- The prose, composed in forecast.js's SCORECARD COPY block: what the
+         ledger is, how small the sample is, which days the weights were
+         fitted on, and how the record actually came out. -->
+    <div class="scorecard-lede" id="scorecard-lede"></div>
+
+    <!-- The short-record card. A real node carrying the server's own reason
+         verbatim; the numbers still render below it, at full size. -->
+    <div class="scorecard-thin" id="scorecard-thin"></div>
+
+    <!-- Realized error per series: every member the payload lists, in its own
+         order, beside the blend, each with the rows it was taken over. -->
+    <div class="scorecard-series" id="scorecard-series"></div>
+
+    <!-- The same record cut by lead, then by cycle. -->
+    <div class="scorecard-leads" id="scorecard-leads"></div>
+    <div class="scorecard-cycles" id="scorecard-cycles"></div>
+
+    <!-- How many cycles in a row went each way. -->
+    <div class="scorecard-streaks" id="scorecard-streaks"></div>
+
+    <!-- Rows the grader left out, each with its recorded reason verbatim.
+         They are never rendered as a scored row: an empty comparison scores
+         perfectly and is fake. -->
+    <div class="scorecard-skips" id="scorecard-skips"></div>
+
+    <!-- What the record is made of: counts, window, observation source and
+         the join tolerance. -->
+    <div class="scorecard-notes" id="scorecard-notes"></div>
+
+    <!-- The scorecard 503, in the empty-state voice. Its own subtree: the
+         forward page and the history region above stay rendered, and the
+         shell is never touched. -->
+    <div class="scorecard-unavailable" id="scorecard-unavailable"></div>
+  </section>
+  <!-- ══ END SCORECARD CONTENT — F9 ══ -->
+
 </div>
 
 <!-- The 503 card is rendered here, outside the shell, by forecast.js:
