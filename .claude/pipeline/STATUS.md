@@ -117,7 +117,7 @@ module). This cost 45 minutes of confusing 503s during F6.
 | F4 | `forecast-api` | F3 | GREEN — finalized 2026-09-04, commit `56967fd`, no PR (FORECAST-SPEC §12) |
 | F5 | `forecast-page` | F1, F3 | GREEN — finalized 2026-09-04, commit `72f0630`, no PR (FORECAST-SPEC §12) |
 | F6 | `forecast-history` | F4, F5 | GREEN — finalized 2026-09-04, commit `27b0f36`, no PR (FORECAST-SPEC §12) |
-| F7 | `forecast-skill-panel` | F4, F5, F6 | GREEN — finalized 2026-09-05, commit `__F7_SHA__`, no PR (FORECAST-SPEC §12) |
+| F7 | `forecast-skill-panel` | F4, F5, F6 | GREEN — finalized 2026-09-05, commit `951f7f0`, no PR (FORECAST-SPEC §12) |
 | F8 | `forecast-docs` | all | TODO |
 | F9 | `forecast-scorecard` | F3, F4 | TODO — **user-approved 11:44**; added on develop @ 37ca272 |
 
