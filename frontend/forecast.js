@@ -194,6 +194,7 @@
       state.history = payload;
       state.dayIdx = 0;
       renderHistory();
+      renderSkillRealized();   // no-op until the forward payload is in
     })
     .catch(function (err) {
       renderHistoryUnavailable(err && err.userDetail ? err.userDetail
@@ -221,6 +222,10 @@
     renderHeadline();
     renderRunLabel($('cycle-run-label'), payload.meta);
     renderSkillShell();
+    renderSkillLeads();
+    renderSkillBasis();
+    renderSkillCrossLink();
+    renderSkillRealized();      // no-op until the archive payload is in
     layoutStrip();
     renderNote();
     selectCell(0, true);          // the panel is never empty on first paint
@@ -841,11 +846,575 @@
       state.meta.site.id + ' has both.'));
 
     if (Number(ws.weights_age_days) > 45) {
-      host.appendChild(el('p', 'strip-note',
+      host.appendChild(el('p', 'skill-weights-note',
         'These weights are ' + ws.weights_age_days + ' days old, fitted on ' +
         utcDate(w.start) + ' → ' + utcDate(w.end) + '.'));
     }
   }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     SKILL PANEL CONTENT — F7, design-target §1.5 and §4
+
+     Everything the trust panel says about what already happened is composed
+     below. Every sentence is past tense, names its window and its lead, and
+     stops there. Nothing here becomes a claim about a forward value.
+
+     PLACED ABOVE THE F6 HISTORY BANNER ON PURPOSE. F6's region extractor
+     slices this file from its own banner to end of file, so anything appended
+     at the tail would land inside F6's region and be read by F6's guards.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* ══ PANEL COPY — pinned by tests/test_forecast_skill_panel_copy.py ══ */
+
+  /* CONTAINMENT RULE. String constants and pure template functions only. No
+     DOM handle, no element builder, no node insertion, no read of the page's
+     own data object — prose in, prose out. A renderer belongs outside this
+     block; a sentence that reaches the page belongs inside it.
+
+     ARGUMENT CONVENTION, written down once so no call site re-decides it:
+     every numeric value arrives ALREADY FORMATTED, as a display string
+     carrying its unit wherever the sentence shows one. The call site does
+     fmt(v, 2) for a mean error, fmt(v, 1, true) for a signed improvement, and
+     appends the unit symbol derived from meta.units. Nothing below calls fmt,
+     so the U+2212 substitution happens in exactly one place and never twice.
+     Counts, the site id, the model name and the lead hour arrive as plain
+     values and are stringified by concatenation.
+
+     Nothing below types a model name, a site name, a unit glyph, a sign or a
+     lead hour. Every one of those differs between the two payloads this page
+     is rendered against, so a literal here would read fine on one and lie
+     about the other. */
+
+  /* The tie window for improvement_pct, read from
+     .claude/features/demo-shell/design-target.md §3 (D4) and never re-derived
+     here. The tone token and the comparison clause are both selected by
+     improvementState(), so a clause and a colour can never disagree about
+     what the same number said. */
+  var IMPROVE_TIE_BOUND = 0.05;
+
+  function improvementState(pct) {
+    var n = Number(pct);
+    if (!isFinite(n)) return 'tie';
+    if (n > IMPROVE_TIE_BOUND) return 'win';
+    if (n < -IMPROVE_TIE_BOUND) return 'loss';
+    return 'tie';
+  }
+
+  /* Three variants, all shipped, all reachable. On one of the two payloads
+     this page renders, the longest fitted lead came out WORSE than the best
+     single model — so a lone "better than" template would read fine there and
+     say something untrue. The loss variant is not a fallback; it is the
+     sentence that payload asks for, and it renders at the same size, position
+     and weight as a win. */
+  var COMPARISON_CLAUSE = {
+    win: 'better than the best single model',
+    tie: 'level with the best single model',
+    loss: 'worse than the best single model'
+  };
+
+  function copyComparisonClause(tone, model, bestMaeText) {
+    var opening = COMPARISON_CLAUSE[tone] || COMPARISON_CLAUSE.tie;
+    return opening + ' (' + model + ', ' + bestMaeText + ') over the same period.';
+  }
+
+  function copyLeadOpening(days, siteId, leadH, blendMaeText) {
+    return 'Over the last ' + days + ' days at ' + siteId +
+      ', this blend\'s typical miss at a ' + leadH + '-hour lead was ' +
+      blendMaeText + ' — ';
+  }
+
+  function copyInSample(trainDays, inSampleText) {
+    return 'In-sample, on the ' + trainDays +
+      ' days the weights were fitted on, it was ' + inSampleText + '.';
+  }
+
+  /* The coincidence clause is gated on the DATA condition below — the two
+     figures being all but equal with the fitted one no lower — and never on a
+     lead hour. A lead-keyed gate would print the coincidence sentence on a
+     refit where the coincidence had gone. */
+  var COINCIDENCE_TOL = 0.01;
+
+  function isCoincidence(blendMae, inSampleMae) {
+    var out = Number(blendMae), fitted = Number(inSampleMae);
+    if (!isFinite(out) || !isFinite(fitted)) return false;
+    return out <= fitted && (fitted - out) < COINCIDENCE_TOL;
+  }
+
+  function copyInSampleCoincidence(trainDays, inSampleText, toleranceText, nTest) {
+    return 'In-sample, on the ' + trainDays +
+      ' days the weights were fitted on, it was also ' + inSampleText +
+      '; the two differ by less than ' + toleranceText +
+      ', and at this lead the fit did not degrade on unseen days. That is a ' +
+      nTest + '-sample coincidence, not evidence that the fit generalised ' +
+      'better than it was measured to.';
+  }
+
+  function copySampleClause(nTest, independentDays, pairs) {
+    return 'That is ' + nTest + ' scored forecasts, which is roughly ' +
+      independentDays + ' independent days, not ' + pairs + '.';
+  }
+
+  var COPY_CLOSER = 'That is history, not a promise about this forecast.';
+
+  /* README C2's reason, in the customer's language. Two variants: the count
+     word when the runs-per-day derivation is a whole number, and the
+     unquantified opener when it is not — which is the case on one of the two
+     payloads, where the figure lands between two whole numbers. */
+  var BASIS_SEVERAL = 'Several';
+
+  function capitaliseWord(word) {
+    var w = String(word);
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }
+
+  function copyBasisSentence(runs, days, pairs, independentDays) {
+    var n = Number(runs);
+    var opener = (isFinite(n) && n === Math.round(n))
+      ? capitaliseWord(countWord(n))
+      : BASIS_SEVERAL;
+    return opener + ' initialisations a day over ' + days +
+      ' days share a weather regime, so the ~' + pairs +
+      ' forecast-observation pairs at each lead are closer to ~' +
+      independentDays + ' independent days.';
+  }
+
+  /* WHEN THE PAYLOAD IS FABRICATED, THE TWO FIGURES IN THIS BLOCK CAME FROM
+     DIFFERENT WORLDS, AND THE PAGE BANNER DOES NOT SAY SO. The banner speaks
+     about the forecast; the realized figure is loaded from the archive by a
+     separate request, which no fixture replaces. So on a fixture payload an
+     invented backtest number sits inches from a genuinely measured one, and
+     both readings a viewer can take are wrong: trusting the banner discards a
+     real measurement, and reading the pair as a comparison reads a difference
+     between an invention and an observation. The sentence below says which is
+     which, and it is repeated in every lead block rather than stated once at
+     the top of the panel, because the juxtaposition it defuses is per-lead and
+     a reader scrolled to one block must see it there. */
+  var COPY_SYNTHETIC_MIXING =
+    'The blend and best-single figures above are fabricated. The realized miss ' +
+    'below was measured from real observations at this site, so the two are not ' +
+    'comparable and the difference between them means nothing.';
+
+  /* The realized figure is pooled over EVERY archived day, the fitted ones
+     included, which is a reason for it to sit lower that has nothing to do
+     with skill. Suppressing it would itself be selection, so it ships with
+     the caveat that makes it unreadable as a score. */
+  function copyRealizedLeadIn(realizedMaeText) {
+    return 'Against the observations already in, the blend\'s realized miss at ' +
+      'this lead came out at ' + realizedMaeText + '.';
+  }
+
+  function copyRealizedCaveat(archivedDays, trainDays) {
+    return 'That pools all ' + archivedDays + ' archived days, including the ' +
+      trainDays + ' the weights were fitted on, so it is not comparable to the ' +
+      'out-of-sample figure beside it, and neither number says anything about ' +
+      'this forecast.';
+  }
+
+  /* Parameterised on the real boundary lead read from the payload — the first
+     slot the payload marks as beyond the fitted range — never on a typed hour
+     count, which a horizon change would leave behind. */
+  function copyCrossLink(boundaryLeadH) {
+    return 'Those are the shaded cells from a ' + boundaryLeadH +
+      '-hour lead onward on the strip above.';
+  }
+
+  /* The whole per-lead sentence, joined here so the spaces between its clauses
+     live inside the pinned block too. Fields arrive already formatted. */
+  function copyLeadSentence(p) {
+    return copyLeadOpening(p.days, p.siteId, p.leadH, p.blendMaeText) +
+      copyComparisonClause(p.tone, p.bestModel, p.bestMaeText) + ' ' +
+      (p.coincidence
+        ? copyInSampleCoincidence(p.trainDays, p.inSampleText, p.toleranceText, p.nTest)
+        : copyInSample(p.trainDays, p.inSampleText)) + ' ' +
+      copySampleClause(p.nTest, p.independentDays, p.pairs) + ' ' +
+      COPY_CLOSER;
+  }
+
+  /* ══ END PANEL COPY ══ */
+
+  /* The two derivations the copy above is parameterised on. Arithmetic, not
+     prose, so they sit outside the pinned block — but they are written down
+     once, here, and never recomputed at a call site.
+
+     Scored rows are the test split only; the pair count the sentence contrasts
+     with is the whole window's, which is why the split ratio is applied. Runs
+     per day then falls out of the pair count and the window length, and is a
+     whole number on one payload and not on the other. */
+  function pairsPerLead(nTest, trainDays, testDays) {
+    var n = Number(nTest), train = Number(trainDays), test = Number(testDays);
+    if (!isFinite(n) || !isFinite(train) || !isFinite(test) || test === 0) return null;
+    return Math.round(n * (train + test) / test);
+  }
+
+  function runsPerDay(pairs, windowDays) {
+    var p = Number(pairs), d = Number(windowDays);
+    if (!isFinite(p) || !isFinite(d) || d === 0) return null;
+    return p / d;
+  }
+
+  /* ── The renderers ──────────────────────────────────────────────
+
+     Prose lives in the pinned block above; everything below is DOM. Nothing
+     here types a sentence, a model name, a site id, a unit glyph or a lead
+     hour — all of those are read from the payload and handed to a template.
+
+     A note on the two precisions, because it is the whole point of the panel.
+     The sentence rounds a mean error to two places, where at one lead both
+     figures read the same and the ordering disappears — which is why the
+     sentence states the direction in words. The cells below carry whatever
+     precision the payload carries, so the ordering stays inspectable by
+     anyone who looks. Neither rendering is dropped to simplify the other. */
+
+  /* The payload's enum, in the customer's words, with the raw value as the
+     fallback: an unrecognised basis renders as itself rather than vanishing,
+     because a missing provenance line reads as no provenance at all. */
+  var BASIS_PROSE = {
+    historical_out_of_sample: 'Historical, out of sample.'
+  };
+
+  /* Whatever precision the payload carries, and not one digit more. A fixed
+     decimal count here would print trailing zeros the backtest never
+     measured on one of the two payloads. */
+  function exactValue(v) {
+    var n = Number(v);
+    return isFinite(n) ? String(n) : '';
+  }
+
+  /* One cell of the five. Label above value, always in this order, and the
+     label is never omitted — a reader who cannot remember which figure is
+     which reads the label, which is always there. */
+  function skillNumCell(host, label, value, cls) {
+    var cell = el('div', cls ? 'skill-num ' + cls : 'skill-num');
+    cell.appendChild(el('div', 'skill-num-label', label));
+    cell.appendChild(el('div', 'skill-num-value num', value));
+    host.appendChild(cell);
+  }
+
+  /* The fitted vector actually used at this lead. Looked up by matching the
+     forward row's fitted-lead field AGAINST the skill lead, never the other
+     way round: that field is the lead the weights came from, not the row's
+     own lead, so indexing skill by it would read the wrong entry for every
+     extrapolated row. No matching row means no chips — an invented vector
+     would be a claim about a fit that is not in the payload. */
+  function weightsForLead(rows, leadH) {
+    var found = null;
+    (rows || []).forEach(function (row) {
+      if (found || !row || !row.weights) return;
+      if (Number(row.weights_fitted_at_lead_h) === Number(leadH)) found = row.weights;
+    });
+    return found;
+  }
+
+  /* Canonical order from the payload's own model list. A weight of exactly
+     zero renders as zero and is marked so the chip can be de-emphasised: the
+     backtest looked at that model and gave it nothing, which is a finding.
+     Dropping it, or renormalising the rest, would hide it. */
+  function renderSkillWeights(block, weights, models) {
+    var chips = el('div', 'skill-weights');
+    models.forEach(function (model) {
+      var w = weights[model];
+      if (w == null) return;
+      var chip = el('span', 'skill-weight-chip', model);
+      chip.style.setProperty('--mark-color', modelVar(model));
+      if (Number(w) === 0) chip.setAttribute('data-zero-weight', 'true');
+      chip.appendChild(el('span', 'skill-weight-num', ' ' + fmt(w, 1)));
+      chips.appendChild(chip);
+    });
+    block.appendChild(chips);
+  }
+
+  /* One block per fitted lead, in PAYLOAD ORDER. Never sorted by any metric:
+     a panel that reorders itself by result is a panel that can be made to
+     lead with its best number. */
+  function renderSkillLeads() {
+    var data = state.data, meta = state.meta;
+    var skill = data && data.skill;
+    var host = $('skill-leads');
+    if (!host || !skill || !skill.by_lead) return;
+    host.textContent = '';
+
+    var units = meta.units;
+    var win = skill.window || {};
+    var ws = meta.weights_source || {};
+    var split = ws.split || {};
+    var models = meta.models_included || [];
+    var toleranceText = withUnit(fmt(COINCIDENCE_TOL, 2), units);
+
+    skill.by_lead.forEach(function (lead) {
+      var tone = improvementState(lead.improvement_pct);
+      var improveText = fmt(lead.improvement_pct, 1, true);
+      var pairs = pairsPerLead(lead.n_test, split.train_days, split.test_days);
+      var block = el('div', 'skill-lead');
+      /* The block's own lead, on the block, so the realized renderer can
+         find it later without depending on child order or on the two
+         renderers agreeing about an index. Always set, always to the
+         payload's value. */
+      block.setAttribute('data-lead-h', lead.lead_h);
+
+      var head = el('div', 'skill-lead-head');
+      head.appendChild(el('span', 'badge-pill', lead.lead_h + '-hour lead'));
+      var improve = el('span', 'skill-improve num', improveText + '%');
+      /* Set to the state it is in, always a positive value. A zero or a loss
+         is a legitimate outcome and gets the same size, position and weight
+         as a win — only the tone token differs, and the clause in the
+         sentence is picked by the same call, so the two cannot disagree. */
+      improve.setAttribute('data-improve', tone);
+      head.appendChild(improve);
+      block.appendChild(head);
+
+      block.appendChild(el('p', 'skill-copy', copyLeadSentence({
+        days: win.days,
+        siteId: meta.site.id,
+        leadH: lead.lead_h,
+        blendMaeText: withUnit(fmt(lead.blend_mae, 2), units),
+        tone: tone,
+        bestModel: lead.best_single_model,
+        bestMaeText: withUnit(fmt(lead.best_single_mae, 2), units),
+        /* Gated on the two figures, never on a lead hour. */
+        coincidence: isCoincidence(lead.blend_mae, lead.blend_mae_in_sample),
+        trainDays: split.train_days,
+        inSampleText: withUnit(fmt(lead.blend_mae_in_sample, 2), units),
+        toleranceText: toleranceText,
+        nTest: lead.n_test,
+        independentDays: lead.independent_days_approx,
+        pairs: pairs
+      })));
+
+      /* Five cells, fixed DOM order, never reordered by magnitude. The
+         out-of-sample figure is first and larger; the fitted-days figure is
+         second, labelled, muted, and never promoted. No difference between
+         the two is drawn as a toned or arrowed figure — at one lead it would
+         favour the fit, and colouring it there would assert exactly what the
+         sample size does not support. */
+      var nums = el('div', 'skill-nums');
+      skillNumCell(nums, 'BLEND MAE (OUT-OF-SAMPLE)',
+        withUnit(exactValue(lead.blend_mae), units), 'skill-num-oos');
+      skillNumCell(nums, 'IN-SAMPLE (FITTED DAYS)',
+        withUnit(exactValue(lead.blend_mae_in_sample), units));
+      skillNumCell(nums, 'BEST SINGLE (' + lead.best_single_model + ')',
+        withUnit(exactValue(lead.best_single_mae), units));
+      /* The one cell in this grid that is not in the temperature unit, so
+         it says so. improvement_pct is a percentage; a bare +9.0 sitting
+         between four °F figures reads as nine degrees. The number itself
+         still comes from the shared formatter, so the minus stays the
+         real U+2212 one and is never substituted twice. The sentence
+         above quotes the comparison clause, not this figure, and is
+         unchanged. */
+      skillNumCell(nums, 'IMPROVEMENT', improveText + '%');
+      skillNumCell(nums, 'SAMPLE', lead.n_test + ' test rows · ~' +
+        lead.independent_days_approx + ' independent days');
+      block.appendChild(nums);
+
+      var weights = weightsForLead(data.forecast, lead.lead_h);
+      if (weights) renderSkillWeights(block, weights, models);
+
+      host.appendChild(block);
+    });
+  }
+
+  /* The provenance line, once, under all three blocks. Always visible: the
+     reason the sample is smaller than the pair count suggests is not a
+     footnote to be opened, it is part of the claim. */
+  function renderSkillBasis() {
+    var node = $('skill-basis');
+    var skill = state.data && state.data.skill;
+    if (!node || !skill) return;
+    var win = skill.window || {};
+    var split = (state.meta.weights_source || {}).split || {};
+    var first = (skill.by_lead && skill.by_lead[0]) || {};
+    var pairs = pairsPerLead(first.n_test, split.train_days, split.test_days);
+    var parts = [];
+    if (skill.basis != null) {
+      parts.push(BASIS_PROSE[skill.basis] || String(skill.basis));
+    }
+    /* The server's own words, unedited. A note that says the numbers are
+       fabricated has to reach the page saying that. */
+    if (skill.note != null) parts.push(String(skill.note));
+    parts.push(copyBasisSentence(runsPerDay(pairs, win.days), win.days, pairs,
+      first.independent_days_approx));
+    node.textContent = parts.join(' ');
+  }
+
+  /* Panel to strip, in words. A SIBLING of the verbatim extrapolation
+     sentence, never inside it: that node's digits are pinned, and a derived
+     hour count landing in it would break the pin the moment the horizon
+     moved. The boundary is the first slot the payload marks as beyond the
+     fitted range; no such slot means no sentence, and the node stays empty
+     rather than being hidden by script. */
+  function renderSkillCrossLink() {
+    var node = $('skill-extrapolated-link');
+    if (!node) return;
+    node.textContent = '';
+    var boundary = null;
+    ((state.data && state.data.forecast) || []).forEach(function (row) {
+      if (boundary === null && row && row.is_extrapolated_lead === true) {
+        boundary = row.lead_h;
+      }
+    });
+    if (boundary === null) return;
+    node.textContent = copyCrossLink(boundary);
+  }
+
+  /* ── 3.1 the realized block ───────────────────────────────────────────
+
+     THE MOST MISREADABLE NUMBER ON THIS PAGE, so it is built to be hard to
+     misread. Realized error is what the archive already scored at this lead.
+     It is NOT a second, friendlier version of the out-of-sample figure: it
+     pools every archived day, the fitted ones included, so it sits lower for
+     a reason that has nothing to do with skill. It therefore lives BELOW the
+     numeric grid, in its own node, in the subordinate muted face — never in a
+     cell of .skill-nums, never in the out-of-sample tone, never beside it in
+     a way that invites a reader to compare the two as like for like. The
+     caveat that says so is rendered with it, always, not on demand.
+
+     Pooled over the individual scored entries at this lead, and never over
+     the days' own mae_f. A mean of daily means gives a day with three scored
+     slots the same weight as a day with six, and the archive's days do not
+     all carry the same count — the two derivations disagree, and the pooled
+     one is the one the sentence claims.
+
+     Magnitude is folded by hand rather than with the absolute-value call this
+     file bans outside a threshold test. The ban exists so a displayed
+     improvement can never quietly lose its sign; here the sign is genuinely
+     not wanted — a miss two degrees high and a miss two degrees low are the
+     same size of miss — so the fold is written out where it can be seen. */
+  function errorMagnitude(v) {
+    var n = Number(v);
+    if (!isFinite(n)) return null;
+    return n < 0 ? -n : n;
+  }
+
+  function pooledRealizedMae(days, leadH) {
+    var total = 0, count = 0;
+    (days || []).forEach(function (day) {
+      ((day && day.entries) || []).forEach(function (entry) {
+        if (!entry || Number(entry.lead_h) !== Number(leadH)) return;
+        var m = errorMagnitude(entry.error_f);
+        if (m === null) return;
+        total += m;
+        count += 1;
+      });
+    });
+    /* No scored entry at this lead means no figure and no node. Zero rows
+       would average to a perfect zero, which is the fake-perfect result this
+       project's integrity rules exist to refuse. */
+    return count ? total / count : null;
+  }
+
+  /* One mark per archived day that actually scored this lead, in archive
+     order. A day the archive scored at other leads but not at this one is
+     SKIPPED — not zeroed, not carried forward from its neighbour, not
+     interpolated — because a mark drawn for a day with no measurement is a
+     measurement invented. The archive's first day is exactly that case at the
+     longest lead, so the shortest row is a true row and not a bug. */
+  function realizedDayMarks(days, leadH) {
+    var marks = [];
+    (days || []).forEach(function (day) {
+      var byLead = (day && day.mae_f) || {};
+      var raw = byLead[String(leadH)];
+      if (raw == null) return;
+      var v = Number(raw);
+      if (!isFinite(v)) return;
+      marks.push(v);
+    });
+    return marks;
+  }
+
+  /* THE SCALE THE MARKS ARE DRAWN ON, DERIVED AND STATED IN ONE PLACE.
+     The largest daily mean absolute error the archive holds at any lead.
+     Read off the data every render, never a typed ceiling — a typed one stops
+     being true the first time a worse day lands — and never a per-lead
+     maximum, which would rescale each row to its own worst day and make three
+     leads with very different spreads look alike. One scale for all three
+     rows, so a tall mark means the same thing wherever it appears. */
+  function realizedMarkScaleMax(days) {
+    var max = 0;
+    (days || []).forEach(function (day) {
+      var byLead = (day && day.mae_f) || {};
+      Object.keys(byLead).forEach(function (key) {
+        var v = Number(byLead[key]);
+        if (isFinite(v) && v > max) max = v;
+      });
+    });
+    return max > 0 ? max : null;
+  }
+
+  /* GUARDED ON BOTH PAYLOADS, CALLED FROM BOTH CHAINS. The forward fetch and
+     the archive fetch settle in either order; each chain calls this, and this
+     returns untouched until the other one's payload is in. Whichever settles
+     second builds the content, so the settle order cannot change the final
+     DOM. The archive failing leaves the whole block unbuilt — no node, no
+     dash, no placeholder, no label with nothing under it — and the forward
+     panel above is not touched by any path through here. Nothing is hidden by
+     script; a node that should not be read is a node that was never made. */
+  function renderSkillRealized() {
+    var data = state.data, archive = state.history;
+    var skill = data && data.skill;
+    var host = $('skill-leads');
+    if (!host || !skill || !skill.by_lead || !archive || !archive.days) return;
+
+    var days = archive.days;
+    /* The fitted-days count comes from the SAME field the in-sample sentence
+       above reads, so the caveat and that sentence can never name different
+       numbers of fitted days. Both counts in the caveat are payload values;
+       neither is typed here. */
+    var trainDays = ((state.meta.weights_source || {}).split || {}).train_days;
+    var units = state.meta.units;
+    var scaleMax = realizedMarkScaleMax(days);
+
+    skill.by_lead.forEach(function (lead) {
+      var block = host.querySelector('[data-lead-h="' + lead.lead_h + '"]');
+      if (!block) return;
+
+      /* Idempotent by construction: a second call replaces the block's
+         realized node rather than appending a second copy, so calling from
+         both chains cannot double the content. */
+      var prior = block.querySelector('.skill-realized');
+      if (prior) block.removeChild(prior);
+
+      var pooled = pooledRealizedMae(days, lead.lead_h);
+      if (pooled === null) return;
+
+      var realized = el('div', 'skill-realized');
+
+      /* GATED ON meta.is_synthetic AND ON NOTHING ELSE — the same single
+         boolean applySynthetic() reads for the page banner. Not a second flag,
+         not a re-derivation from the payload, and never the data-synthetic
+         attribute read back off the documentElement: a second source of truth
+         is how a page ends up with a banner that says fabricated and a block
+         that does not. Read as the boolean it is, never compared against a
+         string, since a negated string literal is still truthy. On a real
+         payload the node is never built, so there is no empty node, no
+         placeholder and no dash left carrying a label. */
+      if (state.meta.is_synthetic) {
+        realized.appendChild(el('p', 'skill-realized-mixing', COPY_SYNTHETIC_MIXING));
+      }
+
+      realized.appendChild(el('p', 'skill-realized-lead-in',
+        copyRealizedLeadIn(withUnit(fmt(pooled, 2), units))));
+
+      /* The marks detail the figure just stated, so they sit with it and
+         above the caveat that qualifies both. Each carries its day's value as
+         a fraction of the archive maximum; one CSS rule turns that into the
+         only channel the mark has. */
+      var marks = realizedDayMarks(days, lead.lead_h);
+      if (marks.length && scaleMax !== null) {
+        var row = el('div', 'skill-realized-marks');
+        marks.forEach(function (value) {
+          var mark = el('span', 'skill-realized-mark');
+          mark.style.setProperty('--mark-scale', String(value / scaleMax));
+          row.appendChild(mark);
+        });
+        realized.appendChild(row);
+      }
+
+      realized.appendChild(el('p', 'skill-realized-caveat',
+        copyRealizedCaveat(days.length, trainDays)));
+      block.appendChild(realized);
+    });
+  }
+
+  /* ══ END SKILL PANEL CONTENT — F7 ══ */
 
   /* ── The 503 ─────────────────────────────────────────────────────────
      Icon, title, one human sentence, then the server's reason verbatim in mono.

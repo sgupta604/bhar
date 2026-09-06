@@ -1021,6 +1021,175 @@ body {
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   SKILL PANEL CONTENT — F7, design-target §1.5
+
+   The trust panel's F7 rules go between this banner and its END marker, above
+   the F6 history banner: F6's extractor slices this file from its own banner
+   to end of file, so a rule appended at the tail would land inside F6's
+   region. Nothing in this region draws geometry around a forward value.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+
+/* ── The three improvement states (D4) ──────────────────────────────────────
+   The tone tokens are read from .claude/features/demo-shell/design-target.md
+   §3 and are never re-derived here. One declaration each, and it is the SAME
+   declaration — colour — so a loss lands at the identical size, weight,
+   position and spacing as a win. .skill-improve above owns the family, the
+   size, the tabular figures, the right edge and the margin that pushes it
+   there, and nothing below overrides one of them. There is no de-emphasis on
+   the loss state: no smaller type, no lighter weight, no parenthesis, no
+   reordering, no fading. The whole point of the rule is that this page cannot
+   make a bad result quieter than a good one.
+
+   The green is spent HERE and nowhere else in the panel. There is no soft
+   green fill, no "fresh" weights badge and no second green anywhere: D4
+   governs .skill-improve alone, and freshness is not an achievement.
+
+   No fork on the theme attribute — this file must not carry one, since it
+   cascades after the linked tokens.css and would silently win. The three
+   tones are deliberately unchanged in the dark layer (tokens §4); the demo
+   page's 300-weight step for its own improvement line lives in that page's
+   own stylesheet, where a theme block is allowed. If the dark step is ever
+   wanted here it belongs in the linked tokens.css, applied to all three
+   states at once, and not in this file. */
+.skill-improve[data-improve="win"]  { color: var(--success); }
+.skill-improve[data-improve="tie"]  { color: var(--text-muted); }
+.skill-improve[data-improve="loss"] { color: var(--danger); }
+
+/* ── The lead badge ─────────────────────────────────────────────────────────
+   The .badge-pill idiom above already carries design target §1.5's surface
+   (--bg-subtle), hairline (--border), --r-full radius and --font-ui 11.5px/500
+   --text-muted type. Restating any of that here would be a second declaration
+   that drifts from the first. Only the deltas the lead row needs: the pill
+   shares a baseline-aligned flex row with the improvement figure pushed to the
+   far side, so it must not be squeezed by it, must not break its label across
+   two lines, and needs a stated line box so all three pills sit on one
+   baseline whatever their label width. One piece of state per pill. */
+.skill-lead-head .badge-pill {
+  flex: none;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+/* ── The realized-error content ─────────────────────────────────────────────
+   Subordinate by construction. It closes the lead block behind its own
+   hairline rule, in the muted 12.5px UI face, so it can never be read as the
+   out-of-sample figure — which is the only 14px --text numeral in the block
+   and sits in its own labelled cell in the grid above. The two never share a
+   cell and never share a tone.
+
+   The caveat is one step quieter again but never hidden, never collapsed and
+   never behind a control: it is the sentence that stops the figure above it
+   from being read as a score, so it ships with the figure or neither ships.
+
+   Absent means absent. A history response the page never received leaves the
+   block unbuilt, and an empty one collapses on :empty — no dash, no "n/a", no
+   script-written visibility. */
+.skill-realized {
+  margin-top: var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.skill-realized:empty { display: none; }
+
+/* ── The fabricated-vs-measured statement ───────────────────────────────────
+   Present only on a fixture payload, where the renderer builds it; on real
+   data the node does not exist, so there is nothing here to hide and nothing
+   to collapse. It reads FIRST inside the block, above the figure it qualifies.
+
+   It borrows the page's existing synthetic treatment — the --danger tone the
+   frame and the banner already use — so "fabricated" looks the same wherever
+   the page says it, rather than inventing a second vocabulary for the same
+   fact. No green: the panel spends its one green declaration on a genuine
+   win, and this is not one. No border and no fill either; the block already
+   has a hairline above it, and a second box around this sentence would read
+   as an aside to be skipped rather than the first thing in the block. */
+.skill-realized-mixing {
+  margin: 0 0 var(--s-2);
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.skill-realized-lead-in { margin: 0; }
+
+.skill-realized-caveat {
+  margin: var(--s-2) 0 0;
+  color: var(--text-subtle);
+}
+
+/* ── The per-day marks ──────────────────────────────────────────────────────
+   ONE MARK PER ARCHIVED DAY THAT SCORED THIS LEAD, AND EVERY MARK CARRIES ITS
+   DAY'S NUMBER. Height is the only channel, and --mark-scale is the whole
+   encoding: the renderer sets it to that day's mean absolute error divided by
+   the largest daily mean absolute error anywhere in the archive, at any lead
+   — a maximum read off the data on every render, never a typed ceiling — so
+   the property is a fraction of one and the archive's worst day is the single
+   full-height mark. THE SAME SCALE FOR ALL THREE LEADS, so the rows are read
+   against each other rather than each against its own worst day, and a tall
+   mark means the same thing wherever it appears.
+
+   The 1px floor is a visible minimum, not part of the encoding: without it
+   the archive's calmest day would draw nothing at all and read as a day that
+   is missing rather than a day that went well. Days the archive did not score
+   at this lead draw nothing, and that is the intended reading.
+
+   Marks are DISCRETE and stay that way. Constant width, constant colour,
+   constant gap, nothing drawn between neighbours and nothing filled beneath
+   them: this is a row of days that already happened, sitting inside the
+   realized block, and it is not a shape attached to any forward value. No
+   rule here or anywhere else in this file draws one. */
+.skill-realized-marks {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 15px;
+  margin: var(--s-3) 0 0;
+}
+
+.skill-realized-mark {
+  flex: none;
+  width: 3px;
+  height: calc(1px + 14px * var(--mark-scale, 0));
+  border-radius: var(--r-full);
+  background: var(--text-subtle);
+}
+
+/* ── The panel to strip cross-link ──────────────────────────────────────────
+   #skill-beyond-fitted carries §4's verbatim sentence and is not edited. The
+   sentence that names the extrapolated region back to the strip is its
+   sibling, and it INHERITS the warn treatment rather than repeating it: no
+   second border, no second fill, no second tone. One warn block, two
+   sentences. The block above owns the 3px --warn edge and the --warn-soft
+   surface; this rule contributes spacing and nothing else.
+
+   Empty until the payload supplies the real boundary lead, and collapsed on
+   :empty until then. */
+.skill-extrapolated-link {
+  margin: var(--s-2) 0 0;
+  font: inherit;
+  color: inherit;
+}
+.skill-extrapolated-link:empty { display: none; }
+
+/* Standing beside the block rather than within it, it keeps that block's text
+   inset and typeface so the two sentences still read as one statement.
+   Spacing and family only — still no border, no fill, no second tone. */
+.skill-extrapolated + .skill-extrapolated-link {
+  padding: 0 var(--s-4) var(--s-3) calc(var(--s-4) + 3px);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* ═══ END SKILL PANEL CONTENT — F7 ═══ */
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
    SECTION 3 — the stale treatment.
    Pasted verbatim from .claude/features/forecast-page/design-target.md §3.
 

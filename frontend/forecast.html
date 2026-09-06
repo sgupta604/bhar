@@ -222,6 +222,25 @@
                so the id must exist, must be unique, and must not be renamed. -->
           <div class="skill-extrapolated" id="skill-beyond-fitted">No skill measurement exists beyond a 24-hour lead. These hours use the 24-hour weights and are unverified.</div>
 
+          <!-- ══ SKILL PANEL CONTENT — F7 ══
+               The panel's F7 markup lives between this banner and its END
+               marker. The per-lead blocks and their realized marks are built
+               by forecast.js inside #skill-leads, and the sentence that names
+               the extrapolated region back to the strip is composed from the
+               payload's own boundary rather than typed here.
+               #skill-beyond-fitted above is F5's node and is not edited. -->
+
+          <!-- Panel → strip, in words, as a SIBLING of the verbatim sentence
+               above rather than inside it: that node's digits are pinned and a
+               derived hour count landing in it would break the pin the moment
+               the horizon moved. Filled by forecast.js from the payload's own
+               first beyond-the-fitted-range slot; left empty when there is no
+               such slot, and empty is the hidden state — the stylesheet keys
+               on it, and nothing here is hidden by script. -->
+          <p class="skill-extrapolated-link" id="skill-extrapolated-link"></p>
+
+          <!-- ══ END SKILL PANEL CONTENT — F7 ══ -->
+
           <!-- skill.basis, skill.note and the sample-size reason, in one
                sentence. Always visible, never collapsed behind a disclosure. -->
           <p class="skill-basis" id="skill-basis"></p>
