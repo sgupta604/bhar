@@ -119,7 +119,7 @@ module). This cost 45 minutes of confusing 503s during F6.
 | F6 | `forecast-history` | F4, F5 | GREEN — finalized 2026-09-04, commit `27b0f36`, no PR (FORECAST-SPEC §12) |
 | F7 | `forecast-skill-panel` | F4, F5, F6 | GREEN — finalized 2026-09-05, commit `951f7f0`, no PR (FORECAST-SPEC §12) |
 | F8 | `forecast-docs` | all | TODO |
-| F9 | `forecast-scorecard` | F3, F4 | TODO — **user-approved 11:44**; added on develop @ 37ca272 |
+| F9 | `forecast-scorecard` | F3, F4 | IN PROGRESS — /plan (live record: blend LOSES to HRRR, n=12) |
 
 ## KNOWN ISSUE — RESOLVED (commit `3c83179`, verified again at F6 finalize: 1209 passed, 0 failed)
 
